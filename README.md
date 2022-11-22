@@ -1,3 +1,7 @@
+#ggogeet backend
+
+This repo is made fo ggogeet backend
+
 ## Description
 
 Started from [Nest](https://github.com/nestjs/nest) framework TypeScript starter. repository.
