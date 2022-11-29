@@ -7,6 +7,11 @@ import { NoticeModule } from './notice/notice.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { Notice } from './notice/entities/notice.entity';
+import { User } from "./users/entities/user.entity"
+import { UserInfo } from "./users/entities/userinfo.entity"
+import { Friend } from "./users/entities/friend.entity"
+import { Social } from "./users/entities/social.entity"
+import { Reminder } from "./reminder/entities/reminder.entity"
 
 const ConfigSettingModule = ConfigModule.forRoot({
   isGlobal: true,
@@ -19,7 +24,7 @@ const TypeOrmSettingModule = TypeOrmModule.forRoot({
   username: process.env.MYSQL_USER,
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DB,
-  entities: [Notice],
+  entities: [Notice, User, UserInfo, Friend, Social, Reminder],
   synchronize: false,
 });
 
