@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { RecevieLetter } from '../../letter/entities/recevieLetter.entity';
 import { Reminder } from '../../reminder/entities/reminder.entity';
 import { Friend } from './friend.entity';
 import { Social } from './social.entity';
@@ -50,4 +51,10 @@ export class User {
 
   @OneToMany(() => Reminder, (reminder) => reminder.user)
   reminders: Reminder[];
+
+  @OneToMany(() => RecevieLetter, (recevieLetter) => recevieLetter.sender)
+  recevieLetter: RecevieLetter[];
+  
+  @OneToMany(() => RecevieLetter, (receiver) => receiver.sender)
+  receiver: RecevieLetter[];
 }
