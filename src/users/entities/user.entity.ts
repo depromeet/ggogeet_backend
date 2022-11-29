@@ -10,6 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { RecevieLetter } from '../../letter/entities/recevieLetter.entity';
+import { SavedLetter } from '../../letter/entities/savedLetter.entity';
 import { Reminder } from '../../reminder/entities/reminder.entity';
 import { Friend } from './friend.entity';
 import { Social } from './social.entity';
@@ -53,8 +54,11 @@ export class User {
   reminders: Reminder[];
 
   @OneToMany(() => RecevieLetter, (recevieLetter) => recevieLetter.sender)
-  recevieLetter: RecevieLetter[];
+  recevieLetters: RecevieLetter[];
   
   @OneToMany(() => RecevieLetter, (receiver) => receiver.sender)
-  receiver: RecevieLetter[];
+  receivers: RecevieLetter[];
+  
+  @OneToMany(() => SavedLetter, (savedLetter) => savedLetter.user)
+  savedLetters: SavedLetter[];
 }

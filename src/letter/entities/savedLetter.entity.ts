@@ -11,20 +11,20 @@ import {
   } from 'typeorm';
   import { User } from '../../users/entities/user.entity';
   
-  @Entity('recevieLetter')
-  export class RecevieLetter {
+  @Entity('savedLetter')
+  export class SavedLetter {
     @PrimaryGeneratedColumn()
     id: number;
   
-    @OneToMany(() => User, (user) => user.recevieLetters)
-    sender: User;
+    @ManyToOne(() => User, (user) => user.savedLetters)
+    user: User;
     
-    @OneToMany(() => User, (user) => user.receivers)
-    receiver: User;
-
     @Column({ type: 'varchar', length: 255 })
     status: string;
   
+    @Column({ type: 'text' })
+    content: string;
+
     @Column({ type: 'timestamp' })
     received_at: Date;
   
