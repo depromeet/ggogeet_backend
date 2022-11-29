@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { RecevieLetter } from '../../letter/entities/recevieLetter.entity';
 import { SavedLetter } from '../../letter/entities/savedLetter.entity';
+import { SavedLetterImg } from '../../letter/entities/savedLetterImg.entity';
 import { Reminder } from '../../reminder/entities/reminder.entity';
 import { Friend } from './friend.entity';
 import { Social } from './social.entity';
@@ -61,4 +62,7 @@ export class User {
   
   @OneToMany(() => SavedLetter, (savedLetter) => savedLetter.user)
   savedLetters: SavedLetter[];
+  
+  @OneToMany(() => SavedLetterImg, (savedLetterImg) => savedLetterImg.user)
+  savedLetterImgs: SavedLetter[];
 }
