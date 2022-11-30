@@ -7,6 +7,10 @@ import { NoticeModule } from './notice/notice.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { Notice } from './notice/entities/notice.entity';
+import { AuthModule } from './auth/auth.module';
+import { User } from './users/entities/user.entity';
+import { UserInfo } from './users/entities/userinfo.entity';
+import { Social } from './users/entities/social.entity';
 
 const ConfigSettingModule = ConfigModule.forRoot({
   isGlobal: true,
@@ -19,7 +23,7 @@ const TypeOrmSettingModule = TypeOrmModule.forRoot({
   username: process.env.MYSQL_USER,
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DB,
-  entities: [Notice],
+  entities: [Notice, User, UserInfo, Social],
   synchronize: false,
 });
 
@@ -29,6 +33,7 @@ const TypeOrmSettingModule = TypeOrmModule.forRoot({
     TypeOrmSettingModule,
     UsersModule,
     NoticeModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
