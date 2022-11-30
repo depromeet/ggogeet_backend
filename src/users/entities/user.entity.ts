@@ -40,13 +40,13 @@ export class User {
   @DeleteDateColumn()
   deleted_at: Date;
 
-  @OneToOne(() => Social, (social) => social.user)
-  @JoinColumn()
-  social: Social;
-
-  @OneToOne(() => UserInfo, (userinfo) => userinfo.user)
+  @OneToOne(() => UserInfo)
   @JoinColumn()
   userinfo: UserInfo;
+
+  @OneToOne(() => Social)
+  @JoinColumn()
+  social: Social;
 
   @OneToMany(() => Friend, (friend) => friend.user)
   friends: Friend[];

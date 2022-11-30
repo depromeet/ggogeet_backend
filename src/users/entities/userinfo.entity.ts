@@ -2,11 +2,9 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from './user.entity';
 
 export enum Gender {
   MALE = 'male',
@@ -42,7 +40,4 @@ export class UserInfo {
 
   @UpdateDateColumn()
   updated_at: Date;
-
-  @OneToOne(() => User, (user) => user.userinfo)
-  user: User;
 }
