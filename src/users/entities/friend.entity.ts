@@ -16,7 +16,7 @@ export class Friend {
   @Column({ type: 'varchar', length: 255 })
   kakao_uuid: string;
 
-  // @중복?
+  // @요기 어떻게할까요 유저와 친구 쌍 메니투메니인거같기도 하네요
   @Column({ type: 'varchar', length: 255 })
   friend_user_id: string;
 
