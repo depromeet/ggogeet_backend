@@ -3,6 +3,7 @@ import {
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
+    JoinColumn,
     OneToOne,
     // ManyToOne,
     // OneToOne,
@@ -32,6 +33,7 @@ import { Reply } from '../../reply/entities/reply.entity';
     access_code: number;
   
     @OneToOne(() => Reply)
+    @JoinColumn()
     reply: Reply;
 
     // @OneToOne(() => Relationship, (relationship) => relationship.letterInfo)
