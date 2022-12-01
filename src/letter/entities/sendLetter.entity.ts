@@ -15,9 +15,11 @@ import {
     @PrimaryGeneratedColumn()
     id: number;
   
+    // check
     @ManyToOne(() => User, (user) => user.reminders)
     sender: User;
     
+    // check
     @ManyToOne(() => User, (user) => user.reminders)
     receiver: User;
 
@@ -39,6 +41,7 @@ import {
     @DeleteDateColumn()
     deleted_at: Date;
   
+    // check
     // @OneToOne(() => User, (user) => user.social)
     // letterInfo: User;
   }

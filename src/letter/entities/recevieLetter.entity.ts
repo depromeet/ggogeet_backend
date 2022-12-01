@@ -16,9 +16,11 @@ import {
     @PrimaryGeneratedColumn()
     id: number;
   
+    // check
     @OneToMany(() => User, (user) => user.recevieLetters)
     sender: User;
     
+    // check
     @OneToMany(() => User, (user) => user.receivers)
     receiver: User;
 
