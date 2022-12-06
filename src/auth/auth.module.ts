@@ -3,7 +3,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtStrategy } from 'src/auth/strategy/jwt.strategy';
-import { KakaoStrategy } from 'src/auth/strategy/kakao.strategy';
 import { Friends } from 'src/users/entities/friends.entity';
 import { Social } from 'src/users/entities/social.entity';
 import { User } from 'src/users/entities/user.entity';

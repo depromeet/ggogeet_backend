@@ -9,7 +9,6 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { KakaoAuthGuard } from 'src/common/guards/kakao-auth.guard';
 import { AuthService } from './auth.service';
 
 @Controller('auth')

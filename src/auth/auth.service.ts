@@ -68,7 +68,6 @@ export class AuthService {
         headers: headerUserInfo,
       });
 
-      console.log(JSON.stringify(responseUserInfo.data));
       const profileJson = responseUserInfo.data;
       const kakao_account = profileJson.kakao_account;
 
@@ -156,7 +155,7 @@ export class AuthService {
     );
   }
 
-  async getRefreshToken(userId: string) {
+  async getRefreshToken(userId: number) {
     return this.jwtService.sign(
       { id: userId },
       {

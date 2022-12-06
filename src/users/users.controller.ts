@@ -8,8 +8,8 @@ import {
   Delete,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateKakaoUserDto } from './dto/create-kakaouser.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateKakaoUserDto } from 'src/auth/dto/create-kakaouser.dto';
 
 @Controller('users')
 export class UsersController {
