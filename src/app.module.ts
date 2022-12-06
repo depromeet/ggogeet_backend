@@ -11,6 +11,9 @@ import { AuthModule } from './auth/auth.module';
 import { User } from './users/entities/user.entity';
 import { UserInfo } from './users/entities/userinfo.entity';
 import { Social } from './users/entities/social.entity';
+import { LetterModule } from './letter/letter.module';
+import { LetterInfo } from './letter/entities/letterinfo.entity';
+import { ReceiveLetter } from './letter/entities/recevieletter.entity';
 
 const ConfigSettingModule = ConfigModule.forRoot({
   isGlobal: true,
@@ -23,8 +26,9 @@ const TypeOrmSettingModule = TypeOrmModule.forRoot({
   username: process.env.MYSQL_USER,
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DB,
-  entities: [Notice, User, UserInfo, Social],
+  entities: [Notice, User, UserInfo, Social, LetterInfo, ReceiveLetter],
   synchronize: false,
+  logging: 'all',
 });
 
 @Module({
@@ -34,6 +38,7 @@ const TypeOrmSettingModule = TypeOrmModule.forRoot({
     UsersModule,
     NoticeModule,
     AuthModule,
+    LetterModule,
   ],
   controllers: [AppController],
   providers: [AppService],
