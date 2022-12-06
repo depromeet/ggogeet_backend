@@ -11,6 +11,7 @@ import { AuthModule } from './auth/auth.module';
 import { User } from './users/entities/user.entity';
 import { UserInfo } from './users/entities/userinfo.entity';
 import { Social } from './users/entities/social.entity';
+import { Friends } from './users/entities/friends.entity';
 
 const ConfigSettingModule = ConfigModule.forRoot({
   isGlobal: true,
@@ -23,7 +24,7 @@ const TypeOrmSettingModule = TypeOrmModule.forRoot({
   username: process.env.MYSQL_USER,
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DB,
-  entities: [Notice, User, UserInfo, Social],
+  entities: [Notice, User, UserInfo, Social, Friends],
   synchronize: false,
 });
 
