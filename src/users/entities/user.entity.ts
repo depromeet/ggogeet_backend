@@ -1,3 +1,6 @@
+import { timeStamp } from 'console';
+import { cp } from 'fs';
+import { type } from 'os';
 import {
   Entity,
   Column,
@@ -49,6 +52,6 @@ export class User {
     onUpdate: 'RESTRICT',
     cascade: true,
   })
-  @JoinColumn({ name: 'userinfo_id', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'user_info_id', referencedColumnName: 'id' })
   user_info_id: UserInfo;
 }
