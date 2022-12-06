@@ -22,13 +22,13 @@ export class UserInfo {
   gender: string;
 
   @Column({ default: true })
-  remind_yn: boolean;
+  remind_on: boolean;
 
   @Column({ default: true })
-  alert_yn: boolean;
+  alert_on: boolean;
 
   @Column({ default: false })
-  welcome_popup: boolean;
+  welcome_popup_view: boolean;
 
   @CreateDateColumn()
   created_at: Date;
