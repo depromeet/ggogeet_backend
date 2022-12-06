@@ -42,6 +42,6 @@ export class User {
   social: Social;
 
   @OneToOne(() => UserInfo, { cascade: true })
-  @JoinColumn({ name: 'user_info_id', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'userinfo_id', referencedColumnName: 'id' })
   userinfo: UserInfo;
 }
