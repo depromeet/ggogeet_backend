@@ -21,18 +21,18 @@ export class UserInfo {
   @Column({ nullable: true })
   gender: string;
 
-  @Column({ nullable: true })
+  @Column({ default: true })
   remind_yn: boolean;
 
-  @Column({ nullable: true })
+  @Column({ default: true })
   alert_yn: boolean;
 
-  @Column({ nullable: true })
+  @Column({ default: false })
   welcome_popup: boolean;
 
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn()
   created_at: Date;
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @UpdateDateColumn()
   updated_at: Date;
 }

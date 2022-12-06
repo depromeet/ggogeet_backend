@@ -8,6 +8,6 @@ export class Social {
   @Column()
   client_id: string;
 
-  @Column({ nullable: true })
+  @Column({ default: false })
   allow_friends_list: boolean;
 }

@@ -28,30 +28,20 @@ export class User {
   @Column()
   profile_img: string;
 
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn()
   created_at: Date;
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @UpdateDateColumn()
   updated_at: Date;
 
-  @DeleteDateColumn({ type: 'timestamp' })
+  @DeleteDateColumn()
   deleted_at: Date;
 
-  @OneToOne(() => Social, {
-    nullable: true,
-    onDelete: 'RESTRICT',
-    onUpdate: 'RESTRICT',
-    cascade: true,
-  })
+  @OneToOne(() => Social, { cascade: true })
   @JoinColumn({ name: 'social_id', referencedColumnName: 'id' })
-  social_id: Social;
+  social: Social;
 
-  @OneToOne(() => UserInfo, {
-    nullable: true,
-    onDelete: 'RESTRICT',
-    onUpdate: 'RESTRICT',
-    cascade: true,
-  })
+  @OneToOne(() => UserInfo, { cascade: true })
   @JoinColumn({ name: 'user_info_id', referencedColumnName: 'id' })
-  user_info_id: UserInfo;
+  userinfo: UserInfo;
 }
