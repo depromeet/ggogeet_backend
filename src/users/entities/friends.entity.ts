@@ -11,17 +11,17 @@ import {
 } from 'typeorm';
 import { User } from './user.entity';
 
-@Entity({ name: 'friends' })
+@Entity({ name: 'friend' })
 export class Friends {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  kakao_uuid: string;
+
   @ManyToOne(() => User)
   @JoinColumn({ name: 'user_id' })
   user_id: User;
-
-  @Column()
-  kakao_uuid: string;
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'friend_user_id' })

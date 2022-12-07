@@ -10,7 +10,7 @@ import {
 @Entity({ name: 'userinfo' })
 export class UserInfo {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Column({ nullable: true })
   birthday: string;
