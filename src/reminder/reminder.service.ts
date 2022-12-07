@@ -17,7 +17,6 @@ export class ReminderService {
 
   async createReminder(reminderDto: CreateReminderDto) {
     const user = await this.userRepository.findOne({ where: { id: 1 } });
-    console.log(reminderDto);
     const reminder = new Reminder();
     reminder.title = reminderDto.title;
     reminder.content = reminderDto.content;
