@@ -25,7 +25,8 @@ export class LetterBody {
   @OneToOne(() => Reply)
   @JoinColumn()
   reply: Reply
-  
-// relationship
+
+  @Column({ type: "int" })
+  relationship: number;
 // situation
 }

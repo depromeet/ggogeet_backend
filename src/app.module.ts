@@ -16,6 +16,7 @@ import { LetterInfo } from './letter/entities/letterinfo.entity';
 import { ReceiveLetter } from './letter/entities/recevieletter.entity';
 import { LetterBody } from './letter/entities/letterbody.entity';
 import { Reply } from './reply/entities/reply.entity';
+import { Relationship } from './relationship/entities/relationship.entity';
 
 const ConfigSettingModule = ConfigModule.forRoot({
   isGlobal: true,
@@ -28,7 +29,7 @@ const TypeOrmSettingModule = TypeOrmModule.forRoot({
   username: process.env.MYSQL_USER,
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DB,
-  entities: [Notice, User, UserInfo, Social, LetterInfo, ReceiveLetter, LetterBody, Reply],
+  entities: [Notice, User, UserInfo, Social, LetterInfo, ReceiveLetter, LetterBody, Reply, Relationship],
   synchronize: false,
   logging: 'all',
 });
