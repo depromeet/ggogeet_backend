@@ -19,8 +19,15 @@ export class ReminderController {
   constructor(private readonly reminderService: ReminderService) {}
 
   @Get()
-  findAll(@Query('limit') limit: number, @Query('offset') offset: number) {
-    return this.reminderService.findAll();
+  findAll(
+    @Query()
+    query: {
+      offset: number;
+      limit: number;
+      done: boolean;
+    },
+  ) {
+    return this.reminderService.findAll(query);
   }
 
   @Get(':id')
@@ -39,9 +46,14 @@ export class ReminderController {
     return this.reminderService.update(id, reminderDto);
   }
 
-  @Patch(':id/done')
+  @Patch('done/:id')
   done(@Param('id') id: number) {
     return this.reminderService.done(id);
+  }
+
+  @Patch('undone/:id')
+  undone(@Param('id') id: number) {
+    return this.reminderService.undone(id);
   }
 
   @Delete(':id')

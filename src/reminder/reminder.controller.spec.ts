@@ -1,4 +1,3 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { ReminderController } from './reminder.controller';
 
 describe('ReminderController', () => {

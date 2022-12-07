@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
@@ -11,7 +11,6 @@ export class ReminderService {
   constructor(
     @InjectRepository(Reminder)
     private reminderRepository: Repository<Reminder>,
-
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) {}
@@ -30,20 +29,53 @@ export class ReminderService {
     return this.reminderRepository.save(reminder);
   }
 
-  async findAll() {
-    return this.reminderRepository.findAndCount({
-      where: {
-        deleted_at: null,
+  async findAll(query) {
+    const limit: number = query.limit ? parseInt(query.limit) : 20;
+    const offset: number = query.offset ? parseInt(query.offset) : 0;
+    const order = query.order ? query.order : 'DESC';
+
+    const constraint = {
+      user: {
+        id: 1,
       },
+    };
+
+    if (query.done) {
+      constraint['is_done'] = query.done == 'true';
+    }
+
+    const reminder = await this.reminderRepository.findAndCount({
+      where: constraint,
+      skip: offset,
+      take: limit,
+      order: {
+        event_at: order,
+        is_done: 'ASC',
+      },
+      select: ['id', 'title', 'event_at', 'alert_on', 'is_done'],
     });
+
+    return {
+      count: reminder[1],
+      offset: offset,
+      limit: limit,
+      data: reminder[0],
+    };
   }
 
   async findOne(id: number) {
-    return this.reminderRepository.findOne({
+    const reminder = await this.reminderRepository.findOne({
       where: {
         id: id,
+        user: {
+          id: 1,
+        },
       },
     });
+    if (!reminder) {
+      throw new NotFoundException('Reminder not found');
+    }
+    return reminder;
   }
 
   async update(id: number, updateReminderDto: UpdateReminderDto) {
@@ -52,6 +84,10 @@ export class ReminderService {
         id: id,
       },
     });
+    if (!reminder) {
+      throw new NotFoundException('Reminder not found');
+    }
+
     reminder.title = updateReminderDto.title
       ? updateReminderDto.title
       : reminder.title;
@@ -67,14 +103,40 @@ export class ReminderService {
     reminder.alarm_at = updateReminderDto.alarm_at
       ? updateReminderDto.alarm_at
       : reminder.alarm_at;
-    return this.reminderRepository.save(reminder);
+
+    await this.reminderRepository.save(reminder);
+
+    return {
+      id: id,
+      title: reminder.title,
+      content: reminder.content,
+      event_at: reminder.event_at,
+      alert_on: reminder.alert_on,
+      alarm_at: reminder.alarm_at,
+    };
   }
 
   async delete(id: number) {
-    return `This action removes a #${id} reminder`;
+    await this.reminderRepository.softDelete(id);
+    return {
+      id: id,
+      is_deleted: true,
+    };
   }
 
   async done(id: number) {
-    return await this.reminderRepository.update(id, { is_done: true });
+    await this.reminderRepository.update(id, { is_done: true });
+    return {
+      id: id,
+      is_done: true,
+    };
+  }
+
+  async undone(id: number) {
+    await this.reminderRepository.update(id, { is_done: false });
+    return {
+      id: id,
+      is_done: false,
+    };
   }
 }

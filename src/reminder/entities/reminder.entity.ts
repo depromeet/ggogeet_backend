@@ -21,9 +21,11 @@ export class Reminder {
   @Column({ type: 'text' })
   content: string;
 
-  alert_on: Boolean;
+  @Column({ type: 'boolean' })
+  alert_on: boolean;
 
-  is_done: Boolean;
+  @Column({ type: 'boolean' })
+  is_done: boolean;
 
   @Column({ type: 'timestamp' })
   alarm_at: Date;
