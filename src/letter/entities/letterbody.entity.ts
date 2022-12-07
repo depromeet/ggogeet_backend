@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Reply } from 'src/reply/entities/reply.entity';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { LetterType } from '../letter.constants';
 
 @Entity('letterbody')
@@ -21,7 +22,10 @@ export class LetterBody {
   @Column({ type: 'varchar', length: 255, nullable: false })
   access_code: string;
 
-//   reply: Reply
+  @OneToOne(() => Reply)
+  @JoinColumn()
+  reply: Reply
+  
 // relationship
 // situation
 }
