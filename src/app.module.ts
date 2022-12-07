@@ -16,6 +16,11 @@ import { LetterInfo } from './letter/entities/letterinfo.entity';
 import { ReceiveLetter } from './letter/entities/recevieletter.entity';
 import { ReminderModule } from './reminder/reminder.module';
 import { Reminder } from './reminder/entities/reminder.entity';
+import { LetterBody } from './letter/entities/letterbody.entity';
+import { Reply } from './reply/entities/reply.entity';
+import { Relationship } from './relationship/entities/relationship.entity';
+import { Situation } from './situation/entities/situation.entity';
+import { SendLetter } from './letter/entities/sendLetter.entity';
 
 const ConfigSettingModule = ConfigModule.forRoot({
   isGlobal: true,
@@ -35,6 +40,11 @@ const TypeOrmSettingModule = TypeOrmModule.forRoot({
     Social,
     LetterInfo,
     ReceiveLetter,
+    LetterBody,
+    Reply,
+    Relationship,
+    Situation,
+    SendLetter,
     Reminder,
   ],
   synchronize: false,

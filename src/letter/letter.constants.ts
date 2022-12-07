@@ -3,3 +3,7 @@ export enum LetterType {
   EXTERNALIMG = 'image',
   INTERNAL = 'recevied',
 }
+
+export enum SendLetterStatus {
+  TMP_SAVED = "tmpSaved"
+}
