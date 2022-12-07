@@ -28,5 +28,7 @@ export class LetterBody {
 
   @Column({ type: "int" })
   relationship: number;
-// situation
+  
+  @Column({ type: "int" })
+  situation: number;
 }
