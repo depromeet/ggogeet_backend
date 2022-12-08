@@ -7,7 +7,7 @@ import { CreateExternalLetterDto } from './dto/create-external-letter.dto';
 import { CreateSendLetterDto } from './dto/create-send-letter.dto';
 import { LetterBody } from './entities/letterbody.entity';
 import { LetterInfo } from './entities/letterinfo.entity';
-import { ReceiveLetter } from './entities/recevieletter.entity';
+import { ReceiveLetter } from './entities/receiveletter.entity';
 import { SendLetter } from './entities/sendLetter.entity';
 import { LetterType, SendLetterStatus } from './letter.constants';
 

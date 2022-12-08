@@ -14,7 +14,7 @@ import { Social } from './users/entities/social.entity';
 import { Friend } from './users/entities/friend.entity';
 import { LetterModule } from './letter/letter.module';
 import { LetterInfo } from './letter/entities/letterinfo.entity';
-import { ReceiveLetter } from './letter/entities/recevieletter.entity';
+import { ReceiveLetter } from './letter/entities/receiveletter.entity';
 import { LetterBody } from './letter/entities/letterbody.entity';
 import { Reply } from './reply/entities/reply.entity';
 import { Relationship } from './relationship/entities/relationship.entity';

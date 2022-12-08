@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { multerAttachedImgOptionsFactory } from 'src/utils/multer.options';
 import { LetterInfo } from './entities/letterinfo.entity';
-import { ReceiveLetter } from './entities/recevieletter.entity';
+import { ReceiveLetter } from './entities/receiveletter.entity';
 import { LetterController } from './letter.controller';
 import { LetterService } from './letter.service';
 import { PassportModule } from '@nestjs/passport';
