@@ -4,9 +4,12 @@ import { User } from 'src/users/entities/user.entity';
 import { Repository, UpdateResult } from 'typeorm';
 import { CreateExternalImgLetterDto } from './dto/create-external-letter-img.dto';
 import { CreateExternalLetterDto } from './dto/create-external-letter.dto';
+import { CreateSendLetterDto } from './dto/create-send-letter.dto';
+import { LetterBody } from './entities/letterbody.entity';
 import { LetterInfo } from './entities/letterinfo.entity';
-import { ReceiveLetter } from './entities/recevieletter.entity';
-import { LetterType } from './letter.constants';
+import { ReceiveLetter } from './entities/receiveletter.entity';
+import { SendLetter } from './entities/sendLetter.entity';
+import { LetterType, SendLetterStatus } from './letter.constants';
 
 @Injectable()
 export class LetterService {
@@ -17,8 +20,14 @@ export class LetterService {
     @InjectRepository(LetterInfo)
     private letterInfoRepository: Repository<LetterInfo>,
 
+    @InjectRepository(SendLetter)
+    private sendLetterRepository: Repository<SendLetter>,
+
     @InjectRepository(User)
     private userRepository: Repository<User>,
+
+    @InjectRepository(ReceiveLetter)
+    private receiveLetterRepository: Repository<ReceiveLetter>,
   ) {}
 
   findAll(query): Promise<ReceiveLetter[]> {
@@ -124,5 +133,52 @@ export class LetterService {
     return {
       filePath: file.location,
     };
+  }
+
+  // CHECK: 저장 -> 임시저장은 안되겠지?
+  async createSendLetter(
+    createSendLetterDto: CreateSendLetterDto,
+  ): Promise<SendLetter> {
+    const sender = await this.userRepository.findOne({
+      where: { id: createSendLetterDto.user_id },
+    });
+
+    const letterInfo = new LetterInfo();
+    letterInfo.type = LetterType.INTERNAL;
+    letterInfo.template_url = createSendLetterDto.template_url;
+
+    const letterBody = new LetterBody();
+    letterBody.letterInfo = letterInfo;
+    letterBody.content = createSendLetterDto.content;
+    letterBody.template_url = createSendLetterDto.template_url;
+    letterBody.access_code = 'should_generate_random_code';
+    letterBody.situation_id = createSendLetterDto.situation_id;
+
+    const sendLetter = new SendLetter();
+    sendLetter.sender = sender;
+    if (createSendLetterDto.receiver_id) {
+      sendLetter.receiver = await this.userRepository.findOne({
+        where: { id: createSendLetterDto.receiver_id },
+      });
+    }
+    sendLetter.receiver_nickname = createSendLetterDto.receiver_nickname;
+    sendLetter.status = SendLetterStatus.SENT;
+    sendLetter.letterbody = letterBody;
+
+    const newSendLetter = await this.sendLetterRepository.save(sendLetter);
+
+    // receiveLetter 생성하기.
+    if (createSendLetterDto.receiver_id) {
+      const receiveLetter = new ReceiveLetter();
+      receiveLetter.user = await this.userRepository.findOne({
+        where: { id: createSendLetterDto.receiver_id },
+      });
+      receiveLetter.letterinfo = letterInfo;
+      receiveLetter.sender_nickname = sender.nickname;
+
+      await this.receiveLetterRepository.save(receiveLetter);
+    }
+
+    return newSendLetter;
   }
 }

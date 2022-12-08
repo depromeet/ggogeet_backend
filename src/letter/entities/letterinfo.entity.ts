@@ -9,6 +9,7 @@ export class LetterInfo {
   @Column({ type: 'enum', enum: LetterType, nullable: false })
   type: LetterType;
 
+  // Q: 이거 빼는거겠죠?
   @Column({ type: 'text', nullable: true })
   content: string;
 
