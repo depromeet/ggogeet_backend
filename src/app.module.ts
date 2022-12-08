@@ -33,7 +33,20 @@ const TypeOrmSettingModule = TypeOrmModule.forRoot({
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DB,
 
-  entities: [Notice, User, UserInfo, Social, Friend, LetterInfo, ReceiveLetter, LetterBody, Reply, Relationship, Situation, SendLetter],
+  entities: [
+    Notice,
+    User,
+    UserInfo,
+    Social,
+    Friend,
+    LetterInfo,
+    ReceiveLetter,
+    LetterBody,
+    Reply,
+    Relationship,
+    Situation,
+    SendLetter,
+  ],
   synchronize: false,
   logging: 'all',
 });

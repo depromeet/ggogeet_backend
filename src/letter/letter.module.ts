@@ -8,6 +8,9 @@ import { LetterInfo } from './entities/letterinfo.entity';
 import { ReceiveLetter } from './entities/recevieletter.entity';
 import { LetterController } from './letter.controller';
 import { LetterService } from './letter.service';
+import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from 'src/auth/strategy/jwt.strategy';
+import { SendLetter } from './entities/sendLetter.entity';
 
 @Module({
   imports: [
@@ -16,7 +19,8 @@ import { LetterService } from './letter.service';
       useFactory: multerAttachedImgOptionsFactory,
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([ReceiveLetter, LetterInfo, User]),
+    TypeOrmModule.forFeature([ReceiveLetter, LetterInfo, User, SendLetter]),
+    PassportModule,
   ],
   controllers: [LetterController],
   providers: [LetterService],

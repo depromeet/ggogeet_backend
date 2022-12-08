@@ -5,5 +5,6 @@ export enum LetterType {
 }
 
 export enum SendLetterStatus {
-  TMP_SAVED = "tmpSaved"
+  TMP_SAVED = 'tmpSaved',
+  SENT = 'sent',
 }
