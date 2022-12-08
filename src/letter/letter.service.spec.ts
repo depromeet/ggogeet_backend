@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthController } from './auth.controller';
+import { LetterService } from './letter.service';
 
-describe('AuthController', () => {
-  let controller: AuthController;
+describe('LetterService', () => {
+  let service: LetterService;
 
   it('should be defined', () => {
     expect(true).toBe(true);

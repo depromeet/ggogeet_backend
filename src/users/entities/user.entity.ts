@@ -1,6 +1,3 @@
-import { timeStamp } from 'console';
-import { cp } from 'fs';
-import { type } from 'os';
 import {
   Entity,
   Column,
@@ -38,12 +35,10 @@ export class User {
   deleted_at: Date;
 
   @OneToOne(() => Social, { cascade: true })
-  // @OneToOne(() => Social)
   @JoinColumn({ name: 'social_id', referencedColumnName: 'id' })
   social: Social;
 
   @OneToOne(() => UserInfo, { cascade: true })
-  // @OneToOne(() => UserInfo)
   @JoinColumn({ name: 'userinfo_id', referencedColumnName: 'id' })
   userinfo: UserInfo;
 }
