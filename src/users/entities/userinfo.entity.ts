@@ -9,7 +9,7 @@ import {
 @Entity({ name: 'userinfo' })
 export class UserInfo {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Column({ nullable: true })
   birthday: string;
@@ -20,18 +20,18 @@ export class UserInfo {
   @Column({ nullable: true })
   gender: string;
 
-  @Column({ nullable: true })
-  remind_yn: boolean;
+  @Column({ default: true })
+  remind_on: boolean;
 
-  @Column({ nullable: true })
-  alert_yn: boolean;
+  @Column({ default: true })
+  alert_on: boolean;
 
-  @Column({ nullable: true })
-  welcome_popup: boolean;
+  @Column({ default: false })
+  welcome_popup_view: boolean;
 
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn()
   created_at: Date;
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @UpdateDateColumn()
   updated_at: Date;
 }

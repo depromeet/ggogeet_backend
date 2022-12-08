@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateKakaoUserDto } from './dto/create-kakaouser.dto';
+import { CreateKakaoUserDto } from 'src/auth/dto/create-kakaouser.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()

@@ -3,7 +3,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtStrategy } from 'src/auth/strategy/jwt.strategy';
-import { KakaoStrategy } from 'src/auth/strategy/kakao.strategy';
+import { Friend } from 'src/users/entities/friend.entity';
 import { Social } from 'src/users/entities/social.entity';
 import { User } from 'src/users/entities/user.entity';
 import { UserInfo } from 'src/users/entities/userinfo.entity';
@@ -22,9 +22,10 @@ import { AuthService } from './auth.service';
     TypeOrmModule.forFeature([User]),
     TypeOrmModule.forFeature([UserInfo]),
     TypeOrmModule.forFeature([Social]),
+    TypeOrmModule.forFeature([Friend]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, KakaoStrategy, JwtStrategy],
-  exports: [AuthService, JwtModule, PassportModule, KakaoStrategy, JwtStrategy],
+  providers: [AuthService, JwtStrategy],
+  exports: [AuthService, JwtModule, PassportModule, JwtStrategy],
 })
 export class AuthModule {}

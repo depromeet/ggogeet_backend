@@ -11,6 +11,7 @@ import { AuthModule } from './auth/auth.module';
 import { User } from './users/entities/user.entity';
 import { UserInfo } from './users/entities/userinfo.entity';
 import { Social } from './users/entities/social.entity';
+import { Friend } from './users/entities/friend.entity';
 import { LetterModule } from './letter/letter.module';
 import { LetterInfo } from './letter/entities/letterinfo.entity';
 import { ReceiveLetter } from './letter/entities/recevieletter.entity';
@@ -31,7 +32,8 @@ const TypeOrmSettingModule = TypeOrmModule.forRoot({
   username: process.env.MYSQL_USER,
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DB,
-  entities: [Notice, User, UserInfo, Social, LetterInfo, ReceiveLetter, LetterBody, Reply, Relationship, Situation, SendLetter],
+
+  entities: [Notice, User, UserInfo, Social, Friend, LetterInfo, ReceiveLetter, LetterBody, Reply, Relationship, Situation, SendLetter],
   synchronize: false,
   logging: 'all',
 });
