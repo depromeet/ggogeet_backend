@@ -20,6 +20,8 @@ import { Reply } from './reply/entities/reply.entity';
 import { Relationship } from './relationship/entities/relationship.entity';
 import { Situation } from './situation/entities/situation.entity';
 import { SendLetter } from './letter/entities/sendLetter.entity';
+import { SentenceModule } from './sentence/sentence.module';
+import { Sentence } from './sentence/entities/sentence.entity';
 
 const ConfigSettingModule = ConfigModule.forRoot({
   isGlobal: true,
@@ -33,7 +35,21 @@ const TypeOrmSettingModule = TypeOrmModule.forRoot({
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DB,
 
-  entities: [Notice, User, UserInfo, Social, Friend, LetterInfo, ReceiveLetter, LetterBody, Reply, Relationship, Situation, SendLetter],
+  entities: [
+    Notice,
+    User,
+    UserInfo,
+    Social,
+    Friend,
+    LetterInfo,
+    ReceiveLetter,
+    LetterBody,
+    Reply,
+    Relationship,
+    Situation,
+    SendLetter,
+    Sentence,
+  ],
   synchronize: false,
   logging: 'all',
 });
@@ -46,6 +62,7 @@ const TypeOrmSettingModule = TypeOrmModule.forRoot({
     NoticeModule,
     AuthModule,
     LetterModule,
+    SentenceModule,
   ],
   controllers: [AppController],
   providers: [AppService],
