@@ -1,4 +1,3 @@
-import { timeStamp } from 'console';
 import {
   Entity,
   Column,
@@ -8,28 +7,38 @@ import {
   JoinColumn,
   OneToOne,
   ManyToOne,
+  DeleteDateColumn,
 } from 'typeorm';
 import { User } from './user.entity';
 
 @Entity({ name: 'friend' })
-export class Friends {
+export class Friend {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   kakao_uuid: string;
 
+  @Column()
+  kakao_friend_name: string;
+
   @ManyToOne(() => User)
   @JoinColumn({ name: 'user_id' })
-  user_id: User;
+  user: User;
+
+  @Column({ name: 'user_id' })
+  userId: number;
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'friend_user_id' })
-  friend_user_id: User;
+  friend_user: User;
 
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn()
   created_at: Date;
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @UpdateDateColumn()
   updated_at: Date;
+
+  @DeleteDateColumn()
+  deleted_at: Date;
 }

@@ -9,6 +9,7 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -37,7 +38,7 @@ export class AuthController {
 
     // 친구 목록 동의했으면 회원가입할때 친구 바로 저장
     if (codeResponse.scope.indexOf('friends') !== -1) {
-      await this.authService.createKakaoFriends(
+      await this.authService.updateKakaoFriends(
         codeResponse.access_token,
         user,
       );
@@ -59,7 +60,7 @@ export class AuthController {
     const _hostName = 'https://kauth.kakao.com';
     const _restApiKey = process.env.KAKAO_CLIENT_ID;
     // 카카오 로그인 redirectURI 등록
-    const _redirectUrl = 'http://localhost:3000/auth/kakao/friends';
+    const _redirectUrl = process.env.KAKAO_FRIENDS_REDIRECT_URL;
     const url = `${_hostName}/oauth/authorize?client_id=${_restApiKey}&redirect_uri=${_redirectUrl}&response_type=code&scope=friends`;
     return res.redirect(url);
   }
@@ -73,11 +74,9 @@ export class AuthController {
     );
     const user = await this.authService.getUserProfile(codeResponse);
 
-    const friendslist = await this.authService.createKakaoFriends(
-      codeResponse.access_token,
-      user,
-    );
+    await this.authService.updateKakaoFriends(codeResponse.access_token, user);
 
-    res.send(friendslist);
+    const friendsList = await this.authService.getKakaoFriends(user);
+    return res.send(friendsList);
   }
 }

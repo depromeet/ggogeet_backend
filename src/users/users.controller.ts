@@ -6,14 +6,22 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Req,
+  Res,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateKakaoUserDto } from 'src/auth/dto/create-kakaouser.dto';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { AuthService } from 'src/auth/auth.service';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Post()
   create(@Body() createUserDto: CreateKakaoUserDto) {
@@ -25,10 +33,10 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.usersService.findOne(+id);
+  // }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
@@ -38,5 +46,13 @@ export class UsersController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);
+  }
+
+  // 내 친구목록 가져오기
+  @Get('/friends')
+  @UseGuards(JwtAuthGuard)
+  async getFriends(@Req() req, @Res() res) {
+    const friendsList = await this.authService.getKakaoFriends(req.user);
+    return res.send(friendsList);
   }
 }

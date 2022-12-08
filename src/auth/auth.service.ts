@@ -8,8 +8,10 @@ import { User } from 'src/users/entities/user.entity';
 import { UserInfo } from 'src/users/entities/userinfo.entity';
 import { Repository } from 'typeorm';
 import axios from 'axios';
-import { Friends } from 'src/users/entities/friends.entity';
+import { Friend } from 'src/users/entities/friend.entity';
 import { CreateKakaoUserDto } from './dto/create-kakaouser.dto';
+import { UpdateKakaoUserDto } from './dto/update-kakaouser.dto';
+import { access } from 'fs';
 
 @Injectable()
 export class AuthService {
@@ -18,7 +20,7 @@ export class AuthService {
     @InjectRepository(Social) private socialRepository: Repository<Social>,
     @InjectRepository(UserInfo)
     private userInfoRepository: Repository<UserInfo>,
-    @InjectRepository(Friends) private friendsRepository: Repository<Friends>,
+    @InjectRepository(Friend) private friendsRepository: Repository<Friend>,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -111,12 +113,9 @@ export class AuthService {
     //   client_id: kakaoInfo.kakaoId,
     // });
 
-    const exUser = await this.userRepository
-      .createQueryBuilder('user')
-      .leftJoinAndSelect('user.social', 'social')
-      .where('social.client_id = :client_id', { client_id: kakaoInfo.kakaoId })
-      .getOne();
+    let exUser = await this.findUserByClientId(kakaoInfo.kakaoId);
 
+    // 새로 가입한 유저면 create
     if (!exUser) {
       const newSocial = new Social();
       newSocial.client_id = kakaoInfo.kakaoId;
@@ -141,6 +140,8 @@ export class AuthService {
 
       return newUser;
     } else {
+      // 기존 유저면 update
+      exUser = await this.updateKakaoUser(exUser.id, kakaoInfo);
       return exUser;
     }
   }
@@ -165,7 +166,20 @@ export class AuthService {
     );
   }
 
-  async createKakaoFriends(accessToken, user) {
+  async updateKakaoUser(id, kakaoInfo: CreateKakaoUserDto) {
+    await this.userRepository.update(
+      {
+        id,
+      },
+      {
+        name: kakaoInfo.nickname,
+        profile_img: kakaoInfo.profile_image,
+      },
+    );
+    return await this.userRepository.findOneBy({ id });
+  }
+
+  async updateKakaoFriends(accessToken: string, user: User) {
     const kakaoFriendsUrl = 'https://kapi.kakao.com/v1/api/talk/friends';
 
     const header = {
@@ -179,6 +193,7 @@ export class AuthService {
       url: kakaoFriendsUrl,
       headers: header,
     });
+
     if (responseFriendsInfo.status === 200) {
       // 1. 친구 id쫙 뽑아온다음에 in [id리스트]해서 다시 돌아가면서 insert 해주기 (join 한번)
       // 2. social에서 kakao id로 찾은 다음 user_id 반환해서 friend에 넣어주기
@@ -186,33 +201,57 @@ export class AuthService {
       // 2번 선택
       if (responseFriendsInfo.data.total_count > 0) {
         responseFriendsInfo.data.elements.map(async (element) => {
-          const friend = new Friends();
-          friend.kakao_uuid = element.uuid;
-          // 친구의 social 아이디 찾고
-          const social = await this.socialRepository.findOneBy({
-            client_id: element.id,
+          // 존재하는 친구인지 검사
+          const isFriendExist = await this.friendsRepository.findOne({
+            where: { userId: user.id, kakao_uuid: element.kakao_uuid },
           });
-          // 친구의 user 아이디 찾고
-          const friend_user_id = await this.userRepository.findOneBy({
-            social: social,
-          });
-
-          // 그 아이디를 넣어주기
-          friend.friend_user_id = friend_user_id;
-          friend.user_id = user;
-
-          await this.friendsRepository.save(friend);
+          // 새로운 친구면 추가
+          if (!isFriendExist) {
+            await this.createKakakoFriends(element, user);
+          }
+          // 원래 있던 친구였으나 삭제된 경우 현재 친구목록에서 삭제된 경우..
         });
       }
     }
-    return JSON.stringify(responseFriendsInfo.data);
   }
 
-  async findUserByClientId(clientId: number) {
+  async createKakakoFriends(element, user: User) {
+    const friend = new Friend();
+    friend.kakao_uuid = element.uuid;
+    friend.kakao_friend_name = element.profile_nickname;
+
+    const friend_user = await this.findUserByClientId(element.id);
+    // // 친구의 social 아이디 찾고
+    // const social = await this.socialRepository.findOneBy({
+    //   client_id: element.id,
+    // });
+    // // 친구의 user 아이디 찾고
+    // const friend_user = await this.userRepository.findOneBy({
+    //   social: social,
+    // });
+
+    // 그 아이디를 넣어주기
+    friend.friend_user = friend_user;
+    friend.user = user;
+
+    await this.friendsRepository.save(friend);
+  }
+
+  async findUserByClientId(clientId: string): Promise<User> {
     return await this.userRepository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.social', 'social')
       .where('social.client_id = :client_id', { client_id: clientId })
       .getOne();
+  }
+
+  async getKakaoFriends(user: User) {
+    return await this.friendsRepository
+      .createQueryBuilder('friend')
+      .select(['friend.kakao_uuid', 'friend.kakao_friend_name'])
+      .addSelect(['user.id', 'user.profile_img'])
+      .leftJoinAndSelect('friend.friend_user', 'user')
+      .where('friend.userId = :userId', { userId: user.id })
+      .getMany();
   }
 }
