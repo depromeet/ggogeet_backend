@@ -39,6 +39,8 @@ export class LetterController {
     };
     const sendLetter = await this.letterService.createSendLetter(letterData);
 
+    // TODO: 카카오톡 보내기.
+
     res.send(sendLetter);
   }
 
