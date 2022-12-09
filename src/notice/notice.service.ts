@@ -55,7 +55,7 @@ export class NoticeService {
     await this.noticeRepository.delete(id);
     const result = new DeleteNoticeDto();
     result.status = 'success';
-    result.msg = `Notice #${id} deleted`;
+    result.msg = `Sentence #${id} deleted`;
     return result;
   }
 }

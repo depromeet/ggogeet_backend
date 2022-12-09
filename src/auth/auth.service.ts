@@ -249,8 +249,8 @@ export class AuthService {
     return await this.friendsRepository
       .createQueryBuilder('friend')
       .select(['friend.kakao_uuid', 'friend.kakao_friend_name'])
+      .leftJoin('friend.friend_user', 'user')
       .addSelect(['user.id', 'user.profile_img'])
-      .leftJoinAndSelect('friend.friend_user', 'user')
       .where('friend.userId = :userId', { userId: user.id })
       .getMany();
   }
