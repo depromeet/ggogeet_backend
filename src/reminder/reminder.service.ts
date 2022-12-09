@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Situation } from 'src/situation/entities/situation.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateReminderDto } from './dto/create-reminder.dto';
@@ -11,12 +12,11 @@ export class ReminderService {
   constructor(
     @InjectRepository(Reminder)
     private reminderRepository: Repository<Reminder>,
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    @InjectRepository(Situation)
+    private situationRepository: Repository<Situation>,
   ) {}
 
-  async createReminder(reminderDto: CreateReminderDto) {
-    const user = await this.userRepository.findOne({ where: { id: 1 } });
+  async createReminder(reminderDto: CreateReminderDto, user: User) {
     const reminder = new Reminder();
     reminder.title = reminderDto.title;
     reminder.content = reminderDto.content;
@@ -25,17 +25,22 @@ export class ReminderService {
     reminder.alarm_at = reminderDto.alarm_at;
     reminder.is_done = false;
     reminder.user = user;
+    reminder.situation = await this.situationRepository.findOne({
+      where: {
+        id: reminderDto.situation_id,
+      },
+    });
     return this.reminderRepository.save(reminder);
   }
 
-  async findAll(query) {
+  async findAll(query: any, user: User) {
     const limit: number = query.limit ? parseInt(query.limit) : 20;
     const offset: number = query.offset ? parseInt(query.offset) : 0;
     const order = query.order ? query.order : 'DESC';
 
     const constraint = {
       user: {
-        id: 1,
+        id: user.id,
       },
     };
 
@@ -62,27 +67,54 @@ export class ReminderService {
     };
   }
 
-  async findOne(id: number) {
+  async findOne(id: number, user: User) {
     const reminder = await this.reminderRepository.findOne({
       where: {
         id: id,
         user: {
-          id: 1,
+          id: user.id,
         },
       },
+      relations: ['situation'],
+      select: [
+        'id',
+        'title',
+        'content',
+        'event_at',
+        'alert_on',
+        'alarm_at',
+        'is_done',
+        'situation',
+      ],
     });
     if (!reminder) {
       throw new NotFoundException('Reminder not found');
     }
-    return reminder;
+
+    const result = {
+      id: reminder.id,
+      title: reminder.title,
+      content: reminder.content,
+      event_at: reminder.event_at,
+      alert_on: reminder.alert_on,
+      alarm_at: reminder.alarm_at,
+      is_done: reminder.is_done,
+      situation: reminder.situation.content,
+    };
+
+    return result;
   }
 
-  async update(id: number, updateReminderDto: UpdateReminderDto) {
+  async update(id: number, updateReminderDto: UpdateReminderDto, user: User) {
     const reminder = await this.reminderRepository.findOne({
       where: {
         id: id,
+        user: {
+          id: user.id,
+        },
       },
     });
+
     if (!reminder) {
       throw new NotFoundException('Reminder not found');
     }
@@ -102,6 +134,13 @@ export class ReminderService {
     reminder.alarm_at = updateReminderDto.alarm_at
       ? updateReminderDto.alarm_at
       : reminder.alarm_at;
+    reminder.situation = updateReminderDto.situation_id
+      ? await this.situationRepository.findOne({
+          where: {
+            id: updateReminderDto.situation_id,
+          },
+        })
+      : reminder.situation;
 
     await this.reminderRepository.save(reminder);
 
@@ -112,10 +151,12 @@ export class ReminderService {
       event_at: reminder.event_at,
       alert_on: reminder.alert_on,
       alarm_at: reminder.alarm_at,
+      is_done: reminder.is_done,
+      situation: reminder.situation.content,
     };
   }
 
-  async delete(id: number) {
+  async delete(id: number, user: User) {
     await this.reminderRepository.softDelete(id);
     return {
       id: id,
@@ -123,16 +164,32 @@ export class ReminderService {
     };
   }
 
-  async done(id: number) {
-    await this.reminderRepository.update(id, { is_done: true });
+  async done(id: number, user: User) {
+    await this.reminderRepository.update(
+      {
+        id: id,
+        user: {
+          id: user.id,
+        },
+      },
+      { is_done: true },
+    );
     return {
       id: id,
       is_done: true,
     };
   }
 
-  async undone(id: number) {
-    await this.reminderRepository.update(id, { is_done: false });
+  async undone(id: number, user: User) {
+    await this.reminderRepository.update(
+      {
+        id: id,
+        user: {
+          id: user.id,
+        },
+      },
+      { is_done: false },
+    );
     return {
       id: id,
       is_done: false,

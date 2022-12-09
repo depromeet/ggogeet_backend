@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
+import { Situation } from 'src/situation/entities/situation.entity';
 
 @Entity('reminder')
 export class Reminder {
@@ -45,4 +46,8 @@ export class Reminder {
   @ManyToOne(() => User)
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @ManyToOne(() => Situation)
+  @JoinColumn({ name: 'situation_id' })
+  situation: Situation;
 }
