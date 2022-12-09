@@ -33,7 +33,7 @@ export class ReceiveLetter {
   })
   letterinfo: LetterInfo;
 
-  @Column({ type: 'timestamp', nullable: false })
+  @CreateDateColumn()
   received_at: Date;
 
   @CreateDateColumn()

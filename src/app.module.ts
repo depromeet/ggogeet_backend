@@ -14,7 +14,9 @@ import { Social } from './users/entities/social.entity';
 import { Friend } from './users/entities/friend.entity';
 import { LetterModule } from './letter/letter.module';
 import { LetterInfo } from './letter/entities/letterinfo.entity';
-import { ReceiveLetter } from './letter/entities/recevieletter.entity';
+import { ReceiveLetter } from './letter/entities/receiveletter.entity';
+import { ReminderModule } from './reminder/reminder.module';
+import { Reminder } from './reminder/entities/reminder.entity';
 import { LetterBody } from './letter/entities/letterbody.entity';
 import { Reply } from './reply/entities/reply.entity';
 import { Relationship } from './relationship/entities/relationship.entity';
@@ -35,21 +37,8 @@ const TypeOrmSettingModule = TypeOrmModule.forRoot({
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DB,
 
-  entities: [
-    Notice,
-    User,
-    UserInfo,
-    Social,
-    Friend,
-    LetterInfo,
-    ReceiveLetter,
-    LetterBody,
-    Reply,
-    Relationship,
-    Situation,
-    SendLetter,
-    Sentence,
-  ],
+  entities: [Notice, User, UserInfo, Social, Friend, LetterInfo, ReceiveLetter, LetterBody, Reply, Relationship, Situation, SendLetter, Reminder, Sentence],
+
   synchronize: false,
   logging: 'all',
 });
@@ -63,6 +52,7 @@ const TypeOrmSettingModule = TypeOrmModule.forRoot({
     AuthModule,
     LetterModule,
     SentenceModule,
+    ReminderModule,
   ],
   controllers: [AppController],
   providers: [AppService],
