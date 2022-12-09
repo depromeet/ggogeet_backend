@@ -31,7 +31,7 @@ export class ReminderController {
       limit: number;
       done: boolean;
     },
-    @ReqUser() user,
+    @ReqUser() user: User,
   ) {
     return this.reminderService.findAll(query, user);
   }
