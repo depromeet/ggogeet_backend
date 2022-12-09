@@ -10,8 +10,6 @@ import { Repository } from 'typeorm';
 import axios from 'axios';
 import { Friend } from 'src/users/entities/friend.entity';
 import { CreateKakaoUserDto } from './dto/create-kakaouser.dto';
-import { UpdateKakaoUserDto } from './dto/update-kakaouser.dto';
-import { access } from 'fs';
 
 @Injectable()
 export class AuthService {

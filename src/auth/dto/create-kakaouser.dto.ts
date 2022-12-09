@@ -1,5 +1,3 @@
-import { IsString } from 'class-validator';
-
 export class CreateKakaoUserDto {
   kakaoId: string;
   nickname: string;

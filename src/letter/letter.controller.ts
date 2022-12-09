@@ -1,18 +1,18 @@
 import {
+  Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Post,
-  HttpStatus,
-  HttpCode,
-  Delete,
-  Body,
-  UseInterceptors,
-  UploadedFile,
   Query,
-  UseGuards,
   Req,
   Res,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
