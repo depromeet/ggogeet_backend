@@ -26,6 +26,12 @@ export class SentenceController {
     return await this.sentenceService.findAll(req.user);
   }
 
+  // 내가 쓴 문장 id로 가져오기
+  @Get(':id')
+  async findOneSentence(@Req() req, @Param('id') id: number) {
+    return await this.sentenceService.findOne(req.user, id);
+  }
+
   // 엔드포인트 맘에 안듬
   // 상황별로 문장 가져오기 (예시+추가)
   @Get('situation')

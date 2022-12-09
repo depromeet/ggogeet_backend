@@ -17,7 +17,7 @@ export class SentenceService {
     private situationRepository: Repository<Situation>,
   ) {}
 
-  async findAll(user: User) {
+  async findAll(user: User): Promise<any> {
     const userSentence = [];
     const guideSentence = [];
 
@@ -26,38 +26,32 @@ export class SentenceService {
         user.id,
         situationId,
       );
-      // const tempUserSentence = await this.sentenceRepository
-      //   .createQueryBuilder('sentence')
-      //   .select('sentence.situation_id')
-      //   .addSelect('sentence.content')
-      //   .where('sentence.userId = :id', { id: user.id })
-      //   .andWhere('sentence.type = :type', { type: SentenceType.USER })
-      //   .andWhere('sentence.situation_id = :situation_id', {
-      //     situation_id: situationId,
-      //   })
-      //   .take(4)
-      //   .getMany();
-
       const tempGuideSentence = await this.findGuideSentenceBySituation(
         situationId,
       );
-      // const tempGuideSentence = await this.sentenceRepository
-      //   .createQueryBuilder('sentence')
-      //   .select('sentence.situation_id')
-      //   .addSelect('sentence.content')
-      //   .andWhere('sentence.type = :type', { type: SentenceType.GUIDE })
-      //   .andWhere('sentence.situation_id = :situation_id', {
-      //     situation_id: situationId,
-      //   })
-      //   .orderBy('rand ()')
-      //   .take(4)
-      //   .getMany();
 
       userSentence.push(tempUserSentence);
       guideSentence.push(tempGuideSentence);
     }
 
     return { userSentence, guideSentence };
+  }
+
+  async findOne(user: User, id: number) {
+    const sentence = await this.sentenceRepository.findOne({
+      where: { id: id, userId: user.id },
+    });
+
+    if (!sentence) {
+      throw new NotFoundException(`Sentence ${id} is not found`);
+    }
+
+    return {
+      status: 200,
+      description: '내가 쓴 문장 조회 성공',
+      success: true,
+      data: sentence,
+    };
   }
 
   async findUserSentenceBySituation(userId: number, situationId: number) {
@@ -70,7 +64,7 @@ export class SentenceService {
       .andWhere('sentence.situation_id = :situation_id', {
         situation_id: situationId,
       })
-      .take(4)
+      .take(7)
       .getMany();
     return { situation_id: situationId, sentence: temp };
   }
@@ -85,7 +79,7 @@ export class SentenceService {
         situation_id: situationId,
       })
       .orderBy('rand ()')
-      .take(4)
+      .take(5)
       .getMany();
     return { situation_id: situationId, sentence: temp };
   }
