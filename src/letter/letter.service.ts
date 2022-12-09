@@ -16,16 +16,12 @@ export class LetterService {
   constructor(
     @InjectRepository(ReceiveLetter)
     private letterRepository: Repository<ReceiveLetter>,
-
     @InjectRepository(LetterInfo)
     private letterInfoRepository: Repository<LetterInfo>,
-
     @InjectRepository(SendLetter)
     private sendLetterRepository: Repository<SendLetter>,
-
     @InjectRepository(User)
     private userRepository: Repository<User>,
-
     @InjectRepository(ReceiveLetter)
     private receiveLetterRepository: Repository<ReceiveLetter>,
   ) {}

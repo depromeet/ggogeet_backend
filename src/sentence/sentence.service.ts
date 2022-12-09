@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { SentenceType } from 'src/constants/sentence.constant';
 import { Situation } from 'src/situation/entities/situation.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Repository, UpdateResult } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateSentenceDto } from './dto/create-sentence.dto';
 import { DeleteSentenceDto } from './dto/delete-sentence.dto';
 import { Sentence } from './entities/sentence.entity';

@@ -1,4 +1,3 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { LetterController } from './letter.controller';
 
 describe('LetterController', () => {
