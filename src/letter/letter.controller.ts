@@ -16,9 +16,9 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { CreateExternalImgLetterDto } from './dto/create-external-letter-img.dto';
-import { CreateExternalLetterDto } from './dto/create-external-letter.dto';
-import { CreateSendLetterDto } from './dto/create-send-letter.dto';
+import { CreateExternalImgLetterDto } from './dto/requests/create-external-letter-img.request.dto';
+import { CreateExternalLetterDto } from './dto/requests/create-external-letter.request.dto';
+import { CreateSendLetterDto } from './dto/requests/create-send-letter.request.dto';
 import { LetterService } from './letter.service';
 
 @Controller('letters')
