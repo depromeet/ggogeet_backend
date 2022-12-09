@@ -57,24 +57,4 @@ describe('ReminderController', () => {
       expect(await reminderController.findAll(query, user)).toBe(result);
     });
   });
-
-  describe('Test FindOne', () => {
-    it('should return a reminder', async () => {
-      jest
-        .spyOn(reminderService, 'findOne')
-        .mockImplementation(() => Promise.resolve(reminder));
-
-      expect(await reminderController.findOne(1, user)).toBe(reminder);
-    });
-  });
-
-  describe('Test Create', () => {
-    it('should create a reminder', async () => {
-      jest
-        .spyOn(reminderService, 'createReminder')
-        .mockImplementation(() => Promise.resolve(reminder));
-
-      expect(await reminderController.create(reminder, user)).toBe(reminder);
-    });
-  });
 });

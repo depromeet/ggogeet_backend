@@ -1,4 +1,4 @@
-import { IsBoolean, IsDateString, IsString } from 'class-validator';
+import { IsBoolean, IsDateString, IsNumber, IsString } from 'class-validator';
 
 export class CreateReminderDto {
   @IsString()
@@ -6,6 +6,9 @@ export class CreateReminderDto {
 
   @IsString()
   readonly content: string;
+
+  @IsNumber()
+  readonly situation_id: number;
 
   @IsDateString()
   readonly event_at: Date;

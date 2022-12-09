@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Situation } from 'src/situation/entities/situation.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateReminderDto } from './dto/create-reminder.dto';
@@ -11,8 +12,8 @@ export class ReminderService {
   constructor(
     @InjectRepository(Reminder)
     private reminderRepository: Repository<Reminder>,
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    @InjectRepository(Situation)
+    private situationRepository: Repository<Situation>,
   ) {}
 
   async createReminder(reminderDto: CreateReminderDto, user: User) {
@@ -24,6 +25,11 @@ export class ReminderService {
     reminder.alarm_at = reminderDto.alarm_at;
     reminder.is_done = false;
     reminder.user = user;
+    reminder.situation = await this.situationRepository.findOne({
+      where: {
+        id: reminderDto.situation_id,
+      },
+    });
     return this.reminderRepository.save(reminder);
   }
 
@@ -69,11 +75,34 @@ export class ReminderService {
           id: user.id,
         },
       },
+      relations: ['situation'],
+      select: [
+        'id',
+        'title',
+        'content',
+        'event_at',
+        'alert_on',
+        'alarm_at',
+        'is_done',
+        'situation',
+      ],
     });
     if (!reminder) {
       throw new NotFoundException('Reminder not found');
     }
-    return reminder;
+
+    const result = {
+      id: reminder.id,
+      title: reminder.title,
+      content: reminder.content,
+      event_at: reminder.event_at,
+      alert_on: reminder.alert_on,
+      alarm_at: reminder.alarm_at,
+      is_done: reminder.is_done,
+      situation: reminder.situation.content,
+    };
+
+    return result;
   }
 
   async update(id: number, updateReminderDto: UpdateReminderDto, user: User) {
@@ -105,6 +134,13 @@ export class ReminderService {
     reminder.alarm_at = updateReminderDto.alarm_at
       ? updateReminderDto.alarm_at
       : reminder.alarm_at;
+    reminder.situation = updateReminderDto.situation_id
+      ? await this.situationRepository.findOne({
+          where: {
+            id: updateReminderDto.situation_id,
+          },
+        })
+      : reminder.situation;
 
     await this.reminderRepository.save(reminder);
 
@@ -115,6 +151,8 @@ export class ReminderService {
       event_at: reminder.event_at,
       alert_on: reminder.alert_on,
       alarm_at: reminder.alarm_at,
+      is_done: reminder.is_done,
+      situation: reminder.situation.content,
     };
   }
 
