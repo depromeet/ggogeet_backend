@@ -29,7 +29,7 @@ export class LetterBody {
   @Column({ type: 'varchar', length: 255, nullable: false })
   access_code: string;
 
-  @OneToOne(() => Reply)
+  @OneToOne(() => Reply, { cascade: true })
   @JoinColumn()
   reply: Reply;
 
