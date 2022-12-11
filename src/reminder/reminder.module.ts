@@ -5,19 +5,17 @@ import { AuthModule } from 'src/auth/auth.module';
 import { JwtStrategy } from 'src/auth/strategy/jwt.strategy';
 import { Situation } from 'src/situation/entities/situation.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Sentence } from './entities/sentence.entity';
-import { SentenceController } from './sentence.controller';
-import { SentenceService } from './sentence.service';
+import { Reminder } from './entities/reminder.entity';
+import { ReminderController } from './reminder.controller';
+import { ReminderService } from './reminder.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Sentence]),
-    TypeOrmModule.forFeature([Situation]),
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([Reminder, User, Situation]),
     PassportModule,
     AuthModule,
   ],
-  controllers: [SentenceController],
-  providers: [SentenceService, JwtStrategy],
+  controllers: [ReminderController],
+  providers: [ReminderService, JwtStrategy],
 })
-export class SentenceModule {}
+export class ReminderModule {}

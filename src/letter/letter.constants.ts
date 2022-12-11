@@ -1,9 +1,10 @@
 export enum LetterType {
   EXTERNAL = 'text',
   EXTERNALIMG = 'image',
-  INTERNAL = 'recevied',
+  INTERNAL = 'received',
 }
 
 export enum SendLetterStatus {
-  TMP_SAVED = "tmpSaved"
+  TMP_SAVED = 'tmpSaved',
+  SENT = 'sent',
 }

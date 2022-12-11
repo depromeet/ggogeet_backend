@@ -1,15 +1,4 @@
-import {
-  Controller,
-  Get,
-  Header,
-  HttpCode,
-  Query,
-  Req,
-  Res,
-  UnauthorizedException,
-  UseGuards,
-} from '@nestjs/common';
-import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { Controller, Get, Header, Query, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 @Controller('auth')

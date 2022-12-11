@@ -1,24 +1,48 @@
 import {
+  Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Post,
-  HttpStatus,
-  HttpCode,
-  Delete,
-  Body,
-  UseInterceptors,
-  UploadedFile,
   Query,
+  Req,
+  Res,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { CreateExternalImgLetterDto } from './dto/create-external-letter-img.dto';
-import { CreateExternalLetterDto } from './dto/create-external-letter.dto';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { CreateExternalImgLetterDto } from './dto/requests/create-external-letter-img.request.dto';
+import { CreateExternalLetterDto } from './dto/requests/create-external-letter.request.dto';
+import { CreateSendLetterDto } from './dto/requests/create-send-letter.request.dto';
 import { LetterService } from './letter.service';
 
 @Controller('letters')
 export class LetterController {
   constructor(private readonly letterService: LetterService) {}
+
+  @Post('/send')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.CREATED)
+  async createSendLetter(
+    @Req() req,
+    @Res() res,
+    @Body() createSendLetterDto: CreateSendLetterDto,
+  ) {
+    const letterData = {
+      user_id: req.user.id,
+      ...createSendLetterDto,
+    };
+    const sendLetter = await this.letterService.createSendLetter(letterData);
+
+    // TODO: 카카오톡 보내기.
+
+    res.send(sendLetter);
+  }
 
   @Get()
   findAll(

@@ -14,7 +14,6 @@ import { Repository } from 'typeorm';
 import axios from 'axios';
 import { Friend } from 'src/users/entities/friend.entity';
 import { UpdateKakaoUserDto } from './dto/requests/update-kakaouser.dto';
-import { plainToInstance } from 'class-transformer';
 import { CreateKakaoUserDto } from './dto/requests/create-kakaouser.dto';
 import { ResponseFriendDto } from './dto/response/response-friend.dto';
 

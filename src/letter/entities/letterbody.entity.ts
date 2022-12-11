@@ -1,6 +1,13 @@
-import { Reply } from 'src/reply/entities/reply.entity';
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Reply } from '../../reply/entities/reply.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { LetterType } from '../letter.constants';
+import { LetterInfo } from './letterinfo.entity';
 
 @Entity('letterbody')
 export class LetterBody {
@@ -24,11 +31,15 @@ export class LetterBody {
 
   @OneToOne(() => Reply)
   @JoinColumn()
-  reply: Reply
+  reply: Reply;
 
-  @Column({ type: "int" })
-  relationship: number;
-  
-  @Column({ type: "int" })
-  situation: number;
+  @OneToOne(() => LetterInfo, { cascade: true })
+  @JoinColumn()
+  letterInfo: LetterInfo;
+
+  @Column({ type: 'int' })
+  relationship_id: number;
+
+  @Column({ type: 'int' })
+  situation_id: number;
 }
