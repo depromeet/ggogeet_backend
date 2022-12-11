@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as qs from 'qs';
@@ -9,7 +13,9 @@ import { UserInfo } from 'src/users/entities/userinfo.entity';
 import { Repository } from 'typeorm';
 import axios from 'axios';
 import { Friend } from 'src/users/entities/friend.entity';
-import { CreateKakaoUserDto } from './dto/create-kakaouser.dto';
+import { UpdateKakaoUserDto } from './dto/requests/update-kakaouser.dto';
+import { CreateKakaoUserDto } from './dto/requests/create-kakaouser.dto';
+import { ResponseFriendDto } from './dto/response/response-friend.dto';
 
 @Injectable()
 export class AuthService {
@@ -106,11 +112,6 @@ export class AuthService {
   }
 
   async validateKakao(kakaoInfo: CreateKakaoUserDto) {
-    // select user.id from user, social where user.social_id = social.id and social.client_id =
-    // const exUser = await this.socialRepository.findOneBy({
-    //   client_id: kakaoInfo.kakaoId,
-    // });
-
     let exUser = await this.findUserByClientId(kakaoInfo.kakaoId);
 
     // 새로 가입한 유저면 create
@@ -136,11 +137,11 @@ export class AuthService {
 
       await this.userRepository.save(newUser);
 
-      return newUser;
+      return { statusCode: 201, user: newUser };
     } else {
       // 기존 유저면 update
       exUser = await this.updateKakaoUser(exUser.id, kakaoInfo);
-      return exUser;
+      return { statusCode: 200, user: exUser };
     }
   }
 
@@ -193,10 +194,6 @@ export class AuthService {
     });
 
     if (responseFriendsInfo.status === 200) {
-      // 1. 친구 id쫙 뽑아온다음에 in [id리스트]해서 다시 돌아가면서 insert 해주기 (join 한번)
-      // 2. social에서 kakao id로 찾은 다음 user_id 반환해서 friend에 넣어주기
-
-      // 2번 선택
       if (responseFriendsInfo.data.total_count > 0) {
         responseFriendsInfo.data.elements.map(async (element) => {
           // 존재하는 친구인지 검사
@@ -218,38 +215,58 @@ export class AuthService {
     friend.kakao_uuid = element.uuid;
     friend.kakao_friend_name = element.profile_nickname;
 
-    const friend_user = await this.findUserByClientId(element.id);
-    // // 친구의 social 아이디 찾고
-    // const social = await this.socialRepository.findOneBy({
-    //   client_id: element.id,
-    // });
-    // // 친구의 user 아이디 찾고
-    // const friend_user = await this.userRepository.findOneBy({
-    //   social: social,
-    // });
-
-    // 그 아이디를 넣어주기
-    friend.friend_user = friend_user;
+    friend.friend_user = await this.findUserByClientId(element.id);
     friend.user = user;
 
     await this.friendsRepository.save(friend);
   }
 
   async findUserByClientId(clientId: string): Promise<User> {
-    return await this.userRepository
+    const socialUser = await this.userRepository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.social', 'social')
       .where('social.client_id = :client_id', { client_id: clientId })
       .getOne();
+
+    if (!socialUser) {
+      throw new NotFoundException({
+        type: 'NOT_FOUND',
+        message: `Social User #${clientId} not found`,
+      });
+    }
+
+    return socialUser;
   }
 
-  async getKakaoFriends(user: User) {
-    return await this.friendsRepository
+  async getKakaoFriends(user: User): Promise<ResponseFriendDto[]> {
+    const friendList = await this.friendsRepository
       .createQueryBuilder('friend')
-      .select(['friend.kakao_uuid', 'friend.kakao_friend_name'])
-      .leftJoin('friend.friend_user', 'user')
-      .addSelect(['user.id', 'user.profile_img'])
+      // .select(['friend.kakao_uuid', 'friend.kakao_friend_name'])
+      .leftJoinAndSelect('friend.friend_user', 'user')
+      // .addSelect(['user.id', 'user.profile_img'])
       .where('friend.userId = :userId', { userId: user.id })
       .getMany();
+
+    return friendList.map((friend) => {
+      return new ResponseFriendDto(friend);
+    });
+  }
+
+  async getKakaoFriendById(id: number, user: User): Promise<ResponseFriendDto> {
+    const friend = await this.friendsRepository
+      .createQueryBuilder('friend')
+      .leftJoinAndSelect('friend.friend_user', 'user')
+      .where('friend.id = :id', { id: id })
+      .andWhere('friend.userId = :userId', { userId: user.id })
+      .getOne();
+
+    if (!friend) {
+      throw new NotFoundException({
+        type: 'NOT_FOUND',
+        message: `Friend #${id} not found`,
+      });
+    }
+
+    return new ResponseFriendDto(friend);
   }
 }

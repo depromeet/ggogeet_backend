@@ -1,4 +1,4 @@
 export class DeleteSentenceDto {
-  status: string;
-  msg: string;
+  type: string;
+  message: string;
 }
