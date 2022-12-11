@@ -17,7 +17,6 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Get('/kakao')
-  @Header('Content-Type', 'text/html')
   kakaoLoginLogic(@Res() res): void {
     const _hostName = 'https://kauth.kakao.com';
     const _restApiKey = process.env.KAKAO_CLIENT_ID;
@@ -34,7 +33,9 @@ export class AuthController {
     const codeResponse = await this.authService.getKakaoAccessToken(code);
 
     // 인증 코드로 토큰 전달
-    const user = await this.authService.getUserProfile(codeResponse);
+    const { statusCode, user } = await this.authService.getUserProfile(
+      codeResponse,
+    );
 
     // 친구 목록 동의했으면 회원가입할때 친구 바로 저장
     if (codeResponse.scope.indexOf('friends') !== -1) {
@@ -43,19 +44,15 @@ export class AuthController {
         user,
       );
     }
-
     // user.id로 jwt 토큰 발급
     const jwtAccessToken = await this.authService.getAccessToken(user.id);
-
-    res.send({
-      jwtAccessToken,
-      message: 'success',
-    });
+    const jwtRefreshToken = await this.authService.getRefreshToken(user.id);
+    return res.status(statusCode).send({ jwtAccessToken, jwtRefreshToken });
+    // return res.st.send({ jwtAccessToken, jwtRefreshToken });
   }
 
   // 카카오 친구 불러오기
   @Get('/friends')
-  @Header('Content-Type', 'text/html')
   kakaoFriendLogic(@Res() res): void {
     const _hostName = 'https://kauth.kakao.com';
     const _restApiKey = process.env.KAKAO_CLIENT_ID;
@@ -72,11 +69,12 @@ export class AuthController {
       code,
       'friends',
     );
-    const user = await this.authService.getUserProfile(codeResponse);
+    const { statusCode, user } = await this.authService.getUserProfile(
+      codeResponse,
+    );
 
     await this.authService.updateKakaoFriends(codeResponse.access_token, user);
-
-    const friendsList = await this.authService.getKakaoFriends(user);
-    return res.send(friendsList);
+    // const friendsList = await this.authService.getKakaoFriends(user);
+    return res.send(await this.authService.getKakaoFriends(user));
   }
 }

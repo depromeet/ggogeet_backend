@@ -45,6 +45,9 @@ export class Sentence {
   @JoinColumn({ name: 'situation_id', referencedColumnName: 'id' })
   situation: Situation;
 
+  @Column({ name: 'situation_id' })
+  situationId: number;
+
   @CreateDateColumn()
   created_at: Date;
 
