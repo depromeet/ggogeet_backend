@@ -33,11 +33,7 @@ export class AuthService {
     const body = {
       grant_type: 'authorization_code',
       client_id: process.env.KAKAO_CLIENT_ID,
-      // redirect_uri: process.env.KAKAO_REDIRECT_URL,
-      redirect_uri:
-        option == 'friends'
-          ? process.env.KAKAO_FRIENDS_REDIRECT_URL
-          : process.env.KAKAO_REDIRECT_URL,
+      redirect_uri: `http://localhost:3000/auth/kakao/${option}`,
       code,
     };
     const headers = {
@@ -268,5 +264,35 @@ export class AuthService {
     }
 
     return new ResponseFriendDto(friend);
+  }
+
+  async sendMessageToUser(accessToken: string, kakao_uuid: string) {
+    const kakaoMessageUrl = 'https://kapi.kakao.com/v2/api/talk/memo/send';
+
+    // 편지 조회하기 위한 access_token
+    const access_code = 'dfsdasdfafda';
+    const body = {
+      template_id: 87114,
+      template_args: `{\"code\": "${access_code}"}`,
+      receiver_uuids: [kakao_uuid],
+    };
+
+    const header = {
+      'Content-type': 'application/x-www-form-urlencoded;charset=utf-8',
+      Authorization: `Bearer ${accessToken}`,
+    };
+
+    // 메세지 보내기
+    try {
+      const responseMessageInfo = await axios({
+        method: 'POST',
+        url: kakaoMessageUrl,
+        headers: header,
+        data: qs.stringify(body),
+      });
+      return responseMessageInfo.data;
+    } catch (e) {
+      console.log(e);
+    }
   }
 }

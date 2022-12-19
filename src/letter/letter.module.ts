@@ -10,6 +10,8 @@ import { LetterController } from './letter.controller';
 import { LetterService } from './letter.service';
 import { PassportModule } from '@nestjs/passport';
 import { SendLetter } from './entities/sendLetter.entity';
+import { AuthModule } from 'src/auth/auth.module';
+import { JwtStrategy } from 'src/auth/strategy/jwt.strategy';
 
 @Module({
   imports: [
@@ -20,8 +22,9 @@ import { SendLetter } from './entities/sendLetter.entity';
     }),
     TypeOrmModule.forFeature([ReceiveLetter, LetterInfo, User, SendLetter]),
     PassportModule,
+    AuthModule,
   ],
   controllers: [LetterController],
-  providers: [LetterService],
+  providers: [LetterService, JwtStrategy],
 })
 export class LetterModule {}

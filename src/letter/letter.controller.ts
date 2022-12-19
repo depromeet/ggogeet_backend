@@ -15,7 +15,11 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import axios from 'axios';
+import { AuthService } from 'src/auth/auth.service';
+import { ReqUser } from 'src/common/decorators/user.decorators';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { User } from 'src/users/entities/user.entity';
 import { CreateExternalImgLetterDto } from './dto/requests/create-external-letter-img.request.dto';
 import { CreateExternalLetterDto } from './dto/requests/create-external-letter.request.dto';
 import { CreateSendLetterDto } from './dto/requests/create-send-letter.request.dto';
@@ -23,23 +27,39 @@ import { LetterService } from './letter.service';
 
 @Controller('letters')
 export class LetterController {
-  constructor(private readonly letterService: LetterService) {}
+  constructor(
+    private readonly letterService: LetterService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Post('/send')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   async createSendLetter(
-    @Req() req,
+    @ReqUser() user: User,
     @Res() res,
     @Body() createSendLetterDto: CreateSendLetterDto,
   ) {
     const letterData = {
-      user_id: req.user.id,
+      user_id: user.id,
       ...createSendLetterDto,
     };
     const sendLetter = await this.letterService.createSendLetter(letterData);
 
-    // TODO: 카카오톡 보내기.
+    // TODO: 카카오톡 보내기
+
+    // 메세지 api 사용 위한 access token 요청
+    // 테스트 시 code는 auth/code/friends로 받아와서 요청
+    const codeResponse = await this.authService.getKakaoAccessToken(
+      createSendLetterDto.kakao_access_code,
+      'friends',
+    );
+
+    // 메세지 보내기 (친구 uuid)
+    await this.authService.sendMessageToUser(
+      codeResponse.access_token,
+      createSendLetterDto.kakao_uuid,
+    );
 
     res.send(sendLetter);
   }

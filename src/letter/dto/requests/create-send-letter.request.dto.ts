@@ -10,6 +10,10 @@ export class CreateSendLetterDto {
   readonly receiver_id?: number;
 
   @IsString()
+  @IsOptional()
+  readonly kakao_uuid?: string;
+
+  @IsString()
   readonly receiver_nickname: string;
 
   @IsNumber()
@@ -23,4 +27,7 @@ export class CreateSendLetterDto {
 
   @IsString()
   readonly template_url: string;
+
+  @IsString()
+  readonly kakao_access_code: string;
 }
