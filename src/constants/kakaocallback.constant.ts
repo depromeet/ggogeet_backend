@@ -1,4 +1,4 @@
 export enum CallbackType {
-  LOGIN = 'callback',
+  LOGIN = 'login',
   FRIEND = 'friends',
 }
