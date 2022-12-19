@@ -19,6 +19,7 @@ import axios from 'axios';
 import { AuthService } from 'src/auth/auth.service';
 import { ReqUser } from 'src/common/decorators/user.decorators';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { CallbackType } from 'src/constants/kakaocallback.constant';
 import { User } from 'src/users/entities/user.entity';
 import { CreateExternalImgLetterDto } from './dto/requests/create-external-letter-img.request.dto';
 import { CreateExternalLetterDto } from './dto/requests/create-external-letter.request.dto';
@@ -52,7 +53,7 @@ export class LetterController {
     // 테스트 시 code는 auth/code/friends로 받아와서 요청
     const codeResponse = await this.authService.getKakaoAccessToken(
       createSendLetterDto.kakao_access_code,
-      'friends',
+      CallbackType.FRIEND,
     );
 
     // 메세지 보내기 (친구 uuid)

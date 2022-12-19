@@ -7,6 +7,7 @@ import {
   Query,
   Res,
 } from '@nestjs/common';
+import { CallbackType } from 'src/constants/kakaocallback.constant';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -18,7 +19,7 @@ export class AuthController {
     // 인증 코드로 카카오 토큰 받아오기
     const codeResponse = await this.authService.getKakaoAccessToken(
       code,
-      'login',
+      CallbackType.LOGIN,
     );
     // 토큰으로 사용자 정보 받아오기
     const { statusCode, user } = await this.authService.getUserProfile(
@@ -42,7 +43,7 @@ export class AuthController {
   async addAgreeCategory(@Body('code') code: string, @Res() res) {
     const codeResponse = await this.authService.getKakaoAccessToken(
       code,
-      'friends',
+      CallbackType.FRIEND,
     );
     const { statusCode, user } = await this.authService.getUserProfile(
       codeResponse,
