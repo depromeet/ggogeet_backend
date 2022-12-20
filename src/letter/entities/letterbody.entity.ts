@@ -28,12 +28,18 @@ export class LetterBody {
   @Column({ type: 'varchar', length: 255, nullable: false })
   accessCode: string;
 
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  imageContent: string;
+
+  @Column({
+    type: 'enum',
+    enum: LetterType,
+  })
+  type: LetterType;
+
   @OneToOne(() => Reply, { cascade: true })
   @JoinColumn()
   reply: Reply;
-
-  // @Column({ type: 'int' })
-  // relationship_id: number;
 
   @Column({ type: 'int' })
   situationId: number;
