@@ -8,54 +8,47 @@ import {
   Param,
   Post,
   Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { CreateSentenceDto } from './dto/create-sentence.dto';
+import { CreateSentenceDto } from './dto/requests/create-sentence.request.dto';
 import { SentenceService } from './sentence.service';
+import { ReqUser } from 'src/common/decorators/user.decorators';
+import { User } from 'src/users/entities/user.entity';
 
 @Controller('sentence')
 @UseGuards(JwtAuthGuard)
 export class SentenceController {
   constructor(private readonly sentenceService: SentenceService) {}
 
-  // 상황별 모든 문장 가져오기
   @Get()
-  async findAllSentence(@Req() req) {
-    return await this.sentenceService.findAll(req.user);
+  async findAllSentence(
+    @ReqUser() user: User,
+    @Query()
+    query: {
+      situation: number;
+      order: string;
+    },
+  ) {
+    return await this.sentenceService.findAll(user, query);
   }
 
-  // 내가 쓴 문장 id로 가져오기
   @Get(':id')
-  async findOneSentence(@Req() req, @Param('id') id: number) {
-    return await this.sentenceService.findOne(req.user, id);
+  async findOneSentence(@ReqUser() user: User, @Param('id') id: number) {
+    return await this.sentenceService.findOne(user, id);
   }
 
-  // 엔드포인트 맘에 안듬
-  // 상황별로 문장 가져오기 (예시+추가)
-  @Get('situation')
-  async findSentence(@Req() req, @Query('id') situationId: number) {
-    const userSentence = await this.sentenceService.findUserSentenceBySituation(
-      req.user.id,
-      situationId,
-    );
-    const guideSentence =
-      await this.sentenceService.findGuideSentenceBySituation(situationId);
-
-    return { userSentence, guideSentence };
-  }
-
-  // 문장 추가해서 반환
-  @Post() // 관계태그, 공유할지말지, 문장 내용
+  @Post()
   @HttpCode(HttpStatus.CREATED)
-  async createSentence(@Req() req, @Body() sentenceDto: CreateSentenceDto) {
-    return await this.sentenceService.createSentence(req.user, sentenceDto);
+  async createSentence(
+    @ReqUser() user: User,
+    @Body() sentenceDto: CreateSentenceDto,
+  ) {
+    return await this.sentenceService.createSentence(user, sentenceDto);
   }
 
-  // 문장 삭제하기
-  @Delete(':id') // 내가 추가한 문장 삭제
-  async deleteSentence(@Req() req, @Param('id') id: number) {
-    return await this.sentenceService.deleteSentence(id, req.user);
+  @Delete(':id')
+  async deleteSentence(@ReqUser() user: User, @Param('id') id: number) {
+    return await this.sentenceService.deleteSentence(id, user);
   }
 }

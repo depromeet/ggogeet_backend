@@ -4,6 +4,7 @@ import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -32,10 +33,10 @@ export class Sentence {
   @Column({ default: false })
   is_shared: boolean;
 
-  @Column({ nullable: true })
+  @Column({ default: 0 })
   my_preference: number;
 
-  @Column({ nullable: true })
+  @Column({ default: 0 })
   total_preference: number;
 
   @ManyToOne(() => Situation)
@@ -50,4 +51,7 @@ export class Sentence {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @DeleteDateColumn()
+  deleted_at: Date;
 }
