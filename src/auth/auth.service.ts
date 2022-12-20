@@ -32,7 +32,7 @@ export class AuthService {
     const kakaoTokenUrl = 'https://kauth.kakao.com/oauth/token';
     const body = {
       grant_type: 'authorization_code',
-      clientId: process.env.KAKAO_CLIENT_ID,
+      client_id: process.env.KAKAO_CLIENT_ID,
       redirect_uri: `http://localhost:3000/auth/kakao/${option}`,
       code,
     };
@@ -58,7 +58,7 @@ export class AuthService {
     const kakaoUserInfoUrl = 'https://kapi.kakao.com/v2/user/me';
     const headerUserInfo = {
       'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-      Authorization: 'Bearer ' + codeResponse.accessToken,
+      Authorization: 'Bearer ' + codeResponse.access_token,
     };
 
     // 카카오로부터 받은 사용자 정보들 중에서 필요한 값만 담아 응답값 반환
@@ -132,7 +132,6 @@ export class AuthService {
       newUser.userInfo = newUserInfo;
 
       await this.userRepository.save(newUser);
-
       return { statusCode: 201, user: newUser };
     } else {
       // 기존 유저면 update
@@ -174,12 +173,12 @@ export class AuthService {
     return await this.userRepository.findOneBy({ id });
   }
 
-  async updateKakaoFriends(accessToken: string, user: User) {
+  async updateKakaoFriends(access_token: string, user: User) {
     const kakaoFriendsUrl = 'https://kapi.kakao.com/v1/api/talk/friends';
 
     const header = {
       'Content-type': 'application/x-www-form-urlencoded;charset=utf-8',
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bearer ${access_token}`,
     };
 
     const responseFriendsInfo = await axios({
@@ -266,10 +265,10 @@ export class AuthService {
     return new ResponseFriendDto(friend);
   }
 
-  async sendMessageToUser(accessToken: string, kakaoUuid: string) {
+  async sendMessageToUser(access_token: string, kakaoUuid: string) {
     const kakaoMessageUrl = 'https://kapi.kakao.com/v2/api/talk/memo/send';
 
-    // 편지 조회하기 위한 accessToken
+    // 편지 조회하기 위한 access_token
     const accessCode = 'dfsdasdfafda';
     const body = {
       template_id: 87114,
@@ -279,7 +278,7 @@ export class AuthService {
 
     const header = {
       'Content-type': 'application/x-www-form-urlencoded;charset=utf-8',
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bearer ${access_token}`,
     };
 
     // 메세지 보내기
@@ -292,7 +291,6 @@ export class AuthService {
       });
       return responseMessageInfo.data;
     } catch (e) {
-      console.log(e);
     }
   }
 }

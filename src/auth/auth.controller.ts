@@ -28,7 +28,7 @@ export class AuthController {
     // 친구 목록, 메세지 동의했으면 회원가입할때 친구 바로 저장
     if (codeResponse.scope.indexOf('friends') !== -1) {
       await this.authService.updateKakaoFriends(
-        codeResponse.accessToken,
+        codeResponse.access_token,
         user,
       );
     }
@@ -49,7 +49,7 @@ export class AuthController {
       codeResponse,
     );
 
-    await this.authService.updateKakaoFriends(codeResponse.accessToken, user);
+    await this.authService.updateKakaoFriends(codeResponse.access_token, user);
     return res.send(await this.authService.getKakaoFriends(user));
   }
 
@@ -61,7 +61,7 @@ export class AuthController {
     const _restApiKey = process.env.KAKAO_CLIENT_ID;
     // 카카오 로그인 redirectURI 등록
     const _redirectUrl = 'http://localhost:3000/auth/kakao/login';
-    const url = `${_hostName}/oauth/authorize?clientId=${_restApiKey}&redirect_uri=${_redirectUrl}&response_type=code`;
+    const url = `${_hostName}/oauth/authorize?client_id=${_restApiKey}&redirect_uri=${_redirectUrl}&response_type=code`;
     return res.redirect(url);
   }
 
@@ -72,7 +72,7 @@ export class AuthController {
     const _restApiKey = process.env.KAKAO_CLIENT_ID;
     // 카카오 로그인 redirectURI 등록
     const _redirectUrl = 'http://localhost:3000/auth/kakao/friends';
-    const url = `${_hostName}/oauth/authorize?clientId=${_restApiKey}&redirect_uri=${_redirectUrl}&response_type=code&scope=friends,talk_message`;
+    const url = `${_hostName}/oauth/authorize?client_id=${_restApiKey}&redirect_uri=${_redirectUrl}&response_type=code&scope=friends,talk_message`;
     return res.redirect(url);
   }
 
