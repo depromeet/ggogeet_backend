@@ -58,7 +58,7 @@ export class LetterController {
 
   //   // 메세지 보내기 (친구 uuid)
   //   await this.authService.sendMessageToUser(
-  //     codeResponse.accessToken,
+  //     codeResponse.access_token,
   //     createSendLetterDto.kakaoUuid,
   //   );
 
