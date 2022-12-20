@@ -24,6 +24,7 @@ import { Situation } from './situation/entities/situation.entity';
 import { SendLetter } from './letter/entities/sendLetter.entity';
 import { SentenceModule } from './sentence/sentence.module';
 import { Sentence } from './sentence/entities/sentence.entity';
+import { ReplyModule } from './reply/reply.module';
 
 const ConfigSettingModule = ConfigModule.forRoot({
   isGlobal: true,
@@ -68,6 +69,7 @@ const TypeOrmSettingModule = TypeOrmModule.forRoot({
     LetterModule,
     SentenceModule,
     ReminderModule,
+    ReplyModule
   ],
   controllers: [AppController],
   providers: [AppService],
