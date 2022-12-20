@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateNoticeDto } from './dto/create-notice.dto';
-import { DeleteNoticeDto } from './dto/delete-notice.dto';
-import { UpdateNoticeDto } from './dto/update-notice.dto';
+import { CreateNoticeDto } from './dto/createNotice.dto';
+import { DeleteNoticeDto } from './dto/deleteNotice.dto';
+import { UpdateNoticeDto } from './dto/updateNotice.dto';
 import { Notice } from './entities/notice.entity';
 
 @Injectable()

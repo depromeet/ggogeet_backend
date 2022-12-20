@@ -8,14 +8,14 @@ export class CreateReminderDto {
   readonly content: string;
 
   @IsNumber()
-  readonly situation_id: number;
+  readonly situationId: number;
 
   @IsDateString()
-  readonly event_at: Date;
+  readonly eventAt: Date;
 
   @IsBoolean()
-  readonly alert_on: boolean;
+  readonly alertOn: boolean;
 
   @IsDateString()
-  readonly alarm_at: Date;
+  readonly alarmAt: Date;
 }

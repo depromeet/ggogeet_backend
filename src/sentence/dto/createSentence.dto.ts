@@ -5,8 +5,8 @@ export class CreateSentenceDto {
   readonly content: string;
 
   @IsBoolean()
-  readonly is_shared: boolean;
+  readonly isShared: boolean;
 
   @IsNumber()
-  readonly situation_id: number;
+  readonly situationId: number;
 }

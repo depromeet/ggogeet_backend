@@ -11,10 +11,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { UpdateUserDto } from './dto/requests/update-user.dto';
-import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { UpdateUserDto } from './dto/requests/updateUser.dto';
+import { JwtAuthGuard } from 'src/common/guards/jwtAuth.guard';
 import { AuthService } from 'src/auth/auth.service';
-import { CreateKakaoUserDto } from 'src/auth/dto/requests/create-kakaouser.dto';
+import { CreateKakaoUserDto } from 'src/auth/dto/requests/createKakaoUser.dto';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard)

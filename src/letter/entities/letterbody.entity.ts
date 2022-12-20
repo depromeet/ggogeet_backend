@@ -7,9 +7,8 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { LetterType } from '../letter.constants';
-import { LetterInfo } from './letterinfo.entity';
 
-@Entity('letterbody')
+@Entity('letterBody')
 export class LetterBody {
   @PrimaryGeneratedColumn('increment')
   id: number;
@@ -21,25 +20,21 @@ export class LetterBody {
   content: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  result_img: string;
+  resultImg: string;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
-  template_url: string;
+  templateUrl: string;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
-  access_code: string;
+  accessCode: string;
 
   @OneToOne(() => Reply, { cascade: true })
   @JoinColumn()
   reply: Reply;
 
-  @OneToOne(() => LetterInfo, { cascade: true })
-  @JoinColumn()
-  letterInfo: LetterInfo;
-
   // @Column({ type: 'int' })
   // relationship_id: number;
 
   @Column({ type: 'int' })
-  situation_id: number;
+  situationId: number;
 }

@@ -3,21 +3,21 @@ import { IsDateString, IsNumber, IsOptional, IsString } from 'class-validator';
 export class CreateSendLetterDto {
   @IsNumber()
   @IsOptional()
-  readonly user_id: number;
+  readonly userId: number;
 
   @IsNumber()
   @IsOptional()
-  readonly receiver_id?: number;
+  readonly receiverId?: number;
 
   @IsString()
   @IsOptional()
-  readonly kakao_uuid?: string;
+  readonly kakaoUuid?: string;
 
   @IsString()
-  readonly receiver_nickname: string;
+  readonly receiverNickname: string;
 
   @IsNumber()
-  readonly situation_id: number;
+  readonly situationId: number;
 
   @IsString()
   readonly content: string;
@@ -26,8 +26,8 @@ export class CreateSendLetterDto {
   readonly date: Date;
 
   @IsString()
-  readonly template_url: string;
+  readonly templateUrl: string;
 
   @IsString()
-  readonly kakao_access_code: string;
+  readonly kakaoAccessCode: string;
 }

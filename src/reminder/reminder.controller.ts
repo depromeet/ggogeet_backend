@@ -12,10 +12,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ReqUser } from 'src/common/decorators/user.decorators';
-import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/common/guards/jwtAuth.guard';
 import { User } from 'src/users/entities/user.entity';
-import { CreateReminderDto } from './dto/create-reminder.dto';
-import { UpdateReminderDto } from './dto/update-reminder.dto';
+import { CreateReminderDto } from './dto/createReminder.dto';
+import { UpdateReminderDto } from './dto/updateReminder.dto';
 import { ReminderService } from './reminder.service';
 
 @Controller('reminders')

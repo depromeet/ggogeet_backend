@@ -2,57 +2,51 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Repository, UpdateResult } from 'typeorm';
-import { CreateExternalImgLetterDto } from './dto/requests/create-external-letter-img.request.dto';
-import { CreateExternalLetterDto } from './dto/requests/create-external-letter.request.dto';
-import { CreateSendLetterDto } from './dto/requests/create-send-letter.request.dto';
-import { LetterBody } from './entities/letterbody.entity';
-import { LetterInfo } from './entities/letterinfo.entity';
-import { ReceiveLetter } from './entities/receiveletter.entity';
+import { CreateExternalImgLetterDto } from './dto/requests/createExternalLetterImg.request.dto';
+import { CreateExternalLetterDto } from './dto/requests/createExternalLetter.request.dto';
+import { CreateSendLetterDto } from './dto/requests/createSendLetter.request.dto';
+import { LetterBody } from './entities/letterBody.entity';
+import { ReceivedLetter } from './entities/receivedLetter.entity';
 import { SendLetter } from './entities/sendLetter.entity';
 import { LetterType, SendLetterStatus } from './letter.constants';
 
 @Injectable()
 export class LetterService {
   constructor(
-    @InjectRepository(ReceiveLetter)
-    private letterRepository: Repository<ReceiveLetter>,
-    @InjectRepository(LetterInfo)
-    private letterInfoRepository: Repository<LetterInfo>,
+    @InjectRepository(ReceivedLetter)
+    private letterRepository: Repository<ReceivedLetter>,
     @InjectRepository(SendLetter)
     private sendLetterRepository: Repository<SendLetter>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    @InjectRepository(ReceiveLetter)
-    private receiveLetterRepository: Repository<ReceiveLetter>,
+    @InjectRepository(ReceivedLetter)
+    private receivedLetterRepository: Repository<ReceivedLetter>,
   ) {}
 
-  findAll(query): Promise<ReceiveLetter[]> {
+  findAll(query): Promise<ReceivedLetter[]> {
     const limit = query.limit ? query.limit : 10;
     const offset = query.offset ? query.offset : 0;
     const order = query.order ? query.order : 'DESC';
-    const from_date = query.from_date
-      ? new Date(query.from_date)
+    const fromDate = query.fromDate
+      ? new Date(query.fromDate)
       : new Date('1970-01-01');
-    const to_date = query.to_date ? new Date(query.to_date) : new Date();
-    const letter_types = query.type
+    const toDate = query.toDate ? new Date(query.toDate) : new Date();
+    const letterTypes = query.type
       ? query.type
       : [LetterType.EXTERNAL, LetterType.EXTERNALIMG];
 
     const letters = this.letterRepository
       .createQueryBuilder('letter')
-      .select(['letter.id', 'letter.sender_nickname', 'letter.received_at'])
-      .leftJoin('letter.letterinfo', 'letterinfo')
-      .addSelect(['letterinfo.template_url'])
-      .andWhere('letter.user_id = :user_id', { user_id: 1 })
-      .andWhere('letter.deleted_at IS NULL')
-      .andWhere('letter.received_at >= :from_date', {
-        from_date: from_date,
+      .select(['letter.id', 'letter.senderNickname', 'letter.receivedAt'])
+      .andWhere('letter.userId = :userId', { userId: 1 })
+      .andWhere('letter.deletedAt IS NULL')
+      .andWhere('letter.receivedAt >= :fromDate', {
+        fromDate: fromDate,
       })
-      .andWhere('letter.received_at < :to_date', {
-        to_date: to_date,
+      .andWhere('letter.receivedAt < :toDate', {
+        toDate: toDate,
       })
-      .andWhere('letterinfo.type IN (:...types)', { types: letter_types })
-      .addOrderBy('letter.received_at', order)
+      .addOrderBy('letter.receivedAt', order)
       .limit(limit)
       .offset(offset)
       .getMany();
@@ -60,13 +54,10 @@ export class LetterService {
     return letters;
   }
 
-  async findOne(id: number): Promise<ReceiveLetter> {
+  async findOne(id: number): Promise<ReceivedLetter> {
     const letter = await this.letterRepository.findOne({
       where: { id: id },
-      select: ['id', 'sender_nickname', 'received_at'],
-      relations: {
-        letterinfo: true,
-      },
+      select: ['id', 'senderNickname', 'receivedAt'],
     });
     if (!letter) {
       throw new BadRequestException('There is no id');
@@ -76,16 +67,10 @@ export class LetterService {
 
   async createExternalLetter(
     createExternalLetterDto: CreateExternalLetterDto,
-  ): Promise<ReceiveLetter> {
-    const letterInfo = new LetterInfo();
-    letterInfo.type = LetterType.EXTERNAL;
-    letterInfo.content = createExternalLetterDto.content;
-    await this.letterInfoRepository.save(letterInfo);
-
-    const letter = new ReceiveLetter();
-    letter.letterinfo = letterInfo;
-    letter.received_at = new Date(createExternalLetterDto.date);
-    letter.sender_nickname = createExternalLetterDto.sender;
+  ): Promise<ReceivedLetter> {
+    const letter = new ReceivedLetter();
+    letter.receivedAt = new Date(createExternalLetterDto.date);
+    letter.senderNickname = createExternalLetterDto.sender;
 
     const user = await this.userRepository.findOne({ where: { id: 1 } });
     if (!user) {
@@ -98,16 +83,10 @@ export class LetterService {
 
   async createExternalImgLetter(
     createExternalImgLetterDto: CreateExternalImgLetterDto,
-  ): Promise<ReceiveLetter> {
-    const letterInfo = new LetterInfo();
-    letterInfo.type = LetterType.EXTERNALIMG;
-    letterInfo.image_url = createExternalImgLetterDto.image;
-    await this.letterInfoRepository.save(letterInfo);
-
-    const letter = new ReceiveLetter();
-    letter.letterinfo = letterInfo;
-    letter.received_at = new Date(createExternalImgLetterDto.date);
-    letter.sender_nickname = createExternalImgLetterDto.sender;
+  ): Promise<ReceivedLetter> {
+    const letter = new ReceivedLetter();
+    letter.receivedAt = new Date(createExternalImgLetterDto.date);
+    letter.senderNickname = createExternalImgLetterDto.sender;
 
     const user = await this.userRepository.findOne({ where: { id: 1 } });
     if (!user) {
@@ -119,7 +98,7 @@ export class LetterService {
   }
 
   async delete(id: number): Promise<UpdateResult> {
-    return await this.letterRepository.update(id, { deleted_at: new Date() });
+    return await this.letterRepository.update(id, { deletedAt: new Date() });
   }
 
   uploadExternalLetterImage(file: Express.MulterS3.File) {
@@ -136,43 +115,38 @@ export class LetterService {
     createSendLetterDto: CreateSendLetterDto,
   ): Promise<SendLetter> {
     const sender = await this.userRepository.findOne({
-      where: { id: createSendLetterDto.user_id },
+      where: { id: createSendLetterDto.userId },
     });
 
-    const letterInfo = new LetterInfo();
-    letterInfo.type = LetterType.INTERNAL;
-    letterInfo.template_url = createSendLetterDto.template_url;
-
+    
     const letterBody = new LetterBody();
-    letterBody.letterInfo = letterInfo;
     letterBody.content = createSendLetterDto.content;
-    letterBody.template_url = createSendLetterDto.template_url;
-    letterBody.access_code = 'should_generate_random_code';
-    letterBody.situation_id = createSendLetterDto.situation_id;
+    letterBody.templateUrl = createSendLetterDto.templateUrl;
+    letterBody.accessCode = 'should_generate_random_code';
+    letterBody.situationId = createSendLetterDto.situationId;
 
     const sendLetter = new SendLetter();
     sendLetter.sender = sender;
-    if (createSendLetterDto.receiver_id) {
+    if (createSendLetterDto.receiverId) {
       sendLetter.receiver = await this.userRepository.findOne({
-        where: { id: createSendLetterDto.receiver_id },
+        where: { id: createSendLetterDto.receiverId },
       });
     }
-    sendLetter.receiver_nickname = createSendLetterDto.receiver_nickname;
+    sendLetter.receiverNickname = createSendLetterDto.receiverNickname;
     sendLetter.status = SendLetterStatus.SENT;
-    sendLetter.letterbody = letterBody;
+    sendLetter.letterBody = letterBody;
 
     const newSendLetter = await this.sendLetterRepository.save(sendLetter);
 
-    // receiveLetter 생성하기.
-    if (createSendLetterDto.receiver_id) {
-      const receiveLetter = new ReceiveLetter();
-      receiveLetter.user = await this.userRepository.findOne({
-        where: { id: createSendLetterDto.receiver_id },
+    // receivedLetter 생성하기.
+    if (createSendLetterDto.receiverId) {
+      const receivedLetter = new ReceivedLetter();
+      receivedLetter.user = await this.userRepository.findOne({
+        where: { id: createSendLetterDto.receiverId },
       });
-      receiveLetter.letterinfo = letterInfo;
-      receiveLetter.sender_nickname = sender.nickname;
+      receivedLetter.senderNickname = sender.nickname;
 
-      await this.receiveLetterRepository.save(receiveLetter);
+      await this.receivedLetterRepository.save(receivedLetter);
     }
 
     return newSendLetter;

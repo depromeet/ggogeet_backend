@@ -7,9 +7,9 @@ import {
     UseGuards,
   } from '@nestjs/common';
   import { ReqUser } from 'src/common/decorators/user.decorators';
-  import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+  import { JwtAuthGuard } from 'src/common/guards/jwtAuth.guard';
   import { User } from 'src/users/entities/user.entity';
-import { CreateReplyDto } from './dtos/requests/create-reply.request.dto';
+import { CreateReplyDto } from './dtos/requests/createReply.request.dto';
   import { ReplyService } from './reply.service';
   
   @Controller('replies')
