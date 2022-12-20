@@ -37,8 +37,8 @@ export class LetterBody {
   @JoinColumn()
   letterInfo: LetterInfo;
 
-  @Column({ type: 'int' })
-  relationship_id: number;
+  // @Column({ type: 'int' })
+  // relationship_id: number;
 
   @Column({ type: 'int' })
   situation_id: number;
