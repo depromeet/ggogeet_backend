@@ -23,31 +23,31 @@ export class Reminder {
   content: string;
 
   @Column({ type: 'boolean' })
-  alert_on: boolean;
+  alertOn: boolean;
 
   @Column({ type: 'boolean' })
-  is_done: boolean;
+  isDone: boolean;
 
   @Column({ type: 'timestamp' })
-  alarm_at: Date;
+  alarmAt: Date;
 
   @Column({ type: 'timestamp' })
-  event_at: Date;
+  eventAt: Date;
 
   @CreateDateColumn()
-  created_at: Date;
+  createdAt: Date;
 
   @UpdateDateColumn()
-  updated_at: Date;
+  updatedAt: Date;
 
   @DeleteDateColumn()
-  deleted_at: Date;
+  deletedAt: Date;
 
   @ManyToOne(() => User)
-  @JoinColumn({ name: 'user_id' })
+  @JoinColumn({ name: 'userId' })
   user: User;
 
   @ManyToOne(() => Situation)
-  @JoinColumn({ name: 'situation_id' })
+  @JoinColumn({ name: 'situationId' })
   situation: Situation;
 }

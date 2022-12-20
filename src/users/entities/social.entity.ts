@@ -6,8 +6,8 @@ export class Social {
   id: number;
 
   @Column()
-  client_id: string;
+  clientId: string;
 
   @Column({ default: false })
-  allow_friends_list: boolean;
+  allowFriendsList: boolean;
 }

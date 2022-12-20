@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity({ name: 'userinfo' })
+@Entity({ name: 'userInfo' })
 export class UserInfo {
   @PrimaryGeneratedColumn()
   id: number;
@@ -21,17 +21,17 @@ export class UserInfo {
   gender: string;
 
   @Column({ default: true })
-  remind_on: boolean;
+  remindOn: boolean;
 
   @Column({ default: true })
-  alert_on: boolean;
+  alertOn: boolean;
 
   @Column({ default: false })
-  welcome_popup_view: boolean;
+  welcomePopupView: boolean;
 
   @CreateDateColumn()
-  created_at: Date;
+  createdAt: Date;
 
   @UpdateDateColumn()
-  updated_at: Date;
+  updatedAt: Date;
 }

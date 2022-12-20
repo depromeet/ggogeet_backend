@@ -1,7 +1,7 @@
 export class SentenceResponseDto {
   id: number;
-  situation_id: number;
+  situationId: number;
   type: string;
-  is_shared: boolean;
-  created_at: Date;
+  isShared: boolean;
+  createdAt: Date;
 }

@@ -1,9 +1,9 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LetterBody } from 'src/letter/entities/letterbody.entity';
+import { LetterBody } from 'src/letter/entities/letterBody.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
-import { CreateReplyDto } from './dtos/requests/create-reply.request.dto';
+import { CreateReplyDto } from './dtos/requests/createReply.request.dto';
 import { Reply } from './entities/reply.entity';
 
 @Injectable()

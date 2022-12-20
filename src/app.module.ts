@@ -9,15 +9,14 @@ import { DataSource } from 'typeorm';
 import { Notice } from './notice/entities/notice.entity';
 import { AuthModule } from './auth/auth.module';
 import { User } from './users/entities/user.entity';
-import { UserInfo } from './users/entities/userinfo.entity';
+import { UserInfo } from './users/entities/userInfo.entity';
 import { Social } from './users/entities/social.entity';
 import { Friend } from './users/entities/friend.entity';
 import { LetterModule } from './letter/letter.module';
-import { LetterInfo } from './letter/entities/letterinfo.entity';
-import { ReceiveLetter } from './letter/entities/receiveletter.entity';
+import { ReceivedLetter } from './letter/entities/receivedLetter.entity';
 import { ReminderModule } from './reminder/reminder.module';
 import { Reminder } from './reminder/entities/reminder.entity';
-import { LetterBody } from './letter/entities/letterbody.entity';
+import { LetterBody } from './letter/entities/letterBody.entity';
 import { Reply } from './reply/entities/reply.entity';
 import { Relationship } from './relationship/entities/relationship.entity';
 import { Situation } from './situation/entities/situation.entity';
@@ -44,8 +43,7 @@ const TypeOrmSettingModule = TypeOrmModule.forRoot({
     UserInfo,
     Social,
     Friend,
-    LetterInfo,
-    ReceiveLetter,
+    ReceivedLetter,
     LetterBody,
     Reply,
     Relationship,

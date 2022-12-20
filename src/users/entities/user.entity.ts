@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Social } from './social.entity';
-import { UserInfo } from './userinfo.entity';
+import { UserInfo } from './userInfo.entity';
 
 @Entity({ name: 'user' })
 export class User {
@@ -23,22 +23,22 @@ export class User {
   nickname: string;
 
   @Column()
-  profile_img: string;
+  profileImg: string;
 
   @CreateDateColumn()
-  created_at: Date;
+  createdAt: Date;
 
   @UpdateDateColumn()
-  updated_at: Date;
+  updatedAt: Date;
 
   @DeleteDateColumn()
-  deleted_at: Date;
+  deletedAt: Date;
 
   @OneToOne(() => Social, { cascade: true })
-  @JoinColumn({ name: 'social_id', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'socialId', referencedColumnName: 'id' })
   social: Social;
 
   @OneToOne(() => UserInfo, { cascade: true })
-  @JoinColumn({ name: 'userinfo_id', referencedColumnName: 'id' })
-  userinfo: UserInfo;
+  @JoinColumn({ name: 'userInfoId', referencedColumnName: 'id' })
+  userInfo: UserInfo;
 }

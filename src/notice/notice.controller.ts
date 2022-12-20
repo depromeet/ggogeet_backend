@@ -9,8 +9,8 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { CreateNoticeDto } from './dto/create-notice.dto';
-import { UpdateNoticeDto } from './dto/update-notice.dto';
+import { CreateNoticeDto } from './dto/createNotice.dto';
+import { UpdateNoticeDto } from './dto/updateNotice.dto';
 import { NoticeService } from './notice.service';
 
 @Controller('notices')

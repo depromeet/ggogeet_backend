@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { SendLetterStatus } from '../letter.constants';
-import { LetterBody } from './letterbody.entity';
+import { LetterBody } from './letterBody.entity';
 
 @Entity('sendLetter')
 export class SendLetter {
@@ -20,14 +20,14 @@ export class SendLetter {
 
   @ManyToOne(() => User)
   @JoinColumn({
-    name: 'sender_id',
+    name: 'senderId',
     referencedColumnName: 'id',
   })
   sender: User;
 
   @ManyToOne(() => User)
   @JoinColumn({
-    name: 'receiver_id',
+    name: 'receiverId',
     referencedColumnName: 'id',
   })
   receiver: User;
@@ -39,21 +39,21 @@ export class SendLetter {
   status: string;
 
   @Column({ type: 'varchar', length: '255' })
-  receiver_nickname: string;
+  receiverNickname: string;
 
   @OneToOne(() => LetterBody, { cascade: true })
   @JoinColumn()
-  letterbody: LetterBody;
+  letterBody: LetterBody;
 
   @CreateDateColumn()
-  send_at: Date;
+  sendAt: Date;
 
   @CreateDateColumn()
-  created_at: Date;
+  createdAt: Date;
 
   @UpdateDateColumn()
-  updated_at: Date;
+  updatedAt: Date;
 
   @DeleteDateColumn()
-  deleted_at: Date;
+  deletedAt: Date;
 }

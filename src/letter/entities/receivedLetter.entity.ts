@@ -9,39 +9,38 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
-import { LetterInfo } from './letterinfo.entity';
 
-@Entity('receiveletter')
-export class ReceiveLetter {
+@Entity('receivedLetter')
+export class ReceivedLetter {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
   @ManyToOne(() => User)
   @JoinColumn({
-    name: 'user_id',
+    name: 'receiverId',
     referencedColumnName: 'id',
   })
-  user: User;
+  receiver: User;
+
+  @ManyToOne(() => User)
+  @JoinColumn({
+    name: 'senderId',
+    referencedColumnName: 'id',
+  })
+  sender: User;
 
   @Column({ type: 'varchar', length: '255' })
-  sender_nickname: string;
-
-  @ManyToOne(() => LetterInfo)
-  @JoinColumn({
-    name: 'letterinfo_id',
-    referencedColumnName: 'id',
-  })
-  letterinfo: LetterInfo;
+  senderNickname: string;
 
   @CreateDateColumn()
-  received_at: Date;
+  receivedAt: Date;
 
   @CreateDateColumn()
-  created_at: Date;
+  createdAt: Date;
 
   @UpdateDateColumn()
-  updated_at: Date;
+  updatedAt: Date;
 
   @DeleteDateColumn()
-  deleted_at: Date;
+  deletedAt: Date;
 }

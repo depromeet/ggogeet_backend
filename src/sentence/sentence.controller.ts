@@ -11,8 +11,8 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { CreateSentenceDto } from './dto/create-sentence.dto';
+import { JwtAuthGuard } from 'src/common/guards/jwtAuth.guard';
+import { CreateSentenceDto } from './dto/createSentence.dto';
 import { SentenceService } from './sentence.service';
 
 @Controller('sentence')

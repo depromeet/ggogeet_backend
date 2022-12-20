@@ -4,8 +4,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { multerAttachedImgOptionsFactory } from 'src/utils/multer.options';
-import { LetterInfo } from './entities/letterinfo.entity';
-import { ReceiveLetter } from './entities/receiveletter.entity';
+import { ReceivedLetter } from './entities/receivedLetter.entity';
 import { LetterController } from './letter.controller';
 import { LetterService } from './letter.service';
 import { PassportModule } from '@nestjs/passport';
@@ -20,7 +19,7 @@ import { JwtStrategy } from 'src/auth/strategy/jwt.strategy';
       useFactory: multerAttachedImgOptionsFactory,
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([ReceiveLetter, LetterInfo, User, SendLetter]),
+    TypeOrmModule.forFeature([ReceivedLetter, User, SendLetter]),
     PassportModule,
     AuthModule,
   ],

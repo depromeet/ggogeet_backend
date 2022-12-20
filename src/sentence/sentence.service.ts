@@ -4,8 +4,8 @@ import { SentenceType } from 'src/constants/sentence.constant';
 import { Situation } from 'src/situation/entities/situation.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
-import { CreateSentenceDto } from './dto/create-sentence.dto';
-import { DeleteSentenceDto } from './dto/delete-sentence.dto';
+import { CreateSentenceDto } from './dto/createSentence.dto';
+import { DeleteSentenceDto } from './dto/deleteSentence.dto';
 import { SentenceResponseDto } from './dto/sentence.response.dto';
 import { Sentence } from './entities/sentence.entity';
 
@@ -53,10 +53,10 @@ export class SentenceService {
 
     const result = new SentenceResponseDto();
     result.id = sentence.id;
-    result.situation_id = sentence.situationId;
-    result.is_shared = sentence.is_shared;
+    result.situationId = sentence.situationId;
+    result.isShared = sentence.isShared;
     result.type = sentence.type;
-    result.created_at = sentence.created_at;
+    result.createdAt = sentence.createdAt;
 
     return result;
   }
@@ -68,12 +68,12 @@ export class SentenceService {
       .addSelect('sentence.content')
       .where('sentence.userId = :id', { id: userId })
       .andWhere('sentence.type = :type', { type: SentenceType.USER })
-      .andWhere('sentence.situation_id = :situation_id', {
-        situation_id: situationId,
+      .andWhere('sentence.situationId = :situationId', {
+        situationId: situationId,
       })
       .take(7)
       .getMany();
-    return { situation_id: situationId, sentence: temp };
+    return { situationId: situationId, sentence: temp };
   }
 
   async findGuideSentenceBySituation(situationId: number) {
@@ -82,13 +82,13 @@ export class SentenceService {
       .select('sentence.id')
       .addSelect('sentence.content')
       .andWhere('sentence.type = :type', { type: SentenceType.GUIDE })
-      .andWhere('sentence.situation_id = :situation_id', {
-        situation_id: situationId,
+      .andWhere('sentence.situationId = :situationId', {
+        situationId: situationId,
       })
       .orderBy('rand ()')
       .take(5)
       .getMany();
-    return { situation_id: situationId, sentence: temp };
+    return { situationId: situationId, sentence: temp };
   }
 
   async createSentence(
@@ -99,19 +99,19 @@ export class SentenceService {
     newSentence.type = SentenceType.USER;
     newSentence.userId = user.id;
     newSentence.situation = await this.situationRepository.findOne({
-      where: { id: sentenceDto.situation_id },
+      where: { id: sentenceDto.situationId },
     });
-    newSentence.is_shared = sentenceDto.is_shared;
+    newSentence.isShared = sentenceDto.isShared;
     newSentence.content = sentenceDto.content;
 
     const saved = await this.sentenceRepository.save(newSentence);
 
     const result = new SentenceResponseDto();
     result.id = saved.id;
-    result.situation_id = saved.situation.id;
-    result.is_shared = saved.is_shared;
+    result.situationId = saved.situation.id;
+    result.isShared = saved.isShared;
     result.type = saved.type;
-    result.created_at = saved.created_at;
+    result.createdAt = saved.createdAt;
 
     return result;
   }
