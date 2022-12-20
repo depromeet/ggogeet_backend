@@ -33,37 +33,37 @@ export class LetterController {
     private readonly authService: AuthService,
   ) {}
 
-  @Post('/send')
-  @UseGuards(JwtAuthGuard)
-  @HttpCode(HttpStatus.CREATED)
-  async createSendLetter(
-    @ReqUser() user: User,
-    @Res() res,
-    @Body() createSendLetterDto: CreateSendLetterDto,
-  ) {
-    const letterData = {
-      userId: user.id,
-      ...createSendLetterDto,
-    };
-    const sendLetter = await this.letterService.createSendLetter(letterData);
+  // @Post('/send')
+  // @UseGuards(JwtAuthGuard)
+  // @HttpCode(HttpStatus.CREATED)
+  // async createSendLetter(
+  //   @ReqUser() user: User,
+  //   @Res() res,
+  //   @Body() createSendLetterDto: CreateSendLetterDto,
+  // ) {
+  //   const letterData = {
+  //     userId: user.id,
+  //     ...createSendLetterDto,
+  //   };
+  //   const sendLetter = await this.letterService.createSendLetter(letterData);
 
-    // TODO: 카카오톡 보내기
+  //   // TODO: 카카오톡 보내기
 
-    // 메세지 api 사용 위한 access token 요청
-    // 테스트 시 code는 auth/code/friends로 받아와서 요청
-    const codeResponse = await this.authService.getKakaoAccessToken(
-      createSendLetterDto.kakaoAccessCode,
-      CallbackType.FRIEND,
-    );
+  //   // 메세지 api 사용 위한 access token 요청
+  //   // 테스트 시 code는 auth/code/friends로 받아와서 요청
+  //   const codeResponse = await this.authService.getKakaoAccessToken(
+  //     createSendLetterDto.kakaoAccessCode,
+  //     CallbackType.FRIEND,
+  //   );
 
-    // 메세지 보내기 (친구 uuid)
-    await this.authService.sendMessageToUser(
-      codeResponse.accessToken,
-      createSendLetterDto.kakaoUuid,
-    );
+  //   // 메세지 보내기 (친구 uuid)
+  //   await this.authService.sendMessageToUser(
+  //     codeResponse.accessToken,
+  //     createSendLetterDto.kakaoUuid,
+  //   );
 
-    res.send(sendLetter);
-  }
+  //   res.send(sendLetter);
+  // }
 
   @Get()
   findAll(
@@ -85,13 +85,13 @@ export class LetterController {
     return this.letterService.findOne(+id);
   }
 
-  @Post('/texts')
-  @HttpCode(HttpStatus.CREATED)
-  createExternalLetter(
-    @Body() createExternalLetterDto: CreateExternalLetterDto,
-  ) {
-    return this.letterService.createExternalLetter(createExternalLetterDto);
-  }
+  // @Post('/texts')
+  // @HttpCode(HttpStatus.CREATED)
+  // createExternalLetter(
+  //   @Body() createExternalLetterDto: CreateExternalLetterDto,
+  // ) {
+  //   return this.letterService.createExternalLetter(createExternalLetterDto);
+  // }
 
   @Post('/images/upload')
   @UseInterceptors(FileInterceptor('file'))
@@ -99,15 +99,15 @@ export class LetterController {
     return this.letterService.uploadExternalLetterImage(file);
   }
 
-  @Post('/images')
-  @HttpCode(HttpStatus.CREATED)
-  createExternalLetterImage(
-    @Body() createExternalImgLetterDto: CreateExternalImgLetterDto,
-  ) {
-    return this.letterService.createExternalImgLetter(
-      createExternalImgLetterDto,
-    );
-  }
+  // @Post('/images')
+  // @HttpCode(HttpStatus.CREATED)
+  // createExternalLetterImage(
+  //   @Body() createExternalImgLetterDto: CreateExternalImgLetterDto,
+  // ) {
+  //   return this.letterService.createExternalImgLetter(
+  //     createExternalImgLetterDto,
+  //   );
+  // }
 
   @Delete(':id')
   delete(@Param('id') id: number) {

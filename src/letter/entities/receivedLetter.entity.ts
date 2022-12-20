@@ -17,10 +17,17 @@ export class ReceivedLetter {
 
   @ManyToOne(() => User)
   @JoinColumn({
-    name: 'userId',
+    name: 'receiverId',
     referencedColumnName: 'id',
   })
-  user: User;
+  receiver: User;
+
+  @ManyToOne(() => User)
+  @JoinColumn({
+    name: 'senderId',
+    referencedColumnName: 'id',
+  })
+  sender: User;
 
   @Column({ type: 'varchar', length: '255' })
   senderNickname: string;
