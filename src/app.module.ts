@@ -53,7 +53,7 @@ const TypeOrmSettingModule = TypeOrmModule.forRoot({
     Sentence,
   ],
 
-  synchronize: true,
+  synchronize: false,
   logging: 'all',
 });
 
