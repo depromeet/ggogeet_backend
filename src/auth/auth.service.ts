@@ -223,12 +223,13 @@ export class AuthService {
       .where('social.clientId = :clientId', { clientId: clientId })
       .getOne();
 
-    if (!socialUser) {
-      throw new NotFoundException({
-        type: 'NOT_FOUND',
-        message: `Social User #${clientId} not found`,
-      });
-    }
+      // 에러 발생해서 유저 새로 생성안됐음. null전달하면 유저 생성되니 주석처리함 - 문규
+    // if (!socialUser) {
+    //   throw new NotFoundException({
+    //     type: 'NOT_FOUND',
+    //     message: `Social User #${clientId} not found`,
+    //   });
+    // }
 
     return socialUser;
   }
