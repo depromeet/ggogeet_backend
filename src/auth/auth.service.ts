@@ -50,7 +50,7 @@ export class AuthService {
       });
       return response.data;
     } catch (e) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException(e, "Wrong kakaoAccessCode");
     }
   }
 

@@ -32,6 +32,7 @@ export class ReceivedLetter {
   @Column({ type: 'varchar', length: '255' })
   senderNickname: string;
 
+  // 필요한가? createdAt 으로 쓰면 될듯한데
   @CreateDateColumn()
   receivedAt: Date;
 

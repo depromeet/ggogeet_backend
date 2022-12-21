@@ -20,14 +20,18 @@ export class CreateSendLetterDto {
   readonly situationId: number;
 
   @IsString()
+  readonly title: string;
+  
+  @IsString()
   readonly content: string;
 
-  @IsDateString()
-  readonly date: Date;
+  // @IsDateString()
+  // readonly date: Date;
 
   @IsString()
   readonly templateUrl: string;
 
   @IsString()
+  @IsOptional()
   readonly kakaoAccessCode: string;
 }
