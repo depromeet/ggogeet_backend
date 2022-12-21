@@ -110,45 +110,43 @@ export class LetterService {
     };
   }
 
-  // // CHECK: 저장 -> 임시저장은 안되겠지?
-  // async createSendLetter(
-  //   createSendLetterDto: CreateSendLetterDto,
-  // ): Promise<SendLetter> {
-  //   const sender = await this.userRepository.findOne({
-  //     where: { id: createSendLetterDto.userId },
-  //   });
+  async createSendLetter(
+    createSendLetterDto: CreateSendLetterDto,
+  ): Promise<SendLetter> {
+    const sender = await this.userRepository.findOne({
+      where: { id: createSendLetterDto.userId },
+    });
+    const receiver = createSendLetterDto?.receiverId ? 
+      await this.userRepository.findOne({
+        where: { id: createSendLetterDto.receiverId },
+      }) : null;
 
-    
-  //   const letterBody = new LetterBody();
-  //   letterBody.content = createSendLetterDto.content;
-  //   letterBody.templateUrl = createSendLetterDto.templateUrl;
-  //   letterBody.accessCode = 'should_generate_random_code';
-  //   letterBody.situationId = createSendLetterDto.situationId;
+    const letterBody = new LetterBody();
+    letterBody.title = createSendLetterDto.title;
+    letterBody.content = createSendLetterDto.content;
+    letterBody.templateUrl = createSendLetterDto.templateUrl;
+    letterBody.accessCode = 'should_generate_random_code'; // #TODO
+    letterBody.situationId = createSendLetterDto.situationId;
 
-  //   const sendLetter = new SendLetter();
-  //   sendLetter.sender = sender;
-  //   if (createSendLetterDto.receiverId) {
-  //     sendLetter.receiver = await this.userRepository.findOne({
-  //       where: { id: createSendLetterDto.receiverId },
-  //     });
-  //   }
-  //   sendLetter.receiverNickname = createSendLetterDto.receiverNickname;
-  //   sendLetter.status = SendLetterStatus.SENT;
-  //   sendLetter.letterBody = letterBody;
+    const sendLetter = new SendLetter();
+    sendLetter.sender = sender;
+    if (createSendLetterDto.receiverId) sendLetter.receiver = receiver;
+    sendLetter.receiverNickname = createSendLetterDto.receiverNickname;
+    sendLetter.status = SendLetterStatus.SENT;
+    sendLetter.letterBody = letterBody;
 
-  //   const newSendLetter = await this.sendLetterRepository.save(sendLetter);
+    const newSendLetter = await this.sendLetterRepository.save(sendLetter);
 
-  //   // receivedLetter 생성하기.
-  //   if (createSendLetterDto.receiverId) {
-  //     const receivedLetter = new ReceivedLetter();
-  //     receivedLetter.user = await this.userRepository.findOne({
-  //       where: { id: createSendLetterDto.receiverId },
-  //     });
-  //     receivedLetter.senderNickname = sender.nickname;
+    // receivedLetter 생성하기.
+    if (createSendLetterDto.receiverId) {
+      const receivedLetter = new ReceivedLetter();
+      receivedLetter.sender = sender;
+      receivedLetter.receiver = receiver;
+      receivedLetter.senderNickname = sender.nickname;
 
-  //     await this.receivedLetterRepository.save(receivedLetter);
-  //   }
+      await this.receivedLetterRepository.save(receivedLetter);
+    }
 
-  //   return newSendLetter;
-  // }
+    return newSendLetter;
+  }
 }

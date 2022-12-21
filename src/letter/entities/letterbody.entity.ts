@@ -14,7 +14,7 @@ export class LetterBody {
   id: number;
 
   @Column({ type: 'text', nullable: true })
-  title: LetterType;
+  title: string;
 
   @Column({ type: 'text', nullable: true })
   content: string;

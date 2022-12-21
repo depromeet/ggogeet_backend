@@ -33,37 +33,39 @@ export class LetterController {
     private readonly authService: AuthService,
   ) {}
 
-  // @Post('/send')
-  // @UseGuards(JwtAuthGuard)
-  // @HttpCode(HttpStatus.CREATED)
-  // async createSendLetter(
-  //   @ReqUser() user: User,
-  //   @Res() res,
-  //   @Body() createSendLetterDto: CreateSendLetterDto,
-  // ) {
-  //   const letterData = {
-  //     userId: user.id,
-  //     ...createSendLetterDto,
-  //   };
-  //   const sendLetter = await this.letterService.createSendLetter(letterData);
+  @Post('/send')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.CREATED)
+  async createSendLetter(
+    @ReqUser() user: User,
+    @Res() res,
+    @Body() createSendLetterDto: CreateSendLetterDto,
+  ) {
+    const letterData = {
+      userId: user.id,
+      ...createSendLetterDto,
+    };
+    const sendLetter = await this.letterService.createSendLetter(letterData);
 
-  //   // TODO: 카카오톡 보내기
+    // 메세지 api 사용 위한 access token 요청
+    // 테스트 시 code는 auth/code/friends로 받아와서 요청
+    if (createSendLetterDto.kakaoAccessCode && createSendLetterDto.kakaoUuid) {
+      const codeResponse = await this.authService.getKakaoAccessToken(
+        createSendLetterDto.kakaoAccessCode,
+        CallbackType.FRIEND,
+      );
+  
+      // 메세지 보내기 (친구 uuid)
+      await this.authService.sendMessageToUser(
+        codeResponse.access_token,
+        createSendLetterDto.kakaoUuid,
+      );
+    }
 
-  //   // 메세지 api 사용 위한 access token 요청
-  //   // 테스트 시 code는 auth/code/friends로 받아와서 요청
-  //   const codeResponse = await this.authService.getKakaoAccessToken(
-  //     createSendLetterDto.kakaoAccessCode,
-  //     CallbackType.FRIEND,
-  //   );
-
-  //   // 메세지 보내기 (친구 uuid)
-  //   await this.authService.sendMessageToUser(
-  //     codeResponse.access_token,
-  //     createSendLetterDto.kakaoUuid,
-  //   );
-
-  //   res.send(sendLetter);
-  // }
+    res.send({
+      data: {sendLetter}
+    });
+  }
 
   @Get()
   findAll(
