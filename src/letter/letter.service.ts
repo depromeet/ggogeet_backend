@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
-import { Repository, UpdateResult } from 'typeorm';
+import { ManyToMany, Repository, UpdateResult } from 'typeorm';
 import { CreateExternalImgLetterDto } from './dto/requests/createExternalLetterImg.request.dto';
 import { CreateExternalLetterDto } from './dto/requests/createExternalLetter.request.dto';
 import { CreateSendLetterDto } from './dto/requests/createSendLetter.request.dto';
@@ -148,5 +148,43 @@ export class LetterService {
     }
 
     return newSendLetter;
+  }
+  
+  async getSendLetters(
+    userId: number,
+    page: number = 1,
+    take: number = 10,
+  ): Promise<{
+    meta: {
+      page : number,
+	    take: number,
+	    totalCount: number,
+	    totalPage: number,
+	    hasNext:boolean
+    },
+    sendLetters: SendLetter[]
+  }> {
+    const [results, totalCount] = await this.sendLetterRepository.findAndCount({
+      relations: {
+        letterBody: true
+      },
+      where: { 
+        sender: {id: userId} 
+      },
+      take: take,
+      skip: take * (page -1),
+      order: { createdAt: -1 }
+    });
+
+    return {
+      meta: {
+        page,
+        take,
+        totalCount,
+        totalPage: Math.ceil(totalCount / take), // #TODO
+        hasNext: totalCount > (page -1) * take // #TODO
+      }, 
+      sendLetters: results
+    };
   }
 }
