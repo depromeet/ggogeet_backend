@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Post,
   Query,
   Req,
@@ -64,6 +65,23 @@ export class LetterController {
 
     res.send({
       data: {sendLetter}
+    });
+  }
+  
+  @Get('/send')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async getSendLetter(
+    @ReqUser() user: User,
+    // @Req() req, // #TODO pagination DTO 로 변경
+    @Res() res,
+    @Query('page', ParseIntPipe) page: number,
+  ) {
+    const sendLettersAndMeta = await this.letterService.getSendLetters(user.id, page);
+
+    res.send({
+      meta: sendLettersAndMeta.meta,
+      data: {sendLetters: sendLettersAndMeta.sendLetters}
     });
   }
 
