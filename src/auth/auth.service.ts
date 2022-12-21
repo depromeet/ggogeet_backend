@@ -33,7 +33,7 @@ export class AuthService {
     const body = {
       grant_type: 'authorization_code',
       client_id: process.env.KAKAO_CLIENT_ID,
-      redirect_uri: `http://localhost:3000/auth/kakao/${option}`,
+      redirect_uri: `${process.env.SERVER_HOST}/auth/kakao/${option}`,
       code,
     };
     const headers = {
