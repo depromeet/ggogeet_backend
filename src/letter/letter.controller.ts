@@ -55,19 +55,26 @@ export class LetterController {
         createSendLetterDto.kakaoAccessCode,
         CallbackType.FRIEND,
       );
-  
+
       // 메세지 보내기 (친구 uuid)
-      await this.authService.sendMessageToUser(
+      const isSuccess = await this.authService.sendMessageToUser(
         codeResponse.access_token,
         createSendLetterDto.kakaoUuid,
       );
+      // #TODO : 메세지 성공여부에 따라 에러 처리..
+      // "successful_receiver_uuids": ["abcdefg0001","abcdefg0002"], -> 성공
+      // "failure_info":[{ -> 실패
+      //     "code": -532,
+      //     "msg": "daily message limit per sender has been exceeded.",
+      //     "receiver_uuids": ["abcdefg0003"]
+      // }]
     }
 
     res.send({
-      data: {sendLetter}
+      data: { sendLetter },
     });
   }
-  
+
   @Get('/send')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
@@ -77,11 +84,14 @@ export class LetterController {
     @Res() res,
     @Query('page', ParseIntPipe) page: number,
   ) {
-    const sendLettersAndMeta = await this.letterService.getSendLetters(user.id, page);
+    const sendLettersAndMeta = await this.letterService.getSendLetters(
+      user.id,
+      page,
+    );
 
     res.send({
       meta: sendLettersAndMeta.meta,
-      data: {sendLetters: sendLettersAndMeta.sendLetters}
+      data: { sendLetters: sendLettersAndMeta.sendLetters },
     });
   }
 

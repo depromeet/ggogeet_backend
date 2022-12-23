@@ -35,7 +35,8 @@ export class AuthController {
     // user.id로 jwt 토큰 발급
     const jwtAccessToken = await this.authService.getAccessToken(user.id);
     const jwtRefreshToken = await this.authService.getRefreshToken(user.id);
-    return res.status(statusCode).send({ jwtAccessToken, jwtRefreshToken });
+
+    res.status(statusCode).send({ data: { jwtAccessToken, jwtRefreshToken } });
   }
 
   // 추가 동의항목 동의 후 친구목록 반환
@@ -50,7 +51,11 @@ export class AuthController {
     );
 
     await this.authService.updateKakaoFriends(codeResponse.access_token, user);
-    return res.send(await this.authService.getKakaoFriends(user));
+
+    const friendslist = await this.authService.getKakaoFriends(user);
+    res.send({
+      data: { friends: friendslist },
+    });
   }
 
   //-----------------------------------------------------------------------------------------------------------
