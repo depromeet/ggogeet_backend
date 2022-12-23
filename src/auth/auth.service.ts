@@ -50,7 +50,7 @@ export class AuthService {
       });
       return response.data;
     } catch (e) {
-      throw new UnauthorizedException(e, "Wrong kakaoAccessCode");
+      throw new UnauthorizedException(e, 'Wrong kakaoAccessCode');
     }
   }
 
@@ -66,7 +66,7 @@ export class AuthService {
       // 카카오로부터 받은 토큰 값 헤더에 담아 카카오 서버 /v2/user/me로 사용자 정보 요청
       const responseUserInfo = await axios({
         method: 'GET',
-        url: kakaoUserInfoUrl, // "https://kapi.kakao.com/v2/user/me";
+        url: kakaoUserInfoUrl,
         headers: headerUserInfo,
       });
 
@@ -161,16 +161,17 @@ export class AuthService {
   }
 
   async updateKakaoUser(id, kakaoInfo: CreateKakaoUserDto) {
-    await this.userRepository.update(
-      {
-        id,
-      },
-      {
-        name: kakaoInfo.nickname,
-        profileImg: kakaoInfo.profile_image,
-      },
-    );
-    return await this.userRepository.findOneBy({ id });
+    const user = await this.userRepository.findOne({
+      where: { id: id },
+      relations: { social: true },
+    });
+    user.name = kakaoInfo.nickname;
+    user.profileImg = kakaoInfo.profile_image;
+
+    if (kakaoInfo.allow_scope.indexOf('friends') !== -1) {
+      user.social.allowFriendsList = true;
+    }
+    return await this.userRepository.save(user);
   }
 
   async updateKakaoFriends(access_token: string, user: User) {
@@ -199,7 +200,7 @@ export class AuthService {
           if (!isFriendExist) {
             await this.createKakakoFriends(element, user);
           }
-          // 원래 있던 친구였으나 삭제된 경우 현재 친구목록에서 삭제된 경우..
+          // #TODO: 원래 있던 친구였으나 삭제된 경우 현재 친구목록에서 삭제된 경우
         });
       }
     }
@@ -222,8 +223,7 @@ export class AuthService {
       .leftJoinAndSelect('user.social', 'social')
       .where('social.clientId = :clientId', { clientId: clientId })
       .getOne();
-
-      // 에러 발생해서 유저 새로 생성안됐음. null전달하면 유저 생성되니 주석처리함 - 문규
+    // 에러 발생해서 유저 새로 생성안됐음. null전달하면 유저 생성되니 주석처리함 - 문규
     // if (!socialUser) {
     //   throw new NotFoundException({
     //     type: 'NOT_FOUND',
@@ -237,12 +237,9 @@ export class AuthService {
   async getKakaoFriends(user: User): Promise<ResponseFriendDto[]> {
     const friendList = await this.friendsRepository
       .createQueryBuilder('friend')
-      // .select(['friend.kakaoUuid', 'friend.kakaoFriendName'])
       .leftJoinAndSelect('friend.friendUser', 'user')
-      // .addSelect(['user.id', 'user.profileImg'])
       .where('friend.userId = :userId', { userId: user.id })
       .getMany();
-
     return friendList.map((friend) => {
       return new ResponseFriendDto(friend);
     });
@@ -267,14 +264,15 @@ export class AuthService {
   }
 
   async sendMessageToUser(access_token: string, kakaoUuid: string) {
-    const kakaoMessageUrl = 'https://kapi.kakao.com/v2/api/talk/memo/send';
+    const kakaoMessageUrl =
+      'https://kapi.kakao.com/v1/api/talk/friends/message/send';
 
     // 편지 조회하기 위한 access_token
     const accessCode = 'dfsdasdfafda';
     const body = {
       template_id: 87114,
       template_args: `{\"code\": "${accessCode}"}`,
-      receiver_uuids: [kakaoUuid],
+      receiver_uuids: `["${kakaoUuid}"]`,
     };
 
     const header = {
@@ -292,6 +290,7 @@ export class AuthService {
       });
       return responseMessageInfo.data;
     } catch (e) {
+      console.log(e);
     }
   }
 }
