@@ -9,11 +9,17 @@ import {
 } from '@nestjs/common';
 import { CallbackType } from 'src/constants/kakaoCallback.constant';
 import { AuthService } from './auth.service';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @Controller('auth')
+@ApiTags('Auth API')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @ApiOperation({
+    summary: '카카오 로그인 API',
+    description: '카카오 로그인을 합니다.',
+  })
   @Post('/login')
   async kakaoLogin(@Body('code') code: string, @Res() res) {
     // 인증 코드로 카카오 토큰 받아오기
@@ -38,6 +44,10 @@ export class AuthController {
     return res.status(statusCode).send({ jwtAccessToken, jwtRefreshToken });
   }
 
+  @ApiOperation({
+    summary: '카카오 친구목록 API',
+    description: '카카오 친구목록을 가져옵니다.',
+  })
   // 추가 동의항목 동의 후 친구목록 반환
   @Get('/friends')
   async addAgreeCategory(@Body('code') code: string, @Res() res) {
@@ -54,7 +64,10 @@ export class AuthController {
   }
 
   //-----------------------------------------------------------------------------------------------------------
-  // 백에서 테스트용 (로그인할때 body에 넣을 code값)
+  @ApiOperation({
+    summary: '카카오 로그인 테스트용 API',
+    description: '로그인할때 body에 넣을 code값을 받아옵니다.',
+  })
   @Get('/code/login')
   async getCodeForLoginTest(@Res() res) {
     const _hostName = 'https://kauth.kakao.com';
@@ -65,7 +78,10 @@ export class AuthController {
     return res.redirect(url);
   }
 
-  // 백에서 테스트용 (친구 가져올때 body에 넣을 code값)
+  @ApiOperation({
+    summary: '카카오 친구목록 테스트용 API',
+    description: '친구목록을 가져올때 body에 넣을 code값을 받아옵니다.',
+  })
   @Get('/code/friends')
   async getCodeForFriendsTest(@Res() res) {
     const _hostName = 'https://kauth.kakao.com';
@@ -76,11 +92,19 @@ export class AuthController {
     return res.redirect(url);
   }
 
+  @ApiOperation({
+    summary: '카카오 로그인 Redirect API',
+    description: '카카오 로그인 Redirect API',
+  })
   @Get('/kakao/login')
   async kakaoLoginTest(@Query('code') code: string, @Res() res) {
     return res.send({ scope: 'login', code });
   }
 
+  @ApiOperation({
+    summary: '카카오 친구목록 Redirect API',
+    description: '카카오 친구목록 Redirect API',
+  })
   @Get('/kakao/friends')
   async kakaoFriendsTest(@Query('code') code: string, @Res() res) {
     return res.send({ scope: 'friends', code });

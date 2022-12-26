@@ -6,6 +6,12 @@ export function setupSwagger(app: INestApplication): void {
     .setTitle('ggo-geet API Docs')
     .setDescription('ggo-geet  API description')
     .setVersion('1.0.0')
+    .addBearerAuth({
+      type: 'http',
+      scheme: 'bearer',
+      name: 'JWT',
+      in: 'header',
+    })
     .build();
 
   const document = SwaggerModule.createDocument(app, options);
