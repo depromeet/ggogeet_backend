@@ -63,38 +63,6 @@ export class LetterService {
     return letter;
   }
 
-  // async createExternalLetter(
-  //   createExternalLetterDto: CreateExternalLetterDto,
-  // ): Promise<ReceivedLetter> {
-  //   const letter = new ReceivedLetter();
-  //   letter.receivedAt = new Date(createExternalLetterDto.date);
-  //   letter.senderNickname = createExternalLetterDto.sender;
-
-  //   const user = await this.userRepository.findOne({ where: { id: 1 } });
-  //   if (!user) {
-  //     throw new BadRequestException('There is no user');
-  //   }
-  //   letter.user = user;
-
-  //   return await this.letterRepository.save(letter);
-  // }
-
-  // async createExternalImgLetter(
-  //   createExternalImgLetterDto: CreateExternalImgLetterDto,
-  // ): Promise<ReceivedLetter> {
-  //   const letter = new ReceivedLetter();
-  //   letter.receivedAt = new Date(createExternalImgLetterDto.date);
-  //   letter.senderNickname = createExternalImgLetterDto.sender;
-
-  //   const user = await this.userRepository.findOne({ where: { id: 1 } });
-  //   if (!user) {
-  //     throw new BadRequestException('There is no user');
-  //   }
-  //   letter.user = user;
-
-  //   return await this.letterRepository.save(letter);
-  // }
-
   async delete(id: number): Promise<UpdateResult> {
     return await this.letterRepository.update(id, { deletedAt: new Date() });
   }

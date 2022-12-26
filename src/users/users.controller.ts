@@ -45,11 +45,6 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.usersService.findOne(+id);
-  // }
-
   @ApiOperation({
     summary: '유저 정보 수정 API',
     description: '유저 정보를 수정합니다.',
@@ -72,7 +67,6 @@ export class UsersController {
     summary: '카카오 친구목록 가져오기 API',
     description: '카카오 친구목록을 가져옵니다.',
   })
-  // 내 친구목록 가져오기
   @Get('/friends')
   async getFriends(@Req() req, @Res() res) {
     const friendsList = await this.authService.getKakaoFriends(req.user);

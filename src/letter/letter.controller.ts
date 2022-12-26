@@ -130,14 +130,6 @@ export class LetterController {
     return this.letterService.findOne(+id);
   }
 
-  // @Post('/texts')
-  // @HttpCode(HttpStatus.CREATED)
-  // createExternalLetter(
-  //   @Body() createExternalLetterDto: CreateExternalLetterDto,
-  // ) {
-  //   return this.letterService.createExternalLetter(createExternalLetterDto);
-  // }
-
   @ApiOperation({
     summary: '이미지 편지 업로드 API',
     description: '외부에서 받은 이미지로 된 편지를 업로드합니다.',
@@ -163,16 +155,6 @@ export class LetterController {
   createExternalImgLetter(@UploadedFile() file: Express.MulterS3.File) {
     return this.letterService.uploadExternalLetterImage(file);
   }
-
-  // @Post('/images')
-  // @HttpCode(HttpStatus.CREATED)
-  // createExternalLetterImage(
-  //   @Body() createExternalImgLetterDto: CreateExternalImgLetterDto,
-  // ) {
-  //   return this.letterService.createExternalImgLetter(
-  //     createExternalImgLetterDto,
-  //   );
-  // }
 
   @ApiOperation({
     summary: '편지 삭제 API',
