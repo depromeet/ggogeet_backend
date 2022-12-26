@@ -18,6 +18,7 @@ import {
   ApiBearerAuth,
   ApiNotFoundResponse,
   ApiOperation,
+  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 
@@ -65,6 +66,10 @@ export class SentenceController {
   @ApiOperation({
     summary: '문장 추가하기 API',
     description: '문장을 추가합니다.',
+  })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: '문장이 추가되었습니다.',
   })
   @Post()
   @HttpCode(HttpStatus.CREATED)
