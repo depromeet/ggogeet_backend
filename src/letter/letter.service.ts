@@ -2,11 +2,10 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Repository, UpdateResult } from 'typeorm';
-import { CreateSendLetterDto } from './dto/requests/createSendLetter.request.dto';
-import { LetterBody } from './entities/letterBody.entity';
 import { ReceivedLetter } from './entities/receivedLetter.entity';
 import { SendLetter } from './entities/sendLetter.entity';
 import { LetterType, SendLetterStatus } from './letter.constants';
+import { CreateDraftLetterDto } from './dto/requests/createDraftLetter.request.dto';
 
 @Injectable()
 export class LetterService {
@@ -20,6 +19,17 @@ export class LetterService {
     @InjectRepository(ReceivedLetter)
     private receivedLetterRepository: Repository<ReceivedLetter>,
   ) {}
+
+  async createDraftLetter(
+    user: User,
+    createNewLetterDto: CreateDraftLetterDto,
+  ) {
+    // todo : Create User Draft Letter
+  }
+
+  async sendLetter(user: User, id: number) {
+    // todo : Send Letter
+  }
 
   findAll(query): Promise<ReceivedLetter[]> {
     const limit = query.limit ? query.limit : 10;
@@ -74,47 +84,6 @@ export class LetterService {
     return {
       filePath: file.location,
     };
-  }
-
-  async createSendLetter(
-    createSendLetterDto: CreateSendLetterDto,
-  ): Promise<SendLetter> {
-    const sender = await this.userRepository.findOne({
-      where: { id: createSendLetterDto.userId },
-    });
-    const receiver = createSendLetterDto?.receiverId
-      ? await this.userRepository.findOne({
-          where: { id: createSendLetterDto.receiverId },
-        })
-      : null;
-
-    const letterBody = new LetterBody();
-    letterBody.title = createSendLetterDto.title;
-    letterBody.content = createSendLetterDto.content;
-    letterBody.templateUrl = createSendLetterDto.templateUrl;
-    letterBody.accessCode = 'should_generate_random_code'; // #TODO
-    letterBody.situationId = createSendLetterDto.situationId;
-
-    const sendLetter = new SendLetter();
-    sendLetter.sender = sender;
-    if (createSendLetterDto.receiverId) sendLetter.receiver = receiver;
-    sendLetter.receiverNickname = createSendLetterDto.receiverNickname;
-    sendLetter.status = SendLetterStatus.SENT;
-    sendLetter.letterBody = letterBody;
-
-    const newSendLetter = await this.sendLetterRepository.save(sendLetter);
-
-    // receivedLetter 생성하기.
-    if (createSendLetterDto.receiverId) {
-      const receivedLetter = new ReceivedLetter();
-      receivedLetter.sender = sender;
-      receivedLetter.receiver = receiver;
-      receivedLetter.senderNickname = sender.nickname;
-
-      await this.receivedLetterRepository.save(receivedLetter);
-    }
-
-    return newSendLetter;
   }
 
   async getSendLetters(

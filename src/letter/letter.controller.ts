@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Query,
   Res,
@@ -18,9 +19,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthService } from 'src/auth/auth.service';
 import { ReqUser } from 'src/common/decorators/user.decorators';
 import { JwtAuthGuard } from 'src/common/guards/jwtAuth.guard';
-import { CallbackType } from 'src/constants/kakaoCallback.constant';
 import { User } from 'src/users/entities/user.entity';
-import { CreateSendLetterDto } from './dto/requests/createSendLetter.request.dto';
 import { LetterService } from './letter.service';
 import {
   ApiBearerAuth,
@@ -30,6 +29,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { CreateDraftLetterDto } from './dto/requests/createDraftLetter.request.dto';
 
 @Controller('letters')
 @ApiTags('Letter API')
@@ -42,44 +42,31 @@ export class LetterController {
   ) {}
 
   @ApiOperation({
-    summary: '편지를 보내는 API',
-    description: '편지를 친구에게 보냅니다.',
+    summary: '편지 생성 API',
+    description:
+      '신규 편지를 생성합니다, 편지를 보내기 위해서는 Complete API를 호출해주세요.',
   })
-  @Post('/send')
+  @Post('/draft')
   @HttpCode(HttpStatus.CREATED)
-  async createSendLetter(
+  async createDraftLetter(
     @ReqUser() user: User,
-    @Res() res,
-    @Body() createSendLetterDto: CreateSendLetterDto,
+    @Body() createSendLetterDto: CreateDraftLetterDto,
   ) {
-    const letterData = {
-      userId: user.id,
-      ...createSendLetterDto,
-    };
-    const sendLetter = await this.letterService.createSendLetter(letterData);
-
-    // 메세지 api 사용 위한 access token 요청
-    // 테스트 시 code는 auth/code/friends로 받아와서 요청
-    if (createSendLetterDto.kakaoAccessCode && createSendLetterDto.kakaoUuid) {
-      const codeResponse = await this.authService.getKakaoAccessToken(
-        createSendLetterDto.kakaoAccessCode,
-        CallbackType.FRIEND,
-      );
-
-      // 메세지 보내기 (친구 uuid)
-      await this.authService.sendMessageToUser(
-        codeResponse.access_token,
-        createSendLetterDto.kakaoUuid,
-      );
-    }
-
-    res.send({
-      data: { sendLetter },
-    });
+    return this.letterService.createDraftLetter(user, createSendLetterDto);
   }
 
   @ApiOperation({
-    summary: '보낸 편지 조회하기 API',
+    summary: '편지 전송 API',
+    description: '편지를 친구에게 보냅니다.',
+  })
+  @Post(':id/complete')
+  @HttpCode(HttpStatus.CREATED)
+  async sendLetter(@ReqUser() user: User, @Param('id') id: number) {
+    return this.letterService.sendLetter(user, id);
+  }
+
+  @ApiOperation({
+    summary: '보낸 편지함 조회 API',
     description: '보낸 편지를 조회합니다.',
   })
   @Get('/sent')
@@ -92,10 +79,29 @@ export class LetterController {
   }
 
   @ApiOperation({
+    summary: '보낸 편지 상세 조회 API',
+    description: '보낸 편지를 상세 조회합니다.',
+  })
+  @Get('/sent/:id')
+  async getSentLetter(@Param('id') id: number) {
+    //todo
+  }
+
+  @ApiOperation({
+    summary: '보낸 편지 삭제하기 API',
+    description: '보낸 편지를 삭제합니다.',
+  })
+  @Delete('/sent/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteSentLetter() {
+    //todo
+  }
+
+  @ApiOperation({
     summary: '받은 편지함 조회 API',
     description: '유저가 받은 편지함 조회을 조회합니다.',
   })
-  @Get()
+  @Get('/received')
   findAll(
     @Query()
     query: {
@@ -111,10 +117,10 @@ export class LetterController {
   }
 
   @ApiOperation({
-    summary: '편지 상세 조회 API',
+    summary: '받은 편지 상세 조회 API',
     description: '편지 상세 조회를 조회합니다.',
   })
-  @Get(':id')
+  @Get('/received/:id')
   findOne(@Param('id') id: number) {
     return this.letterService.findOne(+id);
   }
@@ -139,17 +145,17 @@ export class LetterController {
     status: HttpStatus.CREATED,
     description: '이미지 편지 업로드 성공',
   })
-  @Post('/images/upload')
+  @Post('/recevied/images/upload')
   @UseInterceptors(FileInterceptor('file'))
   createExternalImgLetter(@UploadedFile() file: Express.MulterS3.File) {
     return this.letterService.uploadExternalLetterImage(file);
   }
 
   @ApiOperation({
-    summary: '편지 삭제 API',
-    description: '편지를 삭제합니다.',
+    summary: '받은 편지 삭제 API',
+    description: '받은 편지를 삭제합니다.',
   })
-  @Delete(':id')
+  @Delete('/recevied/:id')
   delete(@Param('id') id: number) {
     return this.letterService.delete(id);
   }
