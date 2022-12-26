@@ -3,13 +3,14 @@ import {
   Controller,
   Get,
   Header,
+  HttpStatus,
   Post,
   Query,
   Res,
 } from '@nestjs/common';
 import { CallbackType } from 'src/constants/kakaoCallback.constant';
 import { AuthService } from './auth.service';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('auth')
 @ApiTags('Auth API')
@@ -21,6 +22,35 @@ export class AuthController {
     description: '카카오 로그인을 합니다.',
   })
   @Post('/login')
+  @ApiBody({
+    schema: {
+      properties: {
+        code: {
+          type: 'string',
+          example: 'code',
+          description: '엑세스토큰 요청 위해 카카오에서 받은 엑세스코드',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Jwt 토큰과 Refresh 토큰을 반환합니다.',
+    schema: {
+      properties: {
+        accessToken: {
+          type: 'string',
+          example: 'accessToken',
+          description: 'Jwt 토큰',
+        },
+        refreshToken: {
+          type: 'string',
+          example: 'refreshToken',
+          description: 'Refresh 토큰',
+        },
+      },
+    },
+  })
   async kakaoLogin(@Body('code') code: string, @Res() res) {
     // 인증 코드로 카카오 토큰 받아오기
     const codeResponse = await this.authService.getKakaoAccessToken(
@@ -47,6 +77,17 @@ export class AuthController {
   @ApiOperation({
     summary: '카카오 친구목록 API',
     description: '카카오 친구목록을 가져옵니다.',
+  })
+  @ApiBody({
+    schema: {
+      properties: {
+        code: {
+          type: 'string',
+          example: 'code',
+          description: '엑세스토큰 요청 위해 카카오에서 받은 엑세스코드',
+        },
+      },
+    },
   })
   // 추가 동의항목 동의 후 친구목록 반환
   @Get('/friends')

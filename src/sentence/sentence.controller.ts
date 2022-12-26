@@ -21,6 +21,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { SentenceResponseDto } from './dto/sentence.response.dto';
 
 @Controller('sentence')
 @ApiTags('Sentence API')
@@ -41,6 +42,11 @@ export class SentenceController {
   @ApiOperation({
     summary: '내가 쓴 문장 가져오기 API',
     description: '내가 쓴 문장을 가져옵니다.',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '내가 쓴 문장을 가져옵니다.',
+    type: SentenceResponseDto,
   })
   @Get(':id')
   async findOneSentence(@Req() req, @Param('id') id: number) {
@@ -70,6 +76,7 @@ export class SentenceController {
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: '문장이 추가되었습니다.',
+    type: SentenceResponseDto,
   })
   @Post()
   @HttpCode(HttpStatus.CREATED)
