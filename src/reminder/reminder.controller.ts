@@ -14,18 +14,20 @@ import {
 import { ReqUser } from 'src/common/decorators/user.decorators';
 import { JwtAuthGuard } from 'src/common/guards/jwtAuth.guard';
 import { User } from 'src/users/entities/user.entity';
-import { CreateReminderDto } from './dto/createReminder.dto';
-import { UpdateReminderDto } from './dto/updateReminder.dto';
+import { CreateReminderDto } from './dto/requests/createReminder.request.dto';
+import { UpdateReminderDto } from './dto/requests/updateReminder.request.dto';
 import { ReminderService } from './reminder.service';
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-
+import { ReminderResponseDto } from './dto/responses/reminder.response.dto';
+import { ReminderStautsResponseDto } from './dto/responses/reminderStatus.response.dto';
 @Controller('reminders')
 @ApiTags('Reminder API')
 @ApiBearerAuth()
@@ -42,6 +44,11 @@ export class ReminderController {
   @ApiOperation({
     summary: '리마인더 목록 조회 API',
     description: '유저의 리마인더 목록을 조회합니다.',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '리마인더 목록을 반환합니다.',
+    type: [CreateReminderDto],
   })
   @Get()
   findAll(
@@ -60,6 +67,11 @@ export class ReminderController {
     summary: '리마인더 상세 조회 API',
     description: '유저 리마인더를 상세내용을 조회합니다.',
   })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '리마인더 상세내용을 반환합니다.',
+    type: ReminderResponseDto,
+  })
   @Get(':id')
   findOne(@Param('id') id: number, @ReqUser() user: User) {
     return this.reminderService.findOne(id, user);
@@ -72,6 +84,10 @@ export class ReminderController {
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: '리마인더 생성 성공',
+    type: ReminderResponseDto,
+  })
+  @ApiBody({
+    type: CreateReminderDto,
   })
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -85,7 +101,11 @@ export class ReminderController {
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: '리마인더 수정 성공',
+    description: '리마인더 수정 성공후 상세내용을 반환합니다.',
+    type: ReminderResponseDto,
+  })
+  @ApiBody({
+    type: UpdateReminderDto,
   })
   @Patch(':id')
   update(
@@ -103,6 +123,7 @@ export class ReminderController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: '리마인더 완료 상태변경 성공',
+    type: ReminderStautsResponseDto,
   })
   @Patch('done/:id')
   done(@Param('id') id: number, @ReqUser() user: User) {
@@ -116,6 +137,7 @@ export class ReminderController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: '리마인더 미완료 상태변경 성공',
+    type: ReminderStautsResponseDto,
   })
   @Patch('undone/:id')
   undone(@Param('id') id: number, @ReqUser() user: User) {
@@ -127,9 +149,10 @@ export class ReminderController {
     description: '리마인더를 삭제합니다.',
   })
   @ApiResponse({
-    status: HttpStatus.OK,
+    status: HttpStatus.NO_CONTENT,
     description: '리마인더 삭제 성공',
   })
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
   delete(@Param('id') id: number, @ReqUser() user: User) {
     return this.reminderService.delete(id, user);
