@@ -9,21 +9,17 @@ import {
   ParseIntPipe,
   Post,
   Query,
-  Req,
   Res,
   UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import axios from 'axios';
 import { AuthService } from 'src/auth/auth.service';
 import { ReqUser } from 'src/common/decorators/user.decorators';
 import { JwtAuthGuard } from 'src/common/guards/jwtAuth.guard';
 import { CallbackType } from 'src/constants/kakaoCallback.constant';
 import { User } from 'src/users/entities/user.entity';
-import { CreateExternalImgLetterDto } from './dto/requests/createExternalLetterImg.request.dto';
-import { CreateExternalLetterDto } from './dto/requests/createExternalLetter.request.dto';
 import { CreateSendLetterDto } from './dto/requests/createSendLetter.request.dto';
 import { LetterService } from './letter.service';
 import {

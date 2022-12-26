@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
@@ -24,7 +24,6 @@ import { SendLetter } from './letter/entities/sendLetter.entity';
 import { SentenceModule } from './sentence/sentence.module';
 import { Sentence } from './sentence/entities/sentence.entity';
 import { ReplyModule } from './reply/reply.module';
-import { NestModule } from '@nestjs/common';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import * as winston from 'winston';
 import {
@@ -112,6 +111,7 @@ const WinstomSettingModule = WinstonModule.forRoot({
 })
 export class AppModule implements NestModule {
   constructor(private dataSource: DataSource) {}
+
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(LoggerMiddleware).forRoutes('*');
   }

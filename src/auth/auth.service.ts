@@ -13,7 +13,6 @@ import { UserInfo } from 'src/users/entities/userInfo.entity';
 import { Repository } from 'typeorm';
 import axios from 'axios';
 import { Friend } from 'src/users/entities/friend.entity';
-import { UpdateKakaoUserDto } from './dto/requests/updateKakaoUser.dto';
 import { CreateKakaoUserDto } from './dto/requests/createKakaoUser.dto';
 import { ResponseFriendDto } from './dto/response/responseFriend.dto';
 
@@ -50,7 +49,7 @@ export class AuthService {
       });
       return response.data;
     } catch (e) {
-      throw new UnauthorizedException(e, "Wrong kakaoAccessCode");
+      throw new UnauthorizedException(e, 'Wrong kakaoAccessCode');
     }
   }
 
@@ -223,7 +222,7 @@ export class AuthService {
       .where('social.clientId = :clientId', { clientId: clientId })
       .getOne();
 
-      // 에러 발생해서 유저 새로 생성안됐음. null전달하면 유저 생성되니 주석처리함 - 문규
+    // 에러 발생해서 유저 새로 생성안됐음. null전달하면 유저 생성되니 주석처리함 - 문규
     // if (!socialUser) {
     //   throw new NotFoundException({
     //     type: 'NOT_FOUND',
@@ -291,7 +290,6 @@ export class AuthService {
         data: qs.stringify(body),
       });
       return responseMessageInfo.data;
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 }

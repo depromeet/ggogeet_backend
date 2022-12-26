@@ -1,9 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
-import { ManyToMany, Repository, UpdateResult } from 'typeorm';
-import { CreateExternalImgLetterDto } from './dto/requests/createExternalLetterImg.request.dto';
-import { CreateExternalLetterDto } from './dto/requests/createExternalLetter.request.dto';
+import { Repository, UpdateResult } from 'typeorm';
 import { CreateSendLetterDto } from './dto/requests/createSendLetter.request.dto';
 import { LetterBody } from './entities/letterBody.entity';
 import { ReceivedLetter } from './entities/receivedLetter.entity';
@@ -116,10 +114,11 @@ export class LetterService {
     const sender = await this.userRepository.findOne({
       where: { id: createSendLetterDto.userId },
     });
-    const receiver = createSendLetterDto?.receiverId ? 
-      await this.userRepository.findOne({
-        where: { id: createSendLetterDto.receiverId },
-      }) : null;
+    const receiver = createSendLetterDto?.receiverId
+      ? await this.userRepository.findOne({
+          where: { id: createSendLetterDto.receiverId },
+        })
+      : null;
 
     const letterBody = new LetterBody();
     letterBody.title = createSendLetterDto.title;
@@ -149,31 +148,31 @@ export class LetterService {
 
     return newSendLetter;
   }
-  
+
   async getSendLetters(
     userId: number,
-    page: number = 1,
-    take: number = 10,
+    page = 1,
+    take = 10,
   ): Promise<{
     meta: {
-      page : number,
-	    take: number,
-	    totalCount: number,
-	    totalPage: number,
-	    hasNext:boolean
-    },
-    sendLetters: SendLetter[]
+      page: number;
+      take: number;
+      totalCount: number;
+      totalPage: number;
+      hasNext: boolean;
+    };
+    sendLetters: SendLetter[];
   }> {
     const [results, totalCount] = await this.sendLetterRepository.findAndCount({
       relations: {
-        letterBody: true
+        letterBody: true,
       },
-      where: { 
-        sender: {id: userId} 
+      where: {
+        sender: { id: userId },
       },
       take: take,
-      skip: take * (page -1),
-      order: { createdAt: -1 }
+      skip: take * (page - 1),
+      order: { createdAt: -1 },
     });
 
     return {
@@ -182,9 +181,9 @@ export class LetterService {
         take,
         totalCount,
         totalPage: Math.ceil(totalCount / take), // #TODO
-        hasNext: totalCount > (page -1) * take // #TODO
-      }, 
-      sendLetters: results
+        hasNext: totalCount > (page - 1) * take, // #TODO
+      },
+      sendLetters: results,
     };
   }
 }
