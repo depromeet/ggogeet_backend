@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Sentence } from 'src/sentence/entities/sentence.entity';
 
 export class SentenceResponseDto {
   @ApiProperty({
@@ -30,4 +31,12 @@ export class SentenceResponseDto {
     description: '생성 일자',
   })
   createdAt: Date;
+
+  constructor(sentence: Sentence) {
+    this.id = sentence.id;
+    this.situationId = sentence.situationId;
+    this.type = sentence.type;
+    this.isShared = sentence.isShared;
+    this.createdAt = sentence.createdAt;
+  }
 }
