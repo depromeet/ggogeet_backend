@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
@@ -9,21 +9,29 @@ import { DataSource } from 'typeorm';
 import { Notice } from './notice/entities/notice.entity';
 import { AuthModule } from './auth/auth.module';
 import { User } from './users/entities/user.entity';
-import { UserInfo } from './users/entities/userinfo.entity';
+import { UserInfo } from './users/entities/userInfo.entity';
 import { Social } from './users/entities/social.entity';
 import { Friend } from './users/entities/friend.entity';
 import { LetterModule } from './letter/letter.module';
-import { LetterInfo } from './letter/entities/letterinfo.entity';
-import { ReceiveLetter } from './letter/entities/receiveletter.entity';
+import { ReceivedLetter } from './letter/entities/receivedLetter.entity';
 import { ReminderModule } from './reminder/reminder.module';
 import { Reminder } from './reminder/entities/reminder.entity';
-import { LetterBody } from './letter/entities/letterbody.entity';
+import { LetterBody } from './letter/entities/letterBody.entity';
 import { Reply } from './reply/entities/reply.entity';
 import { Relationship } from './relationship/entities/relationship.entity';
 import { Situation } from './situation/entities/situation.entity';
 import { SendLetter } from './letter/entities/sendLetter.entity';
 import { SentenceModule } from './sentence/sentence.module';
 import { Sentence } from './sentence/entities/sentence.entity';
+import { ReplyModule } from './reply/reply.module';
+import { NestModule } from '@nestjs/common';
+import { LoggerMiddleware } from './common/middlewares/logger.middleware';
+import * as winston from 'winston';
+import {
+  utilities as nestWinstonModuleUtilities,
+  WinstonModule,
+} from 'nest-winston';
+import winstonDaily from 'winston-daily-rotate-file';
 
 const ConfigSettingModule = ConfigModule.forRoot({
   isGlobal: true,
@@ -43,8 +51,7 @@ const TypeOrmSettingModule = TypeOrmModule.forRoot({
     UserInfo,
     Social,
     Friend,
-    LetterInfo,
-    ReceiveLetter,
+    ReceivedLetter,
     LetterBody,
     Reply,
     Relationship,
@@ -58,20 +65,54 @@ const TypeOrmSettingModule = TypeOrmModule.forRoot({
   logging: 'all',
 });
 
+const logDir = 'logs';
+
+const dailyLoggerOptions = (level: string) => {
+  return {
+    level,
+    datePattern: 'YYYY-MM-DD HH:mm:ss',
+    dirname: logDir + `/${level}`,
+    filename: `${level}-%DATE%.log`,
+    maxFiles: '14d',
+    zippedArchive: true,
+  };
+};
+
+const WinstomSettingModule = WinstonModule.forRoot({
+  transports: [
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        nestWinstonModuleUtilities.format.nestLike('ggo-geet', {
+          prettyPrint: true,
+        }),
+      ),
+    }),
+    new winstonDaily(dailyLoggerOptions('error')),
+    new winstonDaily(dailyLoggerOptions('warn')),
+    new winstonDaily(dailyLoggerOptions('info')),
+  ],
+});
+
 @Module({
   imports: [
     ConfigSettingModule,
     TypeOrmSettingModule,
+    WinstomSettingModule,
     UsersModule,
     NoticeModule,
     AuthModule,
     LetterModule,
     SentenceModule,
     ReminderModule,
+    ReplyModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {
+export class AppModule implements NestModule {
   constructor(private dataSource: DataSource) {}
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
 }

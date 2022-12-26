@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Situation } from 'src/situation/entities/situation.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
-import { CreateReminderDto } from './dto/create-reminder.dto';
-import { UpdateReminderDto } from './dto/update-reminder.dto';
+import { CreateReminderDto } from './dto/createReminder.dto';
+import { UpdateReminderDto } from './dto/updateReminder.dto';
 import { Reminder } from './entities/reminder.entity';
 
 @Injectable()
@@ -20,14 +20,14 @@ export class ReminderService {
     const reminder = new Reminder();
     reminder.title = reminderDto.title;
     reminder.content = reminderDto.content;
-    reminder.event_at = reminderDto.event_at;
-    reminder.alert_on = reminderDto.alert_on;
-    reminder.alarm_at = reminderDto.alarm_at;
-    reminder.is_done = false;
+    reminder.eventAt = reminderDto.eventAt;
+    reminder.alertOn = reminderDto.alertOn;
+    reminder.alarmAt = reminderDto.alarmAt;
+    reminder.isDone = false;
     reminder.user = user;
     reminder.situation = await this.situationRepository.findOne({
       where: {
-        id: reminderDto.situation_id,
+        id: reminderDto.situationId,
       },
     });
     return this.reminderRepository.save(reminder);
@@ -45,7 +45,7 @@ export class ReminderService {
     };
 
     if (query.done) {
-      constraint['is_done'] = query.done == 'true';
+      constraint['isDone'] = query.done == 'true';
     }
 
     const reminder = await this.reminderRepository.findAndCount({
@@ -53,10 +53,10 @@ export class ReminderService {
       skip: offset,
       take: limit,
       order: {
-        event_at: order,
-        is_done: 'ASC',
+        eventAt: order,
+        isDone: 'ASC',
       },
-      select: ['id', 'title', 'event_at', 'alert_on', 'is_done'],
+      select: ['id', 'title', 'eventAt', 'alertOn', 'isDone'],
     });
 
     return {
@@ -80,10 +80,10 @@ export class ReminderService {
         'id',
         'title',
         'content',
-        'event_at',
-        'alert_on',
-        'alarm_at',
-        'is_done',
+        'eventAt',
+        'alertOn',
+        'alarmAt',
+        'isDone',
         'situation',
       ],
     });
@@ -95,10 +95,10 @@ export class ReminderService {
       id: reminder.id,
       title: reminder.title,
       content: reminder.content,
-      event_at: reminder.event_at,
-      alert_on: reminder.alert_on,
-      alarm_at: reminder.alarm_at,
-      is_done: reminder.is_done,
+      eventAt: reminder.eventAt,
+      alertOn: reminder.alertOn,
+      alarmAt: reminder.alarmAt,
+      isDone: reminder.isDone,
       situation: reminder.situation.content,
     };
 
@@ -125,19 +125,19 @@ export class ReminderService {
     reminder.content = updateReminderDto.content
       ? updateReminderDto.content
       : reminder.content;
-    reminder.event_at = updateReminderDto.event_at
-      ? updateReminderDto.event_at
-      : reminder.event_at;
-    reminder.alert_on = updateReminderDto.alert_on
-      ? updateReminderDto.alert_on
-      : reminder.alert_on;
-    reminder.alarm_at = updateReminderDto.alarm_at
-      ? updateReminderDto.alarm_at
-      : reminder.alarm_at;
-    reminder.situation = updateReminderDto.situation_id
+    reminder.eventAt = updateReminderDto.eventAt
+      ? updateReminderDto.eventAt
+      : reminder.eventAt;
+    reminder.alertOn = updateReminderDto.alertOn
+      ? updateReminderDto.alertOn
+      : reminder.alertOn;
+    reminder.alarmAt = updateReminderDto.alarmAt
+      ? updateReminderDto.alarmAt
+      : reminder.alarmAt;
+    reminder.situation = updateReminderDto.situationId
       ? await this.situationRepository.findOne({
           where: {
-            id: updateReminderDto.situation_id,
+            id: updateReminderDto.situationId,
           },
         })
       : reminder.situation;
@@ -148,10 +148,10 @@ export class ReminderService {
       id: id,
       title: reminder.title,
       content: reminder.content,
-      event_at: reminder.event_at,
-      alert_on: reminder.alert_on,
-      alarm_at: reminder.alarm_at,
-      is_done: reminder.is_done,
+      eventAt: reminder.eventAt,
+      alertOn: reminder.alertOn,
+      alarmAt: reminder.alarmAt,
+      isDone: reminder.isDone,
       situation: reminder.situation.content,
     };
   }
@@ -160,7 +160,7 @@ export class ReminderService {
     await this.reminderRepository.softDelete(id);
     return {
       id: id,
-      is_deleted: true,
+      isDeleted: true,
     };
   }
 
@@ -172,11 +172,11 @@ export class ReminderService {
           id: user.id,
         },
       },
-      { is_done: true },
+      { isDone: true },
     );
     return {
       id: id,
-      is_done: true,
+      isDone: true,
     };
   }
 
@@ -188,11 +188,11 @@ export class ReminderService {
           id: user.id,
         },
       },
-      { is_done: false },
+      { isDone: false },
     );
     return {
       id: id,
-      is_done: false,
+      isDone: false,
     };
   }
 }

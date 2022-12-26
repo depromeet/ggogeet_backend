@@ -4,9 +4,9 @@ import { SentenceType } from 'src/constants/sentence.constant';
 import { Situation } from 'src/situation/entities/situation.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
-import { CreateSentenceDto } from './dto/requests/create-sentence.request.dto';
-import { DeleteSentenceDto } from './dto/responses/delete-sentence.response.dto';
-import { SentenceResponseDto } from './dto/responses/sentence.response.dto';
+import { CreateSentenceDto } from './dto/createSentence.dto';
+import { DeleteSentenceDto } from './dto/deleteSentence.dto';
+import { SentenceResponseDto } from './dto/sentence.response.dto';
 import { Sentence } from './entities/sentence.entity';
 
 @Injectable()
@@ -106,9 +106,9 @@ export class SentenceService {
     newSentence.type = SentenceType.USER;
     newSentence.userId = user.id;
     newSentence.situation = await this.situationRepository.findOne({
-      where: { id: sentenceDto.situation_id },
+      where: { id: sentenceDto.situationId },
     });
-    newSentence.is_shared = sentenceDto.is_shared;
+    newSentence.isShared = sentenceDto.isShared;
     newSentence.content = sentenceDto.content;
 
     const result = await this.sentenceRepository.save(newSentence);

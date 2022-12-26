@@ -16,28 +16,28 @@ export class Friend {
   id: number;
 
   @Column()
-  kakao_uuid: string;
+  kakaoUuid: string;
 
   @Column()
-  kakao_friend_name: string;
+  kakaoFriendName: string;
 
   @ManyToOne(() => User)
-  @JoinColumn({ name: 'user_id' })
+  @JoinColumn({ name: 'userId' })
   user: User;
 
-  @Column({ name: 'user_id' })
+  @Column({ name: 'userId' })
   userId: number;
 
   @ManyToOne(() => User)
-  @JoinColumn({ name: 'friend_user_id' })
-  friend_user: User;
+  @JoinColumn({ name: 'friendUserId' })
+  friendUser: User;
 
   @CreateDateColumn()
-  created_at: Date;
+  createdAt: Date;
 
   @UpdateDateColumn()
-  updated_at: Date;
+  updatedAt: Date;
 
   @DeleteDateColumn()
-  deleted_at: Date;
+  deletedAt: Date;
 }

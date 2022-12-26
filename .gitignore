@@ -396,3 +396,6 @@ Temporary Items
 # Local
 .env
 dist
+
+# Logs
+logs

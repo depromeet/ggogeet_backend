@@ -21,37 +21,34 @@ export class Sentence {
   type: SentenceType;
 
   @ManyToOne(() => User)
-  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
   user: User;
 
-  @Column({ name: 'user_id' })
+  @Column({ name: 'userId' })
   userId: number;
 
   @Column()
   content: string;
 
   @Column({ default: false })
-  is_shared: boolean;
+  isShared: boolean;
 
   @Column({ default: 0 })
-  my_preference: number;
+  myPreference: number;
 
   @Column({ default: 0 })
-  total_preference: number;
+  totalPreference: number;
 
   @ManyToOne(() => Situation)
-  @JoinColumn({ name: 'situation_id', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'situationId', referencedColumnName: 'id' })
   situation: Situation;
 
-  @Column({ name: 'situation_id' })
+  @Column({ name: 'situationId' })
   situationId: number;
 
   @CreateDateColumn()
-  created_at: Date;
+  createdAt: Date;
 
   @UpdateDateColumn()
-  updated_at: Date;
-
-  @DeleteDateColumn()
-  deleted_at: Date;
+  updatedAt: Date;
 }

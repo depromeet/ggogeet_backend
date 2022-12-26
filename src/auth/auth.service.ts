@@ -9,13 +9,13 @@ import * as qs from 'qs';
 
 import { Social } from 'src/users/entities/social.entity';
 import { User } from 'src/users/entities/user.entity';
-import { UserInfo } from 'src/users/entities/userinfo.entity';
+import { UserInfo } from 'src/users/entities/userInfo.entity';
 import { Repository } from 'typeorm';
 import axios from 'axios';
 import { Friend } from 'src/users/entities/friend.entity';
-import { UpdateKakaoUserDto } from './dto/requests/update-kakaouser.dto';
-import { CreateKakaoUserDto } from './dto/requests/create-kakaouser.dto';
-import { ResponseFriendDto } from './dto/response/response-friend.dto';
+import { UpdateKakaoUserDto } from './dto/requests/updateKakaoUser.dto';
+import { CreateKakaoUserDto } from './dto/requests/createKakaoUser.dto';
+import { ResponseFriendDto } from './dto/response/responseFriend.dto';
 
 @Injectable()
 export class AuthService {
@@ -33,7 +33,7 @@ export class AuthService {
     const body = {
       grant_type: 'authorization_code',
       client_id: process.env.KAKAO_CLIENT_ID,
-      redirect_uri: `http://localhost:3000/auth/kakao/${option}`,
+      redirect_uri: `${process.env.SERVER_HOST}/auth/kakao/${option}`,
       code,
     };
     const headers = {
@@ -50,7 +50,7 @@ export class AuthService {
       });
       return response.data;
     } catch (e) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException(e, "Wrong kakaoAccessCode");
     }
   }
 
@@ -113,9 +113,9 @@ export class AuthService {
     // 새로 가입한 유저면 create
     if (!exUser) {
       const newSocial = new Social();
-      newSocial.client_id = kakaoInfo.kakaoId;
+      newSocial.clientId = kakaoInfo.kakaoId;
       if (kakaoInfo.allow_scope.indexOf('friends') !== -1) {
-        newSocial.allow_friends_list = true;
+        newSocial.allowFriendsList = true;
       }
 
       const newUserInfo = new UserInfo();
@@ -127,12 +127,11 @@ export class AuthService {
       const newUser = new User();
       newUser.name = kakaoInfo.nickname;
       newUser.nickname = kakaoInfo.nickname;
-      newUser.profile_img = kakaoInfo.profile_image;
+      newUser.profileImg = kakaoInfo.profile_image;
       newUser.social = newSocial;
-      newUser.userinfo = newUserInfo;
+      newUser.userInfo = newUserInfo;
 
       await this.userRepository.save(newUser);
-
       return { statusCode: 201, user: newUser };
     } else {
       // 기존 유저면 update
@@ -168,18 +167,18 @@ export class AuthService {
       },
       {
         name: kakaoInfo.nickname,
-        profile_img: kakaoInfo.profile_image,
+        profileImg: kakaoInfo.profile_image,
       },
     );
     return await this.userRepository.findOneBy({ id });
   }
 
-  async updateKakaoFriends(accessToken: string, user: User) {
+  async updateKakaoFriends(access_token: string, user: User) {
     const kakaoFriendsUrl = 'https://kapi.kakao.com/v1/api/talk/friends';
 
     const header = {
       'Content-type': 'application/x-www-form-urlencoded;charset=utf-8',
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bearer ${access_token}`,
     };
 
     const responseFriendsInfo = await axios({
@@ -194,7 +193,7 @@ export class AuthService {
         responseFriendsInfo.data.elements.map(async (element) => {
           // 존재하는 친구인지 검사
           const isFriendExist = await this.friendsRepository.findOne({
-            where: { userId: user.id, kakao_uuid: element.kakao_uuid },
+            where: { userId: user.id, kakaoUuid: element.kakaoUuid },
           });
           // 새로운 친구면 추가
           if (!isFriendExist) {
@@ -208,10 +207,10 @@ export class AuthService {
 
   async createKakakoFriends(element, user: User) {
     const friend = new Friend();
-    friend.kakao_uuid = element.uuid;
-    friend.kakao_friend_name = element.profile_nickname;
+    friend.kakaoUuid = element.uuid;
+    friend.kakaoFriendName = element.profile_nickname;
 
-    friend.friend_user = await this.findUserByClientId(element.id);
+    friend.friendUser = await this.findUserByClientId(element.id);
     friend.user = user;
 
     await this.friendsRepository.save(friend);
@@ -221,15 +220,16 @@ export class AuthService {
     const socialUser = await this.userRepository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.social', 'social')
-      .where('social.client_id = :client_id', { client_id: clientId })
+      .where('social.clientId = :clientId', { clientId: clientId })
       .getOne();
 
-    if (!socialUser) {
-      throw new NotFoundException({
-        type: 'NOT_FOUND',
-        message: `Social User #${clientId} not found`,
-      });
-    }
+      // 에러 발생해서 유저 새로 생성안됐음. null전달하면 유저 생성되니 주석처리함 - 문규
+    // if (!socialUser) {
+    //   throw new NotFoundException({
+    //     type: 'NOT_FOUND',
+    //     message: `Social User #${clientId} not found`,
+    //   });
+    // }
 
     return socialUser;
   }
@@ -237,9 +237,9 @@ export class AuthService {
   async getKakaoFriends(user: User): Promise<ResponseFriendDto[]> {
     const friendList = await this.friendsRepository
       .createQueryBuilder('friend')
-      // .select(['friend.kakao_uuid', 'friend.kakao_friend_name'])
-      .leftJoinAndSelect('friend.friend_user', 'user')
-      // .addSelect(['user.id', 'user.profile_img'])
+      // .select(['friend.kakaoUuid', 'friend.kakaoFriendName'])
+      .leftJoinAndSelect('friend.friendUser', 'user')
+      // .addSelect(['user.id', 'user.profileImg'])
       .where('friend.userId = :userId', { userId: user.id })
       .getMany();
 
@@ -251,7 +251,7 @@ export class AuthService {
   async getKakaoFriendById(id: number, user: User): Promise<ResponseFriendDto> {
     const friend = await this.friendsRepository
       .createQueryBuilder('friend')
-      .leftJoinAndSelect('friend.friend_user', 'user')
+      .leftJoinAndSelect('friend.friendUser', 'user')
       .where('friend.id = :id', { id: id })
       .andWhere('friend.userId = :userId', { userId: user.id })
       .getOne();
@@ -266,20 +266,20 @@ export class AuthService {
     return new ResponseFriendDto(friend);
   }
 
-  async sendMessageToUser(accessToken: string, kakao_uuid: string) {
+  async sendMessageToUser(access_token: string, kakaoUuid: string) {
     const kakaoMessageUrl = 'https://kapi.kakao.com/v2/api/talk/memo/send';
 
     // 편지 조회하기 위한 access_token
-    const access_code = 'dfsdasdfafda';
+    const accessCode = 'dfsdasdfafda';
     const body = {
       template_id: 87114,
-      template_args: `{\"code\": "${access_code}"}`,
-      receiver_uuids: [kakao_uuid],
+      template_args: `{\"code\": "${accessCode}"}`,
+      receiver_uuids: [kakaoUuid],
     };
 
     const header = {
       'Content-type': 'application/x-www-form-urlencoded;charset=utf-8',
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bearer ${access_token}`,
     };
 
     // 메세지 보내기
@@ -292,7 +292,6 @@ export class AuthService {
       });
       return responseMessageInfo.data;
     } catch (e) {
-      console.log(e);
     }
   }
 }
