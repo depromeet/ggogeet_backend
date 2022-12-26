@@ -26,7 +26,7 @@ import { CreateExternalImgLetterDto } from './dto/requests/createExternalLetterI
 import { CreateExternalLetterDto } from './dto/requests/createExternalLetter.request.dto';
 import { CreateSendLetterDto } from './dto/requests/createSendLetter.request.dto';
 import { LetterService } from './letter.service';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @Controller('letters')
 @ApiTags('Letter API')
@@ -40,6 +40,7 @@ export class LetterController {
     summary: '편지를 보내는 API',
     description: '편지를 친구에게 보냅니다.',
   })
+  @ApiBearerAuth()
   @Post('/send')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.CREATED)
@@ -78,6 +79,7 @@ export class LetterController {
     summary: '보낸 편지 조회하기 API',
     description: '보낸 편지를 조회합니다.',
   })
+  @ApiBearerAuth()
   @Get('/send')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
@@ -138,6 +140,7 @@ export class LetterController {
     summary: '이미지 편지 업로드 API',
     description: '외부에서 받은 이미지로 된 편지를 업로드합니다.',
   })
+  @ApiBearerAuth()
   @Post('/images/upload')
   @UseInterceptors(FileInterceptor('file'))
   createExternalImgLetter(@UploadedFile() file: Express.MulterS3.File) {
@@ -158,6 +161,7 @@ export class LetterController {
     summary: '편지 삭제 API',
     description: '편지를 삭제합니다.',
   })
+  @ApiBearerAuth()
   @Delete(':id')
   delete(@Param('id') id: number) {
     return this.letterService.delete(id);

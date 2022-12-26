@@ -15,10 +15,11 @@ import { UpdateUserDto } from './dto/requests/updateUser.dto';
 import { JwtAuthGuard } from 'src/common/guards/jwtAuth.guard';
 import { AuthService } from 'src/auth/auth.service';
 import { CreateKakaoUserDto } from 'src/auth/dto/requests/createKakaoUser.dto';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 @ApiTags('Users API')
 export class UsersController {
   constructor(

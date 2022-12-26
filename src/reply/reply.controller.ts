@@ -11,10 +11,11 @@ import { JwtAuthGuard } from 'src/common/guards/jwtAuth.guard';
 import { User } from 'src/users/entities/user.entity';
 import { CreateReplyDto } from './dtos/requests/createReply.request.dto';
 import { ReplyService } from './reply.service';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @Controller('replies')
 @UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 @ApiTags('Reply API')
 export class ReplyController {
   constructor(private readonly replyService: ReplyService) {}

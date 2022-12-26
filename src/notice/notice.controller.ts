@@ -12,7 +12,7 @@ import {
 import { CreateNoticeDto } from './dto/createNotice.dto';
 import { UpdateNoticeDto } from './dto/updateNotice.dto';
 import { NoticeService } from './notice.service';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @Controller('notices')
 @ApiTags('Notice API')
@@ -42,6 +42,7 @@ export class NoticeController {
     summary: '공지사항 추가하기 API',
     description: '공지사항을 추가합니다.',
   })
+  @ApiBearerAuth()
   @Post()
   @HttpCode(HttpStatus.CREATED)
   create(@Body() noticeData: CreateNoticeDto) {
@@ -53,6 +54,7 @@ export class NoticeController {
     summary: '공지사항 수정하기 API',
     description: '공지사항을 수정합니다.',
   })
+  @ApiBearerAuth()
   @Patch(':id')
   update(@Param('id') id: number, @Body() noticeDto: UpdateNoticeDto) {
     // todo: add validation
@@ -63,6 +65,7 @@ export class NoticeController {
     summary: '공지사항 삭제하기 API',
     description: '공지사항을 삭제합니다.',
   })
+  @ApiBearerAuth()
   @Delete(':id')
   delete(@Param('id') id: number) {
     // todo: add validation

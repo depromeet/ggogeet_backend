@@ -14,10 +14,16 @@ import {
 import { JwtAuthGuard } from 'src/common/guards/jwtAuth.guard';
 import { CreateSentenceDto } from './dto/createSentence.dto';
 import { SentenceService } from './sentence.service';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiNotFoundResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @Controller('sentence')
 @ApiTags('Sentence API')
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 export class SentenceController {
   constructor(private readonly sentenceService: SentenceService) {}
@@ -66,11 +72,11 @@ export class SentenceController {
     return await this.sentenceService.createSentence(req.user, sentenceDto);
   }
 
-  // 문장 삭제하기
   @ApiOperation({
     summary: '문장 삭제하기 API',
     description: '문장을 삭제합니다.',
   })
+  @ApiNotFoundResponse({ description: '문장을 찾을 수 없습니다.' })
   @Delete(':id')
   async deleteSentence(@Req() req, @Param('id') id: number) {
     return await this.sentenceService.deleteSentence(id, req.user);

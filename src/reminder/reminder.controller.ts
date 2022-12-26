@@ -17,10 +17,11 @@ import { User } from 'src/users/entities/user.entity';
 import { CreateReminderDto } from './dto/createReminder.dto';
 import { UpdateReminderDto } from './dto/updateReminder.dto';
 import { ReminderService } from './reminder.service';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @Controller('reminders')
 @ApiTags('Reminder API')
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 export class ReminderController {
   constructor(private readonly reminderService: ReminderService) {}
