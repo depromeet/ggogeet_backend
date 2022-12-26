@@ -221,24 +221,14 @@ export class AuthService {
       .leftJoinAndSelect('user.social', 'social')
       .where('social.clientId = :clientId', { clientId: clientId })
       .getOne();
-
-    // 에러 발생해서 유저 새로 생성안됐음. null전달하면 유저 생성되니 주석처리함 - 문규
-    // if (!socialUser) {
-    //   throw new NotFoundException({
-    //     type: 'NOT_FOUND',
-    //     message: `Social User #${clientId} not found`,
-    //   });
-    // }
-
+      
     return socialUser;
   }
 
   async getKakaoFriends(user: User): Promise<ResponseFriendDto[]> {
     const friendList = await this.friendsRepository
       .createQueryBuilder('friend')
-      // .select(['friend.kakaoUuid', 'friend.kakaoFriendName'])
       .leftJoinAndSelect('friend.friendUser', 'user')
-      // .addSelect(['user.id', 'user.profileImg'])
       .where('friend.userId = :userId', { userId: user.id })
       .getMany();
 
