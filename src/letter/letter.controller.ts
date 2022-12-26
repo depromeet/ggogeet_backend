@@ -33,6 +33,7 @@ import {
 
 @Controller('letters')
 @ApiTags('Letter API')
+@UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 export class LetterController {
   constructor(
@@ -45,7 +46,6 @@ export class LetterController {
     description: '편지를 친구에게 보냅니다.',
   })
   @Post('/send')
-  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   async createSendLetter(
     @ReqUser() user: User,
@@ -82,24 +82,13 @@ export class LetterController {
     summary: '보낸 편지 조회하기 API',
     description: '보낸 편지를 조회합니다.',
   })
-  @Get('/send')
-  @UseGuards(JwtAuthGuard)
+  @Get('/sent')
   @HttpCode(HttpStatus.OK)
   async getSendLetter(
     @ReqUser() user: User,
-    // @Req() req, // #TODO pagination DTO 로 변경
-    @Res() res,
     @Query('page', ParseIntPipe) page: number,
   ) {
-    const sendLettersAndMeta = await this.letterService.getSendLetters(
-      user.id,
-      page,
-    );
-
-    res.send({
-      meta: sendLettersAndMeta.meta,
-      data: { sendLetters: sendLettersAndMeta.sendLetters },
-    });
+    return this.letterService.getSendLetters(user.id, page);
   }
 
   @ApiOperation({

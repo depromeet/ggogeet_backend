@@ -129,7 +129,7 @@ export class LetterService {
       totalPage: number;
       hasNext: boolean;
     };
-    sendLetters: SendLetter[];
+    data: { sendLetters: SendLetter[] };
   }> {
     const [results, totalCount] = await this.sendLetterRepository.findAndCount({
       relations: {
@@ -151,7 +151,9 @@ export class LetterService {
         totalPage: Math.ceil(totalCount / take), // #TODO
         hasNext: totalCount > (page - 1) * take, // #TODO
       },
-      sendLetters: results,
+      data: {
+        sendLetters: results,
+      },
     };
   }
 }
