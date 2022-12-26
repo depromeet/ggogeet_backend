@@ -18,21 +18,16 @@ export class SentenceService {
     private situationRepository: Repository<Situation>,
   ) {}
 
-  async findAll(user: User): Promise<any> {
-    const userSentence = [];
-    const guideSentence = [];
-
-    for (let situationId = 1; situationId < 9; situationId++) {
-      const tempUserSentence = await this.findUserSentenceBySituation(
-        user.id,
-        situationId,
-      );
-      const tempGuideSentence = await this.findGuideSentenceBySituation(
-        situationId,
-      );
-
-      userSentence.push(tempUserSentence);
-      guideSentence.push(tempGuideSentence);
+  async findAll(user: User, query: any): Promise<any> {
+    let userSentence: any;
+    let guideSentence: any;
+    if (query.situation) {
+      const situationId: number = parseInt(query.situation);
+      userSentence = await this.findUserSentence(user.id, situationId);
+      guideSentence = await this.findGuideSentence(situationId);
+    } else {
+      userSentence = await this.findUserSentence(user.id);
+      guideSentence = await this.findGuideSentence();
     }
 
     return { userSentence, guideSentence };
@@ -40,55 +35,67 @@ export class SentenceService {
 
   async findOne(user: User, id: number): Promise<SentenceResponseDto> {
     const sentence = await this.sentenceRepository.findOne({
-      where: { id: id, userId: user.id },
+      where: { id: id },
     });
-    console.log(sentence);
 
-    if (!sentence) {
+    if (
+      !sentence ||
+      (sentence.is_shared === false && sentence.userId !== user.id)
+    ) {
       throw new NotFoundException({
         type: 'NOT_FOUND',
         message: `Sentence #${id} not found`,
       });
     }
 
-    const result = new SentenceResponseDto();
-    result.id = sentence.id;
-    result.situationId = sentence.situationId;
-    result.isShared = sentence.isShared;
-    result.type = sentence.type;
-    result.createdAt = sentence.createdAt;
-
-    return result;
+    return new SentenceResponseDto(sentence);
   }
 
-  async findUserSentenceBySituation(userId: number, situationId: number) {
-    const temp = await this.sentenceRepository
-      .createQueryBuilder('sentence')
-      .select('sentence.id')
-      .addSelect('sentence.content')
-      .where('sentence.userId = :id', { id: userId })
-      .andWhere('sentence.type = :type', { type: SentenceType.USER })
-      .andWhere('sentence.situationId = :situationId', {
-        situationId: situationId,
-      })
-      .take(7)
-      .getMany();
-    return { situationId: situationId, sentence: temp };
+  async findUserSentence(
+    userId: number,
+    situationId?: number,
+    limit: number = 7,
+  ) {
+    let constraint = {
+      type: SentenceType.USER,
+      userId: userId,
+    };
+
+    if (situationId) {
+      constraint['situationId'] = situationId;
+    }
+
+    const result = await this.sentenceRepository.find({
+      where: constraint,
+      order: {
+        my_preference: 'DESC',
+      },
+      take: limit,
+      select: ['id', 'content'],
+    });
+
+    return { situation_id: situationId, sentence: result };
   }
 
-  async findGuideSentenceBySituation(situationId: number) {
-    const temp = await this.sentenceRepository
-      .createQueryBuilder('sentence')
-      .select('sentence.id')
-      .addSelect('sentence.content')
-      .andWhere('sentence.type = :type', { type: SentenceType.GUIDE })
-      .andWhere('sentence.situationId = :situationId', {
-        situationId: situationId,
-      })
-      .orderBy('rand ()')
-      .take(5)
-      .getMany();
-    return { situationId: situationId, sentence: temp };
+  async findGuideSentence(situationId?: number, limit: number = 5) {
+    let constraint = {
+      type: SentenceType.GUIDE,
+    };
+
+    if (situationId) {
+      constraint['situationId'] = situationId;
+    }
+
+    const result = await this.sentenceRepository.find({
+      where: constraint,
+      order: {
+        total_preference: 'DESC',
+      },
+      take: limit,
+      select: ['id', 'content'],
+    });
+
+    return { situation_id: situationId, sentence: result };
   }
 
   async createSentence(
@@ -104,27 +111,15 @@ export class SentenceService {
     newSentence.isShared = sentenceDto.isShared;
     newSentence.content = sentenceDto.content;
 
-    const saved = await this.sentenceRepository.save(newSentence);
-
-    const result = new SentenceResponseDto();
-    result.id = saved.id;
-    result.situationId = saved.situation.id;
-    result.isShared = saved.isShared;
-    result.type = saved.type;
-    result.createdAt = saved.createdAt;
-
-    return result;
+    const result = await this.sentenceRepository.save(newSentence);
+    return new SentenceResponseDto(result);
   }
 
   async deleteSentence(id: number, user: User): Promise<DeleteSentenceDto> {
-    const result = new DeleteSentenceDto();
-
-    const deleted = await this.sentenceRepository.delete({
+    const deleted = await this.sentenceRepository.softDelete({
       id,
       userId: user.id,
     });
-
-    // DeleteResult { raw: [], affected: 1 }
 
     if (!deleted.affected)
       throw new NotFoundException({
@@ -132,9 +127,6 @@ export class SentenceService {
         message: `Sentence #${id} not found`,
       });
 
-    result.type = 'SUCCESS';
-    result.message = `Sentence #${id} is deleted`;
-
-    return result;
+    return new DeleteSentenceDto('SUCCESS', `Sentence #${id} is deleted`);
   }
 }

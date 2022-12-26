@@ -8,7 +8,6 @@ import {
   Param,
   Post,
   Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/common/guards/jwtAuth.guard';
@@ -22,6 +21,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { SentenceResponseDto } from './dto/sentence.response.dto';
+import { User } from 'src/users/entities/user.entity';
+import { ReqUser } from 'src/common/decorators/user.decorators';
 
 @Controller('sentence')
 @ApiTags('Sentence API')
@@ -35,8 +36,15 @@ export class SentenceController {
     description: '상황별의 모든 문장을 가져옵니다.',
   })
   @Get()
-  async findAllSentence(@Req() req) {
-    return await this.sentenceService.findAll(req.user);
+  async findAllSentence(
+    @ReqUser() user: User,
+    @Query()
+    query: {
+      situation: number;
+      order: string;
+    },
+  ) {
+    return await this.sentenceService.findAll(user, query);
   }
 
   @ApiOperation({
@@ -49,48 +57,25 @@ export class SentenceController {
     type: SentenceResponseDto,
   })
   @Get(':id')
-  async findOneSentence(@Req() req, @Param('id') id: number) {
-    return await this.sentenceService.findOne(req.user, id);
+  async findOneSentence(@ReqUser() user: User, @Param('id') id: number) {
+    return await this.sentenceService.findOne(user, id);
   }
 
-  @ApiOperation({
-    summary: '상황별 문장 가져오기 API',
-    description: '상황별로 문장을 가져옵니다.',
-  })
-  @Get('situation')
-  async findSentence(@Req() req, @Query('id') situationId: number) {
-    const userSentence = await this.sentenceService.findUserSentenceBySituation(
-      req.user.id,
-      situationId,
-    );
-    const guideSentence =
-      await this.sentenceService.findGuideSentenceBySituation(situationId);
-
-    return { userSentence, guideSentence };
-  }
-
-  @ApiOperation({
-    summary: '문장 추가하기 API',
-    description: '문장을 추가합니다.',
-  })
-  @ApiResponse({
-    status: HttpStatus.CREATED,
-    description: '문장이 추가되었습니다.',
-    type: SentenceResponseDto,
-  })
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async createSentence(@Req() req, @Body() sentenceDto: CreateSentenceDto) {
-    return await this.sentenceService.createSentence(req.user, sentenceDto);
+  async createSentence(
+    @ReqUser() user: User,
+    @Body() sentenceDto: CreateSentenceDto,
+  ) {
+    return await this.sentenceService.createSentence(user, sentenceDto);
   }
 
   @ApiOperation({
     summary: '문장 삭제하기 API',
     description: '문장을 삭제합니다.',
   })
-  @ApiNotFoundResponse({ description: '문장을 찾을 수 없습니다.' })
   @Delete(':id')
-  async deleteSentence(@Req() req, @Param('id') id: number) {
-    return await this.sentenceService.deleteSentence(id, req.user);
+  async deleteSentence(@ReqUser() user: User, @Param('id') id: number) {
+    return await this.sentenceService.deleteSentence(id, user);
   }
 }

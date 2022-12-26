@@ -4,6 +4,7 @@ import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -32,10 +33,10 @@ export class Sentence {
   @Column({ default: false })
   isShared: boolean;
 
-  @Column({ nullable: true })
+  @Column({ default: 0 })
   myPreference: number;
 
-  @Column({ nullable: true })
+  @Column({ default: 0 })
   totalPreference: number;
 
   @ManyToOne(() => Situation)
