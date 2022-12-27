@@ -16,10 +16,6 @@ export class CreateDraftLetterDto {
   readonly receiverId?: number;
 
   @IsString()
-  @IsOptional()
-  readonly kakaoUuid?: string;
-
-  @IsString()
   @ApiProperty({
     example: 'Pretty Minusu',
     description: '받는 사람 닉네임',
@@ -53,8 +49,4 @@ export class CreateDraftLetterDto {
     description: '편지 템플릿 url',
   })
   readonly templateUrl: string;
-
-  @IsString()
-  @IsOptional()
-  readonly kakaoAccessCode: string;
 }

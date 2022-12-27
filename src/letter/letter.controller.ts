@@ -29,6 +29,7 @@ import {
 import { CreateDraftLetterDto } from './dto/requests/createDraftLetter.request.dto';
 import { LetterSentService } from './letter.sent.service';
 import { LetterReceviedService } from './letter.recevied.service';
+import { SendLetterDto } from './dto/requests/sendLetter.request.dto';
 
 @Controller('letters')
 @ApiTags('Letter API')
@@ -61,8 +62,12 @@ export class LetterController {
   })
   @Post(':id/complete')
   @HttpCode(HttpStatus.CREATED)
-  async sendLetter(@ReqUser() user: User, @Param('id') id: number) {
-    return this.letterService.sendLetter(user, id);
+  async sendLetter(
+    @ReqUser() user: User,
+    @Param('id') id: number,
+    @Body() sendLetterDto: SendLetterDto,
+  ) {
+    return this.letterService.sendLetter(user, id, sendLetterDto);
   }
 
   @ApiOperation({

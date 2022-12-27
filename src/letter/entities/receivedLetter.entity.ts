@@ -5,10 +5,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
+import { LetterBody } from './letterBody.entity';
 
 @Entity('receivedLetter')
 export class ReceivedLetter {
@@ -28,6 +30,10 @@ export class ReceivedLetter {
     referencedColumnName: 'id',
   })
   sender: User;
+
+  @OneToOne(() => LetterBody, { cascade: true })
+  @JoinColumn()
+  letterBody: LetterBody;
 
   @Column({ type: 'varchar', length: '255' })
   senderNickname: string;
