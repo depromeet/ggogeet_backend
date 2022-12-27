@@ -38,7 +38,22 @@ export class LetterReceviedService {
   async createImageLetter(
     user: User,
     createExternalImgLetterDto: CreateExternalImgLetterDto,
-  ) {}
+  ) {
+    const letterBody = new LetterBody();
+    letterBody.title = createExternalImgLetterDto.title;
+    letterBody.imageContent = createExternalImgLetterDto.imageUrl;
+    letterBody.type = LetterType.EXTERNALIMG;
+    letterBody.situationId = createExternalImgLetterDto.situationId;
+    letterBody.templateUrl = createExternalImgLetterDto.templateUrl;
+
+    const receivedLetter = new ReceivedLetter();
+    receivedLetter.receiver = user;
+    receivedLetter.letterBody = letterBody;
+    receivedLetter.senderNickname = createExternalImgLetterDto.senderNickname;
+
+    const result = await this.receviedLetterRepository.save(receivedLetter);
+    return result;
+  }
 
   async findAll(user: User, query: any): Promise<ReceivedLetter[]> {
     const letters = this.receviedLetterRepository.find({
