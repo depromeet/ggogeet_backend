@@ -4,10 +4,6 @@ import { IsNumber, IsOptional, IsString } from 'class-validator';
 export class CreateDraftLetterDto {
   @IsNumber()
   @IsOptional()
-  readonly userId: number;
-
-  @IsNumber()
-  @IsOptional()
   @ApiProperty({
     example: 1,
     description:
@@ -16,11 +12,12 @@ export class CreateDraftLetterDto {
   readonly receiverId?: number;
 
   @IsString()
+  @IsOptional()
   @ApiProperty({
     example: 'Pretty Minusu',
-    description: '받는 사람 닉네임',
+    description: '받는 사람 닉네임: 받는 유저가 회원이 아닐 경우 입력',
   })
-  readonly receiverNickname: string;
+  readonly receiverNickname?: string;
 
   @IsNumber()
   @ApiProperty({

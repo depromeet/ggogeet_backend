@@ -27,18 +27,29 @@ export class LetterService {
   async createDraftLetter(
     user: User,
     createDraftLetterDto: CreateDraftLetterDto,
-  ) {
+  ): Promise<SendLetter> {
     /*
      * Check Recevier is Available
      * Save Letter Body(title, content, template url, situation)
      * Save Send Letter to Temporarily Saved
      */
 
+    if (
+      createDraftLetterDto?.receiverId == null &&
+      createDraftLetterDto?.receiverNickname == null
+    ) {
+      throw new NotFoundException('Receiver is not available');
+    }
+
     const receiver = createDraftLetterDto?.receiverId
       ? await this.userRepository.findOne({
           where: { id: createDraftLetterDto.receiverId },
         })
       : null;
+
+    const receiverNickname = createDraftLetterDto?.receiverNickname
+      ? createDraftLetterDto?.receiverNickname
+      : receiver?.nickname;
 
     const letterBody = new LetterBody();
     letterBody.title = createDraftLetterDto.title;
@@ -50,7 +61,7 @@ export class LetterService {
     const sendLetter = new SendLetter();
     sendLetter.sender = user;
     sendLetter.receiver = receiver;
-    sendLetter.receiverNickname = createDraftLetterDto.receiverNickname;
+    sendLetter.receiverNickname = receiverNickname;
     sendLetter.status = SendLetterStatus.TMP_SAVED;
     sendLetter.letterBody = letterBody;
 
@@ -58,7 +69,11 @@ export class LetterService {
     return result;
   }
 
-  async sendLetter(user: User, id: number, sendLetterDto: SendLetterDto) {
+  async sendLetter(
+    user: User,
+    id: number,
+    sendLetterDto: SendLetterDto,
+  ): Promise<void> {
     /*
      * Validation of letter IDs and recevier
      * Get Access Token through Kakao API
