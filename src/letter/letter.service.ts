@@ -27,6 +27,12 @@ export class LetterService {
     user: User,
     createDraftLetterDto: CreateDraftLetterDto,
   ) {
+    /*
+     * Check Recevier is Available
+     * Save Letter Body(title, content, template url, situation)
+     * Save Send Letter to Temporarily Saved
+     */
+
     const receiver = createDraftLetterDto?.receiverId
       ? await this.userRepository.findOne({
           where: { id: createDraftLetterDto.receiverId },
@@ -52,6 +58,12 @@ export class LetterService {
   }
 
   async sendLetter(user: User, id: number, sendLetterDto: SendLetterDto) {
+    /*
+     * Validation of letter IDs and recevier
+     * Get Access Token through Kakao API
+     * Create new incoming letters, save sender information, and update the status of outgoing letters
+     * Send Message to KaKaotalk Friends API
+     */
     const sendLetter = await this.sendLetterRepository.findOne({
       where: { id: id, sender: { id: user.id } },
     });
