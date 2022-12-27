@@ -106,6 +106,7 @@ export class LetterController {
   })
   @Get('/received')
   findAll(
+    @ReqUser() user: User,
     @Query()
     query: {
       offset: number;
@@ -116,7 +117,7 @@ export class LetterController {
       sender: string;
     },
   ) {
-    return this.letterReceviedService.findAll(query);
+    return this.letterReceviedService.findAll(user, query);
   }
 
   @ApiOperation({
@@ -125,7 +126,7 @@ export class LetterController {
   })
   @Get('/received/:id')
   findOne(@ReqUser() user: User, @Param('id') id: number) {
-    return this.letterReceviedService.findOne(id);
+    return this.letterReceviedService.findOne(user, id);
   }
 
   @ApiOperation({
