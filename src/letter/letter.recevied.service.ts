@@ -3,6 +3,8 @@ import { Repository } from 'typeorm';
 import { ReceivedLetter } from './entities/receivedLetter.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
+import { CreateExternalImgLetterDto } from './dto/requests/createExternalLetterImg.request.dto';
+import { CreateExternalTextLetterDto } from './dto/requests/createExternalLetter.request.dto';
 
 @Injectable()
 export class LetterReceviedService {
@@ -11,11 +13,22 @@ export class LetterReceviedService {
     private receviedLetterRepository: Repository<ReceivedLetter>,
   ) {}
 
+  async createTextLetter(
+    user: User,
+    createExternalTextLetter: CreateExternalTextLetterDto,
+  ) {}
+
+  async createImageLetter(
+    user: User,
+    createExternalImgLetterDto: CreateExternalImgLetterDto,
+  ) {}
+
   async findAll(user: User, query: any): Promise<ReceivedLetter[]> {
     const letters = this.receviedLetterRepository.find({
       where: {
         receiver: { id: user.id },
       },
+      relations: ['letterBody'],
     });
 
     return letters;
@@ -24,6 +37,7 @@ export class LetterReceviedService {
   async findOne(user: User, id: number): Promise<ReceivedLetter> {
     const letter = await this.receviedLetterRepository.findOne({
       where: { id: id, receiver: { id: user.id } },
+      relations: ['letterBody'],
     });
     if (!letter) {
       throw new BadRequestException('There is no id');

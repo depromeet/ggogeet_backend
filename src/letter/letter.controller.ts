@@ -30,6 +30,8 @@ import { CreateDraftLetterDto } from './dto/requests/createDraftLetter.request.d
 import { LetterSentService } from './letter.sent.service';
 import { LetterReceviedService } from './letter.recevied.service';
 import { SendLetterDto } from './dto/requests/sendLetter.request.dto';
+import { CreateExternalImgLetterDto } from './dto/requests/createExternalLetterImg.request.dto';
+import { CreateExternalTextLetterDto } from './dto/requests/createExternalLetter.request.dto';
 
 @Controller('letters')
 @ApiTags('Letter API')
@@ -153,8 +155,40 @@ export class LetterController {
   })
   @Post('/recevied/images/upload')
   @UseInterceptors(FileInterceptor('file'))
-  createExternalImgLetter(@UploadedFile() file: Express.MulterS3.File) {
+  uploadExternalImgLetter(@UploadedFile() file: Express.MulterS3.File) {
     return this.letterReceviedService.uploadExternalLetterImage(file);
+  }
+
+  @ApiOperation({
+    summary: '외부 텍스트 편지 생성 API',
+    description: '외부에서 받은 텍스트로 된 편지를 생성합니다.',
+  })
+  @Post('/recevied/texts')
+  @HttpCode(HttpStatus.CREATED)
+  createExternalTextLetter(
+    @ReqUser() user: User,
+    @Body() createExternalTextLetterDto: CreateExternalTextLetterDto,
+  ) {
+    return this.letterReceviedService.createTextLetter(
+      user,
+      createExternalTextLetterDto,
+    );
+  }
+
+  @ApiOperation({
+    summary: '외부 이미지 편지 생성 API',
+    description: '외부에서 받은 이미지로 된 편지를 생성합니다.',
+  })
+  @Post('/recevied/images')
+  @HttpCode(HttpStatus.CREATED)
+  createExternalImageLetter(
+    @ReqUser() user: User,
+    @Body() createExternalImgLetterDto: CreateExternalImgLetterDto,
+  ) {
+    return this.letterReceviedService.createImageLetter(
+      user,
+      createExternalImgLetterDto,
+    );
   }
 
   @ApiOperation({

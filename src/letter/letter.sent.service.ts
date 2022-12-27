@@ -16,6 +16,7 @@ export class LetterSentService {
       where: {
         sender: { id: user.id },
       },
+      relations: ['letterBody'],
     });
     return letters;
   }
@@ -23,6 +24,7 @@ export class LetterSentService {
   async findOne(user: User, id: number): Promise<SendLetter> {
     const letter = await this.sendLetterRepository.findOne({
       where: { id: id, sender: { id: user.id } },
+      relations: ['letterBody'],
     });
     if (!letter) {
       throw new Error('There is no id');
