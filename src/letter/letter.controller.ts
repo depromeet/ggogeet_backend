@@ -10,13 +10,13 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   Res,
   UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { AuthService } from 'src/auth/auth.service';
 import { ReqUser } from 'src/common/decorators/user.decorators';
 import { JwtAuthGuard } from 'src/common/guards/jwtAuth.guard';
 import { User } from 'src/users/entities/user.entity';
@@ -30,6 +30,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CreateDraftLetterDto } from './dto/requests/createDraftLetter.request.dto';
+import { LetterSentService } from './letter.sent.service';
+import { LetterReceviedService } from './letter.recevied.service';
 
 @Controller('letters')
 @ApiTags('Letter API')
@@ -38,7 +40,8 @@ import { CreateDraftLetterDto } from './dto/requests/createDraftLetter.request.d
 export class LetterController {
   constructor(
     private readonly letterService: LetterService,
-    private readonly authService: AuthService,
+    private readonly letterSentService: LetterSentService,
+    private readonly letterReceviedService: LetterReceviedService,
   ) {}
 
   @ApiOperation({
@@ -75,7 +78,7 @@ export class LetterController {
     @ReqUser() user: User,
     @Query('page', ParseIntPipe) page: number,
   ) {
-    return this.letterService.getSendLetters(user.id, page);
+    return this.letterSentService.findAll(user, page);
   }
 
   @ApiOperation({
@@ -83,8 +86,8 @@ export class LetterController {
     description: '보낸 편지를 상세 조회합니다.',
   })
   @Get('/sent/:id')
-  async getSentLetter(@Param('id') id: number) {
-    //todo
+  async getSentLetter(@ReqUser() user: User, @Param('id') id: number) {
+    return this.letterSentService.findOne(user, id);
   }
 
   @ApiOperation({
@@ -93,8 +96,8 @@ export class LetterController {
   })
   @Delete('/sent/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteSentLetter() {
-    //todo
+  async deleteSentLetter(@ReqUser() user: User, @Param('id') id: number) {
+    return this.letterSentService.delete(user, id);
   }
 
   @ApiOperation({
@@ -113,7 +116,7 @@ export class LetterController {
       sender: string;
     },
   ) {
-    return this.letterService.findAll(query);
+    return this.letterReceviedService.findAll(query);
   }
 
   @ApiOperation({
@@ -121,8 +124,8 @@ export class LetterController {
     description: '편지 상세 조회를 조회합니다.',
   })
   @Get('/received/:id')
-  findOne(@Param('id') id: number) {
-    return this.letterService.findOne(+id);
+  findOne(@ReqUser() user: User, @Param('id') id: number) {
+    return this.letterReceviedService.findOne(id);
   }
 
   @ApiOperation({
@@ -148,15 +151,16 @@ export class LetterController {
   @Post('/recevied/images/upload')
   @UseInterceptors(FileInterceptor('file'))
   createExternalImgLetter(@UploadedFile() file: Express.MulterS3.File) {
-    return this.letterService.uploadExternalLetterImage(file);
+    return this.letterReceviedService.uploadExternalLetterImage(file);
   }
 
   @ApiOperation({
     summary: '받은 편지 삭제 API',
     description: '받은 편지를 삭제합니다.',
   })
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('/recevied/:id')
   delete(@Param('id') id: number) {
-    return this.letterService.delete(id);
+    return this.letterReceviedService.delete(id);
   }
 }
