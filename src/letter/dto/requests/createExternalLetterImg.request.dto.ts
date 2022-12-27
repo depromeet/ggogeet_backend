@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDateString, IsString, IsUrl } from 'class-validator';
+import { IsDateString, IsNumber, IsString, IsUrl } from 'class-validator';
 
 export class CreateExternalImgLetterDto {
   @IsString()
@@ -36,4 +36,11 @@ export class CreateExternalImgLetterDto {
     description: '편지 템플릿 url',
   })
   readonly templateUrl: string;
+
+  @IsNumber()
+  @ApiProperty({
+    example: 1,
+    description: '상황 id',
+  })
+  readonly situationId: number;
 }
