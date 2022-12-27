@@ -10,6 +10,7 @@ import { SendLetterDto } from './dto/requests/sendLetter.request.dto';
 import { CallbackType } from 'src/constants/kakaoCallback.constant';
 import { AuthService } from 'src/auth/auth.service';
 import { ReceivedLetter } from './entities/receivedLetter.entity';
+import { LetterUtils } from './letter.utils';
 
 @Injectable()
 export class LetterService {
@@ -43,7 +44,7 @@ export class LetterService {
     letterBody.title = createDraftLetterDto.title;
     letterBody.content = createDraftLetterDto.content;
     letterBody.templateUrl = createDraftLetterDto.templateUrl;
-    letterBody.accessCode = 'should_generate_random_code';
+    letterBody.accessCode = LetterUtils.generateAccessCode();
     letterBody.situationId = createDraftLetterDto.situationId;
 
     const sendLetter = new SendLetter();
