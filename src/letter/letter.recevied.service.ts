@@ -5,6 +5,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { CreateExternalImgLetterDto } from './dto/requests/createExternalLetterImg.request.dto';
 import { CreateExternalTextLetterDto } from './dto/requests/createExternalLetter.request.dto';
+import { LetterBody } from './entities/letterBody.entity';
+import { LetterType } from './letter.constants';
 
 @Injectable()
 export class LetterReceviedService {
@@ -16,7 +18,22 @@ export class LetterReceviedService {
   async createTextLetter(
     user: User,
     createExternalTextLetter: CreateExternalTextLetterDto,
-  ) {}
+  ) {
+    const letterBody = new LetterBody();
+    letterBody.title = createExternalTextLetter.title;
+    letterBody.content = createExternalTextLetter.content;
+    letterBody.type = LetterType.EXTERNAL;
+    letterBody.situationId = createExternalTextLetter.situationId;
+    letterBody.templateUrl = createExternalTextLetter.templateUrl;
+
+    const receivedLetter = new ReceivedLetter();
+    receivedLetter.receiver = user;
+    receivedLetter.letterBody = letterBody;
+    receivedLetter.senderNickname = createExternalTextLetter.senderNickname;
+
+    const result = await this.receviedLetterRepository.save(receivedLetter);
+    return result;
+  }
 
   async createImageLetter(
     user: User,
