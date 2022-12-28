@@ -5,10 +5,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
+import { LetterBody } from './letterBody.entity';
 
 @Entity('receivedLetter')
 export class ReceivedLetter {
@@ -29,10 +31,13 @@ export class ReceivedLetter {
   })
   sender: User;
 
+  @OneToOne(() => LetterBody, { cascade: true })
+  @JoinColumn()
+  letterBody: LetterBody;
+
   @Column({ type: 'varchar', length: '255' })
   senderNickname: string;
 
-  // 필요한가? createdAt 으로 쓰면 될듯한데
   @CreateDateColumn()
   receivedAt: Date;
 

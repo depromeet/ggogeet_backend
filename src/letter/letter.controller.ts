@@ -9,18 +9,14 @@ import {
   ParseIntPipe,
   Post,
   Query,
-  Res,
   UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { AuthService } from 'src/auth/auth.service';
 import { ReqUser } from 'src/common/decorators/user.decorators';
 import { JwtAuthGuard } from 'src/common/guards/jwtAuth.guard';
-import { CallbackType } from 'src/constants/kakaoCallback.constant';
 import { User } from 'src/users/entities/user.entity';
-import { CreateSendLetterDto } from './dto/requests/createSendLetter.request.dto';
 import { LetterService } from './letter.service';
 import {
   ApiBearerAuth,
@@ -30,84 +26,91 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { CreateDraftLetterDto } from './dto/requests/createDraftLetter.request.dto';
+import { LetterSentService } from './letter.sent.service';
+import { LetterReceviedService } from './letter.recevied.service';
+import { SendLetterDto } from './dto/requests/sendLetter.request.dto';
+import { CreateExternalImgLetterDto } from './dto/requests/createExternalLetterImg.request.dto';
+import { CreateExternalTextLetterDto } from './dto/requests/createExternalLetter.request.dto';
 
 @Controller('letters')
 @ApiTags('Letter API')
+@UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 export class LetterController {
   constructor(
     private readonly letterService: LetterService,
-    private readonly authService: AuthService,
+    private readonly letterSentService: LetterSentService,
+    private readonly letterReceviedService: LetterReceviedService,
   ) {}
 
   @ApiOperation({
-    summary: '편지를 보내는 API',
-    description: '편지를 친구에게 보냅니다.',
+    summary: '편지 생성 API',
+    description:
+      '신규 편지를 생성합니다, 편지를 보내기 위해서는 Complete API를 호출해주세요.',
   })
-  @Post('/send')
-  @UseGuards(JwtAuthGuard)
+  @Post('/draft')
   @HttpCode(HttpStatus.CREATED)
-  async createSendLetter(
+  async createDraftLetter(
     @ReqUser() user: User,
-    @Res() res,
-    @Body() createSendLetterDto: CreateSendLetterDto,
+    @Body() createSendLetterDto: CreateDraftLetterDto,
   ) {
-    const letterData = {
-      userId: user.id,
-      ...createSendLetterDto,
-    };
-    const sendLetter = await this.letterService.createSendLetter(letterData);
-
-    // 메세지 api 사용 위한 access token 요청
-    // 테스트 시 code는 auth/code/friends로 받아와서 요청
-    if (createSendLetterDto.kakaoAccessCode && createSendLetterDto.kakaoUuid) {
-      const codeResponse = await this.authService.getKakaoAccessToken(
-        createSendLetterDto.kakaoAccessCode,
-        CallbackType.FRIEND,
-      );
-
-      // 메세지 보내기 (친구 uuid)
-      await this.authService.sendMessageToUser(
-        codeResponse.access_token,
-        createSendLetterDto.kakaoUuid,
-      );
-    }
-
-    res.send({
-      data: { sendLetter },
-    });
+    return this.letterService.createDraftLetter(user, createSendLetterDto);
   }
 
   @ApiOperation({
-    summary: '보낸 편지 조회하기 API',
+    summary: '편지 전송 API',
+    description: '편지를 친구에게 보냅니다.',
+  })
+  @Post(':id/complete')
+  @HttpCode(HttpStatus.CREATED)
+  async sendLetter(
+    @ReqUser() user: User,
+    @Param('id') id: number,
+    @Body() sendLetterDto: SendLetterDto,
+  ) {
+    return this.letterService.sendLetter(user, id, sendLetterDto);
+  }
+
+  @ApiOperation({
+    summary: '보낸 편지함 조회 API',
     description: '보낸 편지를 조회합니다.',
   })
-  @Get('/send')
-  @UseGuards(JwtAuthGuard)
+  @Get('/sent')
   @HttpCode(HttpStatus.OK)
   async getSendLetter(
     @ReqUser() user: User,
-    // @Req() req, // #TODO pagination DTO 로 변경
-    @Res() res,
     @Query('page', ParseIntPipe) page: number,
   ) {
-    const sendLettersAndMeta = await this.letterService.getSendLetters(
-      user.id,
-      page,
-    );
+    return this.letterSentService.findAll(user, page);
+  }
 
-    res.send({
-      meta: sendLettersAndMeta.meta,
-      data: { sendLetters: sendLettersAndMeta.sendLetters },
-    });
+  @ApiOperation({
+    summary: '보낸 편지 상세 조회 API',
+    description: '보낸 편지를 상세 조회합니다.',
+  })
+  @Get('/sent/:id')
+  async getSentLetter(@ReqUser() user: User, @Param('id') id: number) {
+    return this.letterSentService.findOne(user, id);
+  }
+
+  @ApiOperation({
+    summary: '보낸 편지 삭제하기 API',
+    description: '보낸 편지를 삭제합니다.',
+  })
+  @Delete('/sent/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteSentLetter(@ReqUser() user: User, @Param('id') id: number) {
+    return this.letterSentService.delete(user, id);
   }
 
   @ApiOperation({
     summary: '받은 편지함 조회 API',
     description: '유저가 받은 편지함 조회을 조회합니다.',
   })
-  @Get()
+  @Get('/received')
   findAll(
+    @ReqUser() user: User,
     @Query()
     query: {
       offset: number;
@@ -118,16 +121,16 @@ export class LetterController {
       sender: string;
     },
   ) {
-    return this.letterService.findAll(query);
+    return this.letterReceviedService.findAll(user, query);
   }
 
   @ApiOperation({
-    summary: '편지 상세 조회 API',
+    summary: '받은 편지 상세 조회 API',
     description: '편지 상세 조회를 조회합니다.',
   })
-  @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.letterService.findOne(+id);
+  @Get('/received/:id')
+  findOne(@ReqUser() user: User, @Param('id') id: number) {
+    return this.letterReceviedService.findOne(user, id);
   }
 
   @ApiOperation({
@@ -150,18 +153,51 @@ export class LetterController {
     status: HttpStatus.CREATED,
     description: '이미지 편지 업로드 성공',
   })
-  @Post('/images/upload')
+  @Post('/recevied/images/upload')
   @UseInterceptors(FileInterceptor('file'))
-  createExternalImgLetter(@UploadedFile() file: Express.MulterS3.File) {
-    return this.letterService.uploadExternalLetterImage(file);
+  uploadExternalImgLetter(@UploadedFile() file: Express.MulterS3.File) {
+    return this.letterReceviedService.uploadExternalLetterImage(file);
   }
 
   @ApiOperation({
-    summary: '편지 삭제 API',
-    description: '편지를 삭제합니다.',
+    summary: '외부 텍스트 편지 생성 API',
+    description: '외부에서 받은 텍스트로 된 편지를 생성합니다.',
   })
-  @Delete(':id')
+  @Post('/recevied/texts')
+  @HttpCode(HttpStatus.CREATED)
+  createExternalTextLetter(
+    @ReqUser() user: User,
+    @Body() createExternalTextLetterDto: CreateExternalTextLetterDto,
+  ) {
+    return this.letterReceviedService.createTextLetter(
+      user,
+      createExternalTextLetterDto,
+    );
+  }
+
+  @ApiOperation({
+    summary: '외부 이미지 편지 생성 API',
+    description: '외부에서 받은 이미지로 된 편지를 생성합니다.',
+  })
+  @Post('/recevied/images')
+  @HttpCode(HttpStatus.CREATED)
+  createExternalImageLetter(
+    @ReqUser() user: User,
+    @Body() createExternalImgLetterDto: CreateExternalImgLetterDto,
+  ) {
+    return this.letterReceviedService.createImageLetter(
+      user,
+      createExternalImgLetterDto,
+    );
+  }
+
+  @ApiOperation({
+    summary: '받은 편지 삭제 API',
+    description: '받은 편지를 삭제합니다.',
+  })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete('/recevied/:id')
   delete(@Param('id') id: number) {
-    return this.letterService.delete(id);
+    return this.letterReceviedService.delete(id);
   }
 }

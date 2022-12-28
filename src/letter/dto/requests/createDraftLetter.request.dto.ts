@@ -1,11 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class CreateSendLetterDto {
-  @IsNumber()
-  @IsOptional()
-  readonly userId: number;
-
+export class CreateDraftLetterDto {
   @IsNumber()
   @IsOptional()
   @ApiProperty({
@@ -17,14 +13,11 @@ export class CreateSendLetterDto {
 
   @IsString()
   @IsOptional()
-  readonly kakaoUuid?: string;
-
-  @IsString()
   @ApiProperty({
     example: 'Pretty Minusu',
-    description: '받는 사람 닉네임',
+    description: '받는 사람 닉네임: 받는 유저가 회원이 아닐 경우 입력',
   })
-  readonly receiverNickname: string;
+  readonly receiverNickname?: string;
 
   @IsNumber()
   @ApiProperty({
@@ -53,8 +46,4 @@ export class CreateSendLetterDto {
     description: '편지 템플릿 url',
   })
   readonly templateUrl: string;
-
-  @IsString()
-  @IsOptional()
-  readonly kakaoAccessCode: string;
 }

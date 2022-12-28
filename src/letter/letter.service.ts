@@ -1,157 +1,114 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { User } from 'src/users/entities/user.entity';
-import { Repository, UpdateResult } from 'typeorm';
-import { CreateSendLetterDto } from './dto/requests/createSendLetter.request.dto';
+import { CreateDraftLetterDto } from './dto/requests/createDraftLetter.request.dto';
 import { LetterBody } from './entities/letterBody.entity';
-import { ReceivedLetter } from './entities/receivedLetter.entity';
 import { SendLetter } from './entities/sendLetter.entity';
-import { LetterType, SendLetterStatus } from './letter.constants';
+import { SendLetterStatus } from './letter.constants';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { SendLetterDto } from './dto/requests/sendLetter.request.dto';
+import { CallbackType } from 'src/constants/kakaoCallback.constant';
+import { AuthService } from 'src/auth/auth.service';
+import { ReceivedLetter } from './entities/receivedLetter.entity';
+import { LetterUtils } from './letter.utils';
 
 @Injectable()
 export class LetterService {
   constructor(
-    @InjectRepository(ReceivedLetter)
-    private letterRepository: Repository<ReceivedLetter>,
-    @InjectRepository(SendLetter)
-    private sendLetterRepository: Repository<SendLetter>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(SendLetter)
+    private sendLetterRepository: Repository<SendLetter>,
     @InjectRepository(ReceivedLetter)
     private receivedLetterRepository: Repository<ReceivedLetter>,
+    private readonly authService: AuthService,
   ) {}
 
-  findAll(query): Promise<ReceivedLetter[]> {
-    const limit = query.limit ? query.limit : 10;
-    const offset = query.offset ? query.offset : 0;
-    const order = query.order ? query.order : 'DESC';
-    const fromDate = query.fromDate
-      ? new Date(query.fromDate)
-      : new Date('1970-01-01');
-    const toDate = query.toDate ? new Date(query.toDate) : new Date();
-    const letterTypes = query.type
-      ? query.type
-      : [LetterType.EXTERNAL, LetterType.EXTERNALIMG];
-
-    const letters = this.letterRepository
-      .createQueryBuilder('letter')
-      .select(['letter.id', 'letter.senderNickname', 'letter.receivedAt'])
-      .andWhere('letter.userId = :userId', { userId: 1 })
-      .andWhere('letter.deletedAt IS NULL')
-      .andWhere('letter.receivedAt >= :fromDate', {
-        fromDate: fromDate,
-      })
-      .andWhere('letter.receivedAt < :toDate', {
-        toDate: toDate,
-      })
-      .addOrderBy('letter.receivedAt', order)
-      .limit(limit)
-      .offset(offset)
-      .getMany();
-
-    return letters;
-  }
-
-  async findOne(id: number): Promise<ReceivedLetter> {
-    const letter = await this.letterRepository.findOne({
-      where: { id: id },
-      select: ['id', 'senderNickname', 'receivedAt'],
-    });
-    if (!letter) {
-      throw new BadRequestException('There is no id');
-    }
-    return letter;
-  }
-
-  async delete(id: number): Promise<UpdateResult> {
-    return await this.letterRepository.update(id, { deletedAt: new Date() });
-  }
-
-  uploadExternalLetterImage(file: Express.MulterS3.File) {
-    if (!file) {
-      throw new BadRequestException('There is no file');
-    }
-    return {
-      filePath: file.location,
-    };
-  }
-
-  async createSendLetter(
-    createSendLetterDto: CreateSendLetterDto,
+  async createDraftLetter(
+    user: User,
+    createDraftLetterDto: CreateDraftLetterDto,
   ): Promise<SendLetter> {
-    const sender = await this.userRepository.findOne({
-      where: { id: createSendLetterDto.userId },
-    });
-    const receiver = createSendLetterDto?.receiverId
+    /*
+     * Check Recevier is Available
+     * Save Letter Body(title, content, template url, situation)
+     * Save Send Letter to Temporarily Saved
+     */
+
+    if (
+      createDraftLetterDto?.receiverId == null &&
+      createDraftLetterDto?.receiverNickname == null
+    ) {
+      throw new NotFoundException('Receiver is not available');
+    }
+
+    const receiver = createDraftLetterDto?.receiverId
       ? await this.userRepository.findOne({
-          where: { id: createSendLetterDto.receiverId },
+          where: { id: createDraftLetterDto.receiverId },
         })
       : null;
 
+    const receiverNickname = createDraftLetterDto?.receiverNickname
+      ? createDraftLetterDto?.receiverNickname
+      : receiver?.nickname;
+
     const letterBody = new LetterBody();
-    letterBody.title = createSendLetterDto.title;
-    letterBody.content = createSendLetterDto.content;
-    letterBody.templateUrl = createSendLetterDto.templateUrl;
-    letterBody.accessCode = 'should_generate_random_code'; // #TODO
-    letterBody.situationId = createSendLetterDto.situationId;
+    letterBody.title = createDraftLetterDto.title;
+    letterBody.content = createDraftLetterDto.content;
+    letterBody.templateUrl = createDraftLetterDto.templateUrl;
+    letterBody.accessCode = LetterUtils.generateAccessCode();
+    letterBody.situationId = createDraftLetterDto.situationId;
 
     const sendLetter = new SendLetter();
-    sendLetter.sender = sender;
-    if (createSendLetterDto.receiverId) sendLetter.receiver = receiver;
-    sendLetter.receiverNickname = createSendLetterDto.receiverNickname;
-    sendLetter.status = SendLetterStatus.SENT;
+    sendLetter.sender = user;
+    sendLetter.receiver = receiver;
+    sendLetter.receiverNickname = receiverNickname;
+    sendLetter.status = SendLetterStatus.TMP_SAVED;
     sendLetter.letterBody = letterBody;
 
-    const newSendLetter = await this.sendLetterRepository.save(sendLetter);
-
-    // receivedLetter 생성하기.
-    if (createSendLetterDto.receiverId) {
-      const receivedLetter = new ReceivedLetter();
-      receivedLetter.sender = sender;
-      receivedLetter.receiver = receiver;
-      receivedLetter.senderNickname = sender.nickname;
-
-      await this.receivedLetterRepository.save(receivedLetter);
-    }
-
-    return newSendLetter;
+    const result = await this.sendLetterRepository.save(sendLetter);
+    return result;
   }
 
-  async getSendLetters(
-    userId: number,
-    page = 1,
-    take = 10,
-  ): Promise<{
-    meta: {
-      page: number;
-      take: number;
-      totalCount: number;
-      totalPage: number;
-      hasNext: boolean;
-    };
-    sendLetters: SendLetter[];
-  }> {
-    const [results, totalCount] = await this.sendLetterRepository.findAndCount({
-      relations: {
-        letterBody: true,
-      },
-      where: {
-        sender: { id: userId },
-      },
-      take: take,
-      skip: take * (page - 1),
-      order: { createdAt: -1 },
+  async sendLetter(
+    user: User,
+    id: number,
+    sendLetterDto: SendLetterDto,
+  ): Promise<void> {
+    /*
+     * Validation of letter IDs and recevier
+     * Get Access Token through Kakao API
+     * Create new incoming letters, save sender information, and update the status of outgoing letters
+     * Send Message to KaKaotalk Friends API
+     */
+    const sendLetter = await this.sendLetterRepository.findOne({
+      where: { id: id, sender: { id: user.id } },
+    });
+    if (!sendLetter) {
+      throw new NotFoundException('There is no id');
+    }
+    if (sendLetter.receiver == null) {
+      throw new NotFoundException('There is no receiver');
+    }
+
+    const codeResponse = await this.authService.getKakaoAccessToken(
+      sendLetterDto.kakaoAccessCode,
+      CallbackType.FRIEND,
+    );
+
+    const receivedLetter = new ReceivedLetter();
+    receivedLetter.sender = user;
+    receivedLetter.receiver = sendLetter.receiver;
+    receivedLetter.letterBody = sendLetter.letterBody;
+    receivedLetter.senderNickname = sendLetter.sender.nickname;
+    await this.receivedLetterRepository.save(receivedLetter);
+
+    await this.sendLetterRepository.update(id, {
+      status: SendLetterStatus.SENT,
     });
 
-    return {
-      meta: {
-        page,
-        take,
-        totalCount,
-        totalPage: Math.ceil(totalCount / take), // #TODO
-        hasNext: totalCount > (page - 1) * take, // #TODO
-      },
-      sendLetters: results,
-    };
+    await this.authService.sendMessageToUser(
+      codeResponse.access_token,
+      sendLetterDto.kakaoUuid,
+    );
   }
 }
