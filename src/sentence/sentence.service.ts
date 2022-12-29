@@ -41,7 +41,6 @@ export class SentenceService {
     const sentence = await this.sentenceRepository.findOne({
       where: { id: id, userId: user.id },
     });
-    console.log(sentence);
 
     if (!sentence) {
       throw new NotFoundException({

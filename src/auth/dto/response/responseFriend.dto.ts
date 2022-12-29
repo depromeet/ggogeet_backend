@@ -17,7 +17,7 @@ export class ResponseFriendDto {
     example: '친구 프로필 이미지',
     description: '친구 프로필 이미지',
   })
-  friend_profileImg: string;
+  friendProfileImg: string;
 
   @ApiProperty({ example: '2021-01-01 00:00:00', description: '생성일' })
   createdAt: Date;
@@ -28,7 +28,7 @@ export class ResponseFriendDto {
   constructor(friend: Friend) {
     this.id = friend.id;
     this.friendUserId = friend.friendUser.id;
-    this.friend_profileImg = friend.friendUser.profileImg;
+    this.friendProfileImg = friend.friendUser.profileImg;
     this.kakaoUuid = friend.kakaoUuid;
     this.kakaoFriendName = friend.kakaoFriendName;
     this.createdAt = friend.createdAt;

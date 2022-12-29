@@ -65,7 +65,7 @@ export class AuthService {
       // 카카오로부터 받은 토큰 값 헤더에 담아 카카오 서버 /v2/user/me로 사용자 정보 요청
       const responseUserInfo = await axios({
         method: 'GET',
-        url: kakaoUserInfoUrl, // "https://kapi.kakao.com/v2/user/me";
+        url: kakaoUserInfoUrl,
         headers: headerUserInfo,
       });
 
@@ -160,16 +160,17 @@ export class AuthService {
   }
 
   async updateKakaoUser(id, kakaoInfo: CreateKakaoUserDto) {
-    await this.userRepository.update(
-      {
-        id,
-      },
-      {
-        name: kakaoInfo.nickname,
-        profileImg: kakaoInfo.profile_image,
-      },
-    );
-    return await this.userRepository.findOneBy({ id });
+    const user = await this.userRepository.findOne({
+      where: { id: id },
+      relations: { social: true },
+    });
+    user.name = kakaoInfo.nickname;
+    user.profileImg = kakaoInfo.profile_image;
+
+    if (kakaoInfo.allow_scope.indexOf('friends') !== -1) {
+      user.social.allowFriendsList = true;
+    }
+    return await this.userRepository.save(user);
   }
 
   async updateKakaoFriends(access_token: string, user: User) {
@@ -198,7 +199,7 @@ export class AuthService {
           if (!isFriendExist) {
             await this.createKakakoFriends(element, user);
           }
-          // 원래 있던 친구였으나 삭제된 경우 현재 친구목록에서 삭제된 경우..
+          // #TODO: 원래 있던 친구였으나 삭제된 경우 현재 친구목록에서 삭제된 경우
         });
       }
     }
@@ -221,7 +222,7 @@ export class AuthService {
       .leftJoinAndSelect('user.social', 'social')
       .where('social.clientId = :clientId', { clientId: clientId })
       .getOne();
-      
+
     return socialUser;
   }
 
@@ -231,7 +232,6 @@ export class AuthService {
       .leftJoinAndSelect('friend.friendUser', 'user')
       .where('friend.userId = :userId', { userId: user.id })
       .getMany();
-
     return friendList.map((friend) => {
       return new ResponseFriendDto(friend);
     });
@@ -256,14 +256,16 @@ export class AuthService {
   }
 
   async sendMessageToUser(access_token: string, kakaoUuid: string) {
-    const kakaoMessageUrl = 'https://kapi.kakao.com/v2/api/talk/memo/send';
+    const kakaoMessageUrl =
+      'https://kapi.kakao.com/v1/api/talk/friends/message/send';
 
     // 편지 조회하기 위한 access_token
     const accessCode = 'dfsdasdfafda';
     const body = {
       template_id: 87114,
+      // #TODO: 편지 이미지 파일 첨부
       template_args: `{\"code\": "${accessCode}"}`,
-      receiver_uuids: [kakaoUuid],
+      receiver_uuids: `["${kakaoUuid}"]`,
     };
 
     const header = {
