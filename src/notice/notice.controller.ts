@@ -13,7 +13,7 @@ import { CreateNoticeDto } from './dto/createNotice.dto';
 import { UpdateNoticeDto } from './dto/updateNotice.dto';
 import { NoticeService } from './notice.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { GetPagenation } from 'src/common/decorators/pagination.decorators';
+import { GetPagination } from 'src/common/decorators/pagination.decorators';
 import {
   ApiPaginationRequst,
   ApiPaginationResponse,
@@ -33,7 +33,7 @@ export class NoticeController {
   @ApiPaginationRequst()
   @ApiPaginationResponse(Notice)
   @Get()
-  findAll(@GetPagenation() pagenation: PaginationRequest) {
+  findAll(@GetPagination() pagenation: PaginationRequest) {
     return this.noticeService.findAll(pagenation);
   }
 

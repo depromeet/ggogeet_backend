@@ -5,10 +5,10 @@ import {
 } from '../paginations/pagination.request';
 
 /*
- * @GetPagenation() is a decorator that returns a PagenationRequest object.
- * @GetPagenation() pagenation: PagenationRequest
+ * @GetPagination() is a decorator that returns a PagenationRequest object.
+ * @GetPagination() pagination: PaginationRequest
  */
-export const GetPagenation = createParamDecorator(
+export const GetPagination = createParamDecorator(
   (_data: any, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest();
     const page = request.query?.page || PaginationDefault.PAGE_DEFAULT;
