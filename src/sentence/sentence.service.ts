@@ -4,9 +4,8 @@ import { SentenceType } from 'src/constants/sentence.constant';
 import { Situation } from 'src/situation/entities/situation.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
-import { CreateSentenceDto } from './dto/createSentence.dto';
-import { DeleteSentenceDto } from './dto/deleteSentence.dto';
-import { SentenceResponseDto } from './dto/sentence.response.dto';
+import { CreateSentenceDto } from './dto/requests/createSentence.request.dto';
+import { SentenceResponseDto } from './dto/responses/sentence.response.dto';
 import { Sentence } from './entities/sentence.entity';
 
 @Injectable()
@@ -50,14 +49,7 @@ export class SentenceService {
       });
     }
 
-    const result = new SentenceResponseDto();
-    result.id = sentence.id;
-    result.situationId = sentence.situationId;
-    result.isShared = sentence.isShared;
-    result.type = sentence.type;
-    result.createdAt = sentence.createdAt;
-
-    return result;
+    return new SentenceResponseDto(sentence);
   }
 
   async findUserSentenceBySituation(userId: number, situationId: number) {
@@ -103,37 +95,21 @@ export class SentenceService {
     newSentence.isShared = sentenceDto.isShared;
     newSentence.content = sentenceDto.content;
 
-    const saved = await this.sentenceRepository.save(newSentence);
+    const result = await this.sentenceRepository.save(newSentence);
 
-    const result = new SentenceResponseDto();
-    result.id = saved.id;
-    result.situationId = saved.situation.id;
-    result.isShared = saved.isShared;
-    result.type = saved.type;
-    result.createdAt = saved.createdAt;
-
-    return result;
+    return new SentenceResponseDto(result);
   }
 
-  async deleteSentence(id: number, user: User): Promise<DeleteSentenceDto> {
-    const result = new DeleteSentenceDto();
-
+  async deleteSentence(id: number, user: User): Promise<void> {
     const deleted = await this.sentenceRepository.delete({
       id,
       userId: user.id,
     });
-
-    // DeleteResult { raw: [], affected: 1 }
 
     if (!deleted.affected)
       throw new NotFoundException({
         type: 'NOT_FOUND',
         message: `Sentence #${id} not found`,
       });
-
-    result.type = 'SUCCESS';
-    result.message = `Sentence #${id} is deleted`;
-
-    return result;
   }
 }

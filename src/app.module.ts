@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
@@ -24,6 +24,13 @@ import { SendLetter } from './letter/entities/sendLetter.entity';
 import { SentenceModule } from './sentence/sentence.module';
 import { Sentence } from './sentence/entities/sentence.entity';
 import { ReplyModule } from './reply/reply.module';
+import { LoggerMiddleware } from './common/middlewares/logger.middleware';
+import * as winston from 'winston';
+import {
+  utilities as nestWinstonModuleUtilities,
+  WinstonModule,
+} from 'nest-winston';
+import winstonDaily from 'winston-daily-rotate-file';
 
 const ConfigSettingModule = ConfigModule.forRoot({
   isGlobal: true,
@@ -57,21 +64,55 @@ const TypeOrmSettingModule = TypeOrmModule.forRoot({
   logging: 'all',
 });
 
+const logDir = 'logs';
+
+const dailyLoggerOptions = (level: string) => {
+  return {
+    level,
+    datePattern: 'YYYY-MM-DD HH:mm:ss',
+    dirname: logDir + `/${level}`,
+    filename: `${level}-%DATE%.log`,
+    maxFiles: '14d',
+    zippedArchive: true,
+  };
+};
+
+const WinstomSettingModule = WinstonModule.forRoot({
+  transports: [
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        nestWinstonModuleUtilities.format.nestLike('ggo-geet', {
+          prettyPrint: true,
+        }),
+      ),
+    }),
+    new winstonDaily(dailyLoggerOptions('error')),
+    new winstonDaily(dailyLoggerOptions('warn')),
+    new winstonDaily(dailyLoggerOptions('info')),
+  ],
+});
+
 @Module({
   imports: [
     ConfigSettingModule,
     TypeOrmSettingModule,
+    WinstomSettingModule,
     UsersModule,
     NoticeModule,
     AuthModule,
     LetterModule,
     SentenceModule,
     ReminderModule,
-    ReplyModule
+    ReplyModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {
+export class AppModule implements NestModule {
   constructor(private dataSource: DataSource) {}
+
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
 }

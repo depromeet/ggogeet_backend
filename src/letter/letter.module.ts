@@ -11,6 +11,8 @@ import { PassportModule } from '@nestjs/passport';
 import { SendLetter } from './entities/sendLetter.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { JwtStrategy } from 'src/auth/strategy/jwt.strategy';
+import { LetterSentService } from './letter.sent.service';
+import { LetterReceviedService } from './letter.recevied.service';
 
 @Module({
   imports: [
@@ -24,6 +26,11 @@ import { JwtStrategy } from 'src/auth/strategy/jwt.strategy';
     AuthModule,
   ],
   controllers: [LetterController],
-  providers: [LetterService, JwtStrategy],
+  providers: [
+    LetterService,
+    LetterSentService,
+    LetterReceviedService,
+    JwtStrategy,
+  ],
 })
 export class LetterModule {}

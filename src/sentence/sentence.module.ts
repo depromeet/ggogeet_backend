@@ -11,9 +11,7 @@ import { SentenceService } from './sentence.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Sentence]),
-    TypeOrmModule.forFeature([Situation]),
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([Sentence, Situation, User]),
     PassportModule,
     AuthModule,
   ],

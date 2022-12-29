@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LetterBody } from 'src/letter/entities/letterBody.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -11,7 +15,6 @@ export class ReplyService {
   constructor(
     @InjectRepository(Reply)
     private replyRepository: Repository<Reply>,
-    
     @InjectRepository(LetterBody)
     private letterBodyRepository: Repository<LetterBody>,
   ) {}
@@ -19,9 +22,15 @@ export class ReplyService {
   async createReply(replyDto: CreateReplyDto, user: User) {
     // TODO: 답장 쓸수 있는 편지인지 권한 확인 erd 부터 정립필요.
 
-    const letterBody = await this.letterBodyRepository.findOne({where: { id: replyDto.letterBodyId }, relations: ["reply"]});
+    const letterBody = await this.letterBodyRepository.findOne({
+      where: { id: replyDto.letterBodyId },
+      relations: ['reply'],
+    });
 
-    if (!letterBody) throw new NotFoundException(`LetterBody #${replyDto.letterBodyId} not found`);
+    if (!letterBody)
+      throw new NotFoundException(
+        `LetterBody #${replyDto.letterBodyId} not found`,
+      );
     if (letterBody.reply) throw new ConflictException(`Reply already exists`);
 
     const reply = new Reply();

@@ -3,9 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Situation } from 'src/situation/entities/situation.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
-import { CreateReminderDto } from './dto/createReminder.dto';
-import { UpdateReminderDto } from './dto/updateReminder.dto';
+import { CreateReminderDto } from './dto/requests/createReminder.request.dto';
 import { Reminder } from './entities/reminder.entity';
+import { UpdateReminderDto } from './dto/requests/updateReminder.request.dto';
+import { ReminderResponseDto } from './dto/responses/reminder.response.dto';
+import { ReminderStautsResponseDto } from './dto/responses/reminderStatus.response.dto';
 
 @Injectable()
 export class ReminderService {
@@ -67,7 +69,7 @@ export class ReminderService {
     };
   }
 
-  async findOne(id: number, user: User) {
+  async findOne(id: number, user: User): Promise<ReminderResponseDto> {
     const reminder = await this.reminderRepository.findOne({
       where: {
         id: id,
@@ -91,21 +93,14 @@ export class ReminderService {
       throw new NotFoundException('Reminder not found');
     }
 
-    const result = {
-      id: reminder.id,
-      title: reminder.title,
-      content: reminder.content,
-      eventAt: reminder.eventAt,
-      alertOn: reminder.alertOn,
-      alarmAt: reminder.alarmAt,
-      isDone: reminder.isDone,
-      situation: reminder.situation.content,
-    };
-
-    return result;
+    return new ReminderResponseDto(reminder);
   }
 
-  async update(id: number, updateReminderDto: UpdateReminderDto, user: User) {
+  async update(
+    id: number,
+    updateReminderDto: UpdateReminderDto,
+    user: User,
+  ): Promise<ReminderResponseDto> {
     const reminder = await this.reminderRepository.findOne({
       where: {
         id: id,
@@ -144,24 +139,16 @@ export class ReminderService {
 
     await this.reminderRepository.save(reminder);
 
-    return {
-      id: id,
-      title: reminder.title,
-      content: reminder.content,
-      eventAt: reminder.eventAt,
-      alertOn: reminder.alertOn,
-      alarmAt: reminder.alarmAt,
-      isDone: reminder.isDone,
-      situation: reminder.situation.content,
-    };
+    return new ReminderResponseDto(reminder);
   }
 
   async delete(id: number, user: User) {
-    await this.reminderRepository.softDelete(id);
-    return {
+    const result = await this.reminderRepository.softDelete({
       id: id,
-      isDeleted: true,
-    };
+      user: {
+        id: user.id,
+      },
+    });
   }
 
   async done(id: number, user: User) {
@@ -174,10 +161,7 @@ export class ReminderService {
       },
       { isDone: true },
     );
-    return {
-      id: id,
-      isDone: true,
-    };
+    return new ReminderStautsResponseDto(id, true);
   }
 
   async undone(id: number, user: User) {
@@ -190,9 +174,6 @@ export class ReminderService {
       },
       { isDone: false },
     );
-    return {
-      id: id,
-      isDone: false,
-    };
+    return new ReminderStautsResponseDto(id, false);
   }
 }

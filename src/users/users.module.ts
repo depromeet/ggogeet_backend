@@ -12,10 +12,7 @@ import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
-    TypeOrmModule.forFeature([UserInfo]),
-    TypeOrmModule.forFeature([Social]),
-    TypeOrmModule.forFeature([Friend]),
+    TypeOrmModule.forFeature([User, UserInfo, Social, Friend]),
     PassportModule,
     AuthModule,
   ],
