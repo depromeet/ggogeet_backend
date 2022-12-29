@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateKakaoUserDto } from 'src/auth/dto/requests/createKakaoUser.dto';
 import { Repository } from 'typeorm';
+import { UpdateUserDto } from './dto/requests/updateUser.dto';
 import { UserResponseDto } from './dto/response/user.response.dto';
 import { Social } from './entities/social.entity';
 import { User } from './entities/user.entity';
@@ -25,15 +26,18 @@ export class UsersService {
     return new UserResponseDto(user);
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    const user = await this.userRepository.findOneBy({ id });
+
+    if (!user) {
+      throw new NotFoundException(`User #${id} not found`);
+    }
+
+    // TODO : add update user
+    return await this.userRepository.save(user);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async findAll() {
+    return await this.userRepository.find();
   }
 }
