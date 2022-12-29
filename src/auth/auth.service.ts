@@ -263,6 +263,7 @@ export class AuthService {
     const accessCode = 'dfsdasdfafda';
     const body = {
       template_id: 87114,
+      // #TODO: 편지 이미지 파일 첨부
       template_args: `{\"code\": "${accessCode}"}`,
       receiver_uuids: `["${kakaoUuid}"]`,
     };
