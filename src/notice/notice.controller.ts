@@ -13,6 +13,13 @@ import { CreateNoticeDto } from './dto/createNotice.dto';
 import { UpdateNoticeDto } from './dto/updateNotice.dto';
 import { NoticeService } from './notice.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { GetPagenation } from 'src/common/decorators/pagination.decorators';
+import {
+  ApiPaginationRequst,
+  ApiPaginationResponse,
+} from 'src/common/paginations/pagination.swagger';
+import { Notice } from './entities/notice.entity';
+import { PaginationRequest } from 'src/common/paginations/pagination.request';
 
 @Controller('notices')
 @ApiTags('Notice API')
@@ -23,10 +30,11 @@ export class NoticeController {
     summary: '모든 공지사항 가져오기 API',
     description: '모든 공지사항을 가져옵니다.',
   })
+  @ApiPaginationRequst()
+  @ApiPaginationResponse(Notice)
   @Get()
-  findAll() {
-    // todo: add sorting, pagination
-    return this.noticeService.findAll();
+  findAll(@GetPagenation() pagenation: PaginationRequest) {
+    return this.noticeService.findAll(pagenation);
   }
 
   @ApiOperation({
