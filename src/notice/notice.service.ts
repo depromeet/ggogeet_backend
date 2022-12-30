@@ -5,6 +5,9 @@ import { CreateNoticeDto } from './dto/createNotice.dto';
 import { DeleteNoticeDto } from './dto/deleteNotice.dto';
 import { UpdateNoticeDto } from './dto/updateNotice.dto';
 import { Notice } from './entities/notice.entity';
+import { PaginationRequest } from 'src/common/paginations/pagination.request';
+import { PaginationResponse } from 'src/common/paginations/pagination.response';
+import { PaginationBuilder } from 'src/common/paginations/paginationBuilder.response';
 
 @Injectable()
 export class NoticeService {
@@ -13,8 +16,20 @@ export class NoticeService {
     private noticeRepository: Repository<Notice>,
   ) {}
 
-  findAll(): Promise<Notice[]> {
-    return this.noticeRepository.find();
+  async findAll(
+    pagenation: PaginationRequest,
+  ): Promise<PaginationResponse<Notice>> {
+    const [data, count] = await this.noticeRepository.findAndCount({
+      skip: pagenation.getSkip(),
+      take: pagenation.getTake(),
+    });
+
+    return new PaginationBuilder()
+      .setData(data)
+      .setPage(pagenation.page)
+      .setTake(pagenation.take)
+      .setTotalCount(count)
+      .build();
   }
 
   async findOne(id: number): Promise<Notice> {
