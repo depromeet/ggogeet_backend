@@ -6,7 +6,7 @@ import { UpdateUserDto } from './dto/requests/updateUser.dto';
 import { UserResponseDto } from './dto/response/user.response.dto';
 import { Social } from './entities/social.entity';
 import { User } from './entities/user.entity';
-import { UserInfo } from './entities/userinfo.entity';
+import { UserInfo } from './entities/userInfo.entity';
 
 @Injectable()
 export class UsersService {
