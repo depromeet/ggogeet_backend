@@ -127,7 +127,7 @@ export class AuthController {
     const _hostName = 'https://kauth.kakao.com';
     const _restApiKey = process.env.KAKAO_CLIENT_ID;
     // 카카오 로그인 redirectURI 등록
-    const _redirectUrl = `${process.env.SERVER_HOST}/auth/kakao/login`;
+    const _redirectUrl = `${process.env.FRONT_HOST}/auth/kakao/login`;
     const url = `${_hostName}/oauth/authorize?client_id=${_restApiKey}&redirect_uri=${_redirectUrl}&response_type=code`;
     return res.redirect(url);
   }
@@ -141,7 +141,7 @@ export class AuthController {
     const _hostName = 'https://kauth.kakao.com';
     const _restApiKey = process.env.KAKAO_CLIENT_ID;
     // 카카오 로그인 redirectURI 등록
-    const _redirectUrl = `${process.env.SERVER_HOST}/auth/kakao/friends`;
+    const _redirectUrl = `${process.env.FRONT_HOST}/auth/kakao/friends`;
     const url = `${_hostName}/oauth/authorize?client_id=${_restApiKey}&redirect_uri=${_redirectUrl}&response_type=code&scope=friends,talk_message`;
     return res.redirect(url);
   }
