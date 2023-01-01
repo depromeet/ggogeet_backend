@@ -39,11 +39,4 @@ export class CreateDraftLetterDto {
     description: '편지 내용',
   })
   readonly content: string;
-
-  @IsString()
-  @ApiProperty({
-    example: 'https://cdn.ggo-geet.com/letter-template/1.png',
-    description: '편지 템플릿 url',
-  })
-  readonly templateUrl: string;
 }

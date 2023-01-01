@@ -23,9 +23,6 @@ export class LetterBody {
   resultImg: string;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
-  templateUrl: string;
-
-  @Column({ type: 'varchar', length: 255, nullable: false })
   accessCode: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })

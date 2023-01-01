@@ -30,13 +30,6 @@ export class CreateExternalImgLetterDto {
   })
   readonly senderNickname: string;
 
-  @IsUrl()
-  @ApiProperty({
-    example: 'https://cdn.ggo-geet.com/letter-template/1.png',
-    description: '편지 템플릿 url',
-  })
-  readonly templateUrl: string;
-
   @IsNumber()
   @ApiProperty({
     example: 1,

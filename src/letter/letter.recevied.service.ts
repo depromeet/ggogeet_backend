@@ -24,7 +24,6 @@ export class LetterReceviedService {
     letterBody.content = createExternalTextLetter.content;
     letterBody.type = LetterType.EXTERNAL;
     letterBody.situationId = createExternalTextLetter.situationId;
-    letterBody.templateUrl = createExternalTextLetter.templateUrl;
 
     const receivedLetter = new ReceivedLetter();
     receivedLetter.receiver = user;
@@ -44,7 +43,6 @@ export class LetterReceviedService {
     letterBody.imageContent = createExternalImgLetterDto.imageUrl;
     letterBody.type = LetterType.EXTERNALIMG;
     letterBody.situationId = createExternalImgLetterDto.situationId;
-    letterBody.templateUrl = createExternalImgLetterDto.templateUrl;
 
     const receivedLetter = new ReceivedLetter();
     receivedLetter.receiver = user;
