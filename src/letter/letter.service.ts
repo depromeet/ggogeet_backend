@@ -30,7 +30,7 @@ export class LetterService {
   ): Promise<SendLetter> {
     /*
      * Check Recevier is Available
-     * Save Letter Body(title, content, template url, situation)
+     * Save Letter Body(title, content, template url, situationId)
      * Save Send Letter to Temporarily Saved
      */
 

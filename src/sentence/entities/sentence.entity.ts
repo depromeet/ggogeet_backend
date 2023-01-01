@@ -1,5 +1,4 @@
 import { SentenceType } from 'src/constants/sentence.constant';
-import { Situation } from 'src/situation/entities/situation.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
@@ -38,11 +37,7 @@ export class Sentence {
   @Column({ nullable: true })
   totalPreference: number;
 
-  @ManyToOne(() => Situation)
-  @JoinColumn({ name: 'situationId', referencedColumnName: 'id' })
-  situation: Situation;
-
-  @Column({ name: 'situationId' })
+  @Column({ nullable: true })
   situationId: number;
 
   @CreateDateColumn()
