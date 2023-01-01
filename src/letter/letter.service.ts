@@ -81,7 +81,12 @@ export class LetterService {
      */
     const sendLetter = await this.sendLetterRepository.findOne({
       where: { id: id, sender: { id: user.id } },
+      relations: {
+        receiver: true,
+        sender: true
+      }
     });
+
     if (!sendLetter) {
       throw new NotFoundException('There is no id');
     }
