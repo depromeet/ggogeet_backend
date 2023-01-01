@@ -1,5 +1,6 @@
 import {
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -282,6 +283,9 @@ export class AuthService {
         data: qs.stringify(body),
       });
       return responseMessageInfo.data;
-    } catch (e) {}
+    } catch (e) {
+      // 일단 체크해두려고 넣어둠 :TODO
+      throw new InternalServerErrorException(e)
+    }
   }
 }
