@@ -19,7 +19,6 @@ import { Reminder } from './reminder/entities/reminder.entity';
 import { LetterBody } from './letter/entities/letterBody.entity';
 import { Reply } from './reply/entities/reply.entity';
 import { Relationship } from './relationship/entities/relationship.entity';
-import { Situation } from './situation/entities/situation.entity';
 import { SendLetter } from './letter/entities/sendLetter.entity';
 import { SentenceModule } from './sentence/sentence.module';
 import { Sentence } from './sentence/entities/sentence.entity';
@@ -54,7 +53,6 @@ const TypeOrmSettingModule = TypeOrmModule.forRoot({
     LetterBody,
     Reply,
     Relationship,
-    Situation,
     SendLetter,
     Reminder,
     Sentence,

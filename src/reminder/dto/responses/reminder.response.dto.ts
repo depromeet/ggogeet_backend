@@ -45,10 +45,10 @@ export class ReminderResponseDto {
   isDone: boolean;
 
   @ApiProperty({
-    example: '생일',
-    description: '상황 내용',
+    example: 1,
+    description: '상황 ID',
   })
-  situation: string;
+  situationId: number;
 
   constructor(reminder: Reminder) {
     this.id = reminder.id;
@@ -58,6 +58,6 @@ export class ReminderResponseDto {
     this.alertOn = reminder.alertOn;
     this.alarmAt = reminder.alarmAt;
     this.isDone = reminder.isDone;
-    this.situation = reminder.situation.content;
+    this.situationId = reminder.situationId;
   }
 }

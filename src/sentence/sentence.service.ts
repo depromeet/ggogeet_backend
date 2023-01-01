@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SentenceType } from 'src/constants/sentence.constant';
-import { Situation } from 'src/situation/entities/situation.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateSentenceDto } from './dto/requests/createSentence.request.dto';
@@ -12,9 +11,7 @@ import { Sentence } from './entities/sentence.entity';
 export class SentenceService {
   constructor(
     @InjectRepository(Sentence)
-    private sentenceRepository: Repository<Sentence>,
-    @InjectRepository(Situation)
-    private situationRepository: Repository<Situation>,
+    private sentenceRepository: Repository<Sentence>
   ) {}
 
   async findAll(user: User): Promise<any> {
@@ -89,9 +86,7 @@ export class SentenceService {
     const newSentence = new Sentence();
     newSentence.type = SentenceType.USER;
     newSentence.userId = user.id;
-    newSentence.situation = await this.situationRepository.findOne({
-      where: { id: sentenceDto.situationId },
-    });
+    newSentence.situationId = sentenceDto.situationId
     newSentence.isShared = sentenceDto.isShared;
     newSentence.content = sentenceDto.content;
 

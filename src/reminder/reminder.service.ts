@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Situation } from 'src/situation/entities/situation.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateReminderDto } from './dto/requests/createReminder.request.dto';
@@ -13,9 +12,7 @@ import { ReminderStautsResponseDto } from './dto/responses/reminderStatus.respon
 export class ReminderService {
   constructor(
     @InjectRepository(Reminder)
-    private reminderRepository: Repository<Reminder>,
-    @InjectRepository(Situation)
-    private situationRepository: Repository<Situation>,
+    private reminderRepository: Repository<Reminder>
   ) {}
 
   async createReminder(reminderDto: CreateReminderDto, user: User) {
@@ -27,11 +24,7 @@ export class ReminderService {
     reminder.alarmAt = reminderDto.alarmAt;
     reminder.isDone = false;
     reminder.user = user;
-    reminder.situation = await this.situationRepository.findOne({
-      where: {
-        id: reminderDto.situationId,
-      },
-    });
+    reminder.situationId = reminderDto.situationId
     return this.reminderRepository.save(reminder);
   }
 
@@ -77,7 +70,6 @@ export class ReminderService {
           id: user.id,
         },
       },
-      relations: ['situation'],
       select: [
         'id',
         'title',
@@ -86,7 +78,7 @@ export class ReminderService {
         'alertOn',
         'alarmAt',
         'isDone',
-        'situation',
+        'situationId',
       ],
     });
     if (!reminder) {
@@ -129,13 +121,9 @@ export class ReminderService {
     reminder.alarmAt = updateReminderDto.alarmAt
       ? updateReminderDto.alarmAt
       : reminder.alarmAt;
-    reminder.situation = updateReminderDto.situationId
-      ? await this.situationRepository.findOne({
-          where: {
-            id: updateReminderDto.situationId,
-          },
-        })
-      : reminder.situation;
+    reminder.situationId = updateReminderDto.situationId
+      ? updateReminderDto.situationId
+      : reminder.situationId
 
     await this.reminderRepository.save(reminder);
 
