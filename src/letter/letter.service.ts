@@ -30,7 +30,7 @@ export class LetterService {
   ): Promise<SendLetter> {
     /*
      * Check Recevier is Available
-     * Save Letter Body(title, content, template url, situationId)
+     * Save Letter Body(title, content, situationId)
      * Save Send Letter to Temporarily Saved
      */
 
@@ -54,7 +54,6 @@ export class LetterService {
     const letterBody = new LetterBody();
     letterBody.title = createDraftLetterDto.title;
     letterBody.content = createDraftLetterDto.content;
-    letterBody.templateUrl = createDraftLetterDto.templateUrl;
     letterBody.accessCode = LetterUtils.generateAccessCode();
     letterBody.situationId = createDraftLetterDto.situationId;
 
