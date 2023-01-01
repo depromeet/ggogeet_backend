@@ -52,15 +52,6 @@ export class UsersController {
   }
 
   @ApiOperation({
-    summary: '유저 정보 수정 API',
-    description: '유저 정보를 수정합니다.',
-  })
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
-  }
-
-  @ApiOperation({
     summary: '내 정보 조회 API',
     description: '내 정보를 가져옵니다.',
   })
@@ -72,20 +63,6 @@ export class UsersController {
   @Get('/me')
   async findMe(@ReqUser() user: User, @Res() res) {
     res.send({ data: await this.usersService.findUserById(user.id) });
-  }
-
-  @ApiOperation({
-    summary: '유저 조회 API',
-    description: '유저 정보를 가져옵니다. ',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: '유저 정보를 반환합니다.',
-    type: UserResponseDto,
-  })
-  @Get(':id')
-  async findOne(@Param('id') id: number, @Res() res) {
-    res.send({ data: await this.usersService.findUserById(+id) });
   }
 
   // TODO: 유저 정보 삭제 로직
@@ -129,5 +106,28 @@ export class UsersController {
     res.send({
       data: await this.authService.getKakaoFriendById(id, user),
     });
+  }
+
+  @ApiOperation({
+    summary: '유저 조회 API',
+    description: '유저 정보를 가져옵니다. ',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '유저 정보를 반환합니다.',
+    type: UserResponseDto,
+  })
+  @Get(':id')
+  async findOne(@Param('id') id: number, @Res() res) {
+    res.send({ data: await this.usersService.findUserById(+id) });
+  }
+
+  @ApiOperation({
+    summary: '유저 정보 수정 API',
+    description: '유저 정보를 수정합니다.',
+  })
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.update(+id, updateUserDto);
   }
 }
