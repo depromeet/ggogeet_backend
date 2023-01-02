@@ -28,12 +28,12 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async getKakaoAccessToken(code: string, option?: string) {
+  async getKakaoAccessToken(code: string, redirectURI: string) {
     const kakaoTokenUrl = 'https://kauth.kakao.com/oauth/token';
     const body = {
       grant_type: 'authorization_code',
       client_id: process.env.KAKAO_CLIENT_ID,
-      redirect_uri: `${process.env.FRONT_HOST}/auth/kakao/${option}`,
+      redirect_uri: redirectURI,
       code,
     };
     const headers = {
