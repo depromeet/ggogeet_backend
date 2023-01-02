@@ -80,9 +80,9 @@ export class LetterController {
   @HttpCode(HttpStatus.OK)
   async getSendLetter(
     @ReqUser() user: User,
-    @Query('page') page: number,
+    @Query('sort') sort: string,
   ) {
-    return this.letterSentService.findAll(user, page);
+    return this.letterSentService.findAll(user, sort);
   }
 
   @ApiOperation({
