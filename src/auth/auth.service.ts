@@ -256,16 +256,20 @@ export class AuthService {
     return new ResponseFriendDto(friend);
   }
 
-  async sendMessageToUser(access_token: string, kakaoUuid: string) {
+  async sendMessageToUser(
+    access_token: string,
+    kakaoUuid: string,
+    letterId: number,
+  ) {
     const kakaoMessageUrl =
       'https://kapi.kakao.com/v1/api/talk/friends/message/send';
 
     // 편지 조회하기 위한 access_token
-    const accessCode = 'dfsdasdfafda';
+    const accessCode = 'abcd';
     const body = {
-      template_id: 87114,
+      template_id: 87992,
       // #TODO: 편지 이미지 파일 첨부
-      template_args: `{\"code\": "${accessCode}"}`,
+      template_args: `{\"letterId\": "${letterId}"}`,
       receiver_uuids: `["${kakaoUuid}"]`,
     };
 
@@ -285,7 +289,7 @@ export class AuthService {
       return responseMessageInfo.data;
     } catch (e) {
       // 일단 체크해두려고 넣어둠 :TODO
-      throw new InternalServerErrorException(e)
+      throw new InternalServerErrorException(e);
     }
   }
 }
