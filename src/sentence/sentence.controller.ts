@@ -42,20 +42,6 @@ export class SentenceController {
   }
 
   @ApiOperation({
-    summary: '내가 쓴 문장 가져오기 API',
-    description: '내가 쓴 문장을 가져옵니다.',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: '내가 쓴 문장을 가져옵니다.',
-    type: SentenceResponseDto,
-  })
-  @Get(':id')
-  async findOneSentence(@ReqUser() user: User, @Param('id') id: number) {
-    return await this.sentenceService.findOne(user, id);
-  }
-
-  @ApiOperation({
     summary: '상황별 문장 가져오기 API',
     description: '상황별로 문장을 가져옵니다.',
   })
@@ -87,6 +73,20 @@ export class SentenceController {
     @Body() sentenceDto: CreateSentenceDto,
   ) {
     return await this.sentenceService.createSentence(user, sentenceDto);
+  }
+
+  @ApiOperation({
+    summary: '내가 쓴 문장 가져오기 API',
+    description: '내가 쓴 문장을 가져옵니다.',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '내가 쓴 문장을 가져옵니다.',
+    type: SentenceResponseDto,
+  })
+  @Get(':id')
+  async findOneSentence(@ReqUser() user: User, @Param('id') id: number) {
+    return await this.sentenceService.findOne(user, id);
   }
 
   @ApiOperation({
