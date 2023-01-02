@@ -54,11 +54,13 @@ export class LetterReceviedService {
   }
 
   async findAll(user: User, query: any): Promise<ReceivedLetter[]> {
+    const order = query?.sort === "oldest" ? 1 : -1;
     const letters = this.receviedLetterRepository.find({
       where: {
         receiver: { id: user.id },
       },
       relations: ['letterBody'],
+      order: { receivedAt: order }
     });
 
     return letters;

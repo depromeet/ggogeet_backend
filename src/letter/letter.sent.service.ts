@@ -11,12 +11,14 @@ export class LetterSentService {
     private sendLetterRepository: Repository<SendLetter>,
   ) {}
 
-  async findAll(user: User, page: number): Promise<SendLetter[]> {
+  async findAll(user: User, sort: string = "oldest"): Promise<SendLetter[]> {
+    const order = sort === "oldest" ? 1 : -1;
     const letters = this.sendLetterRepository.find({
       where: {
         sender: { id: user.id },
       },
       relations: ['letterBody'],
+      order: { sendAt: order }
     });
     return letters;
   }
