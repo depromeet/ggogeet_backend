@@ -23,7 +23,7 @@ import { SendLetter } from './letter/entities/sendLetter.entity';
 import { SentenceModule } from './sentence/sentence.module';
 import { Sentence } from './sentence/entities/sentence.entity';
 import { ReplyModule } from './reply/reply.module';
-// import { LoggerMiddleware } from './common/middlewares/logger.middleware';
+import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import * as winston from 'winston';
 import {
   utilities as nestWinstonModuleUtilities,
@@ -62,40 +62,40 @@ const TypeOrmSettingModule = TypeOrmModule.forRoot({
   logging: 'all',
 });
 
-// const logDir = 'logs';
+const logDir = 'logs';
 
-// const dailyLoggerOptions = (level: string) => {
-//   return {
-//     level,
-//     datePattern: 'YYYY-MM-DD HH:mm:ss',
-//     dirname: logDir + `/${level}`,
-//     filename: `${level}-%DATE%.log`,
-//     maxFiles: '14d',
-//     zippedArchive: true,
-//   };
-// };
+const dailyLoggerOptions = (level: string) => {
+  return {
+    level,
+    datePattern: 'YYYY-MM-DD HH:mm:ss',
+    dirname: logDir + `/${level}`,
+    filename: `${level}-%DATE%.log`,
+    maxFiles: '14d',
+    zippedArchive: true,
+  };
+};
 
-// const WinstomSettingModule = WinstonModule.forRoot({
-//   transports: [
-//     new winston.transports.Console({
-//       format: winston.format.combine(
-//         winston.format.timestamp(),
-//         nestWinstonModuleUtilities.format.nestLike('ggo-geet', {
-//           prettyPrint: true,
-//         }),
-//       ),
-//     }),
-//     new winstonDaily(dailyLoggerOptions('error')),
-//     new winstonDaily(dailyLoggerOptions('warn')),
-//     new winstonDaily(dailyLoggerOptions('info')),
-//   ],
-// });
+const WinstomSettingModule = WinstonModule.forRoot({
+  transports: [
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        nestWinstonModuleUtilities.format.nestLike('ggo-geet', {
+          prettyPrint: true,
+        }),
+      ),
+    }),
+    new winstonDaily(dailyLoggerOptions('error')),
+    new winstonDaily(dailyLoggerOptions('warn')),
+    new winstonDaily(dailyLoggerOptions('info')),
+  ],
+});
 
 @Module({
   imports: [
     ConfigSettingModule,
     TypeOrmSettingModule,
-    // WinstomSettingModule,
+    WinstomSettingModule,
     UsersModule,
     NoticeModule,
     AuthModule,
@@ -111,6 +111,6 @@ export class AppModule implements NestModule {
   constructor(private dataSource: DataSource) {}
 
   configure(consumer: MiddlewareConsumer) {
-    // consumer.apply(LoggerMiddleware).forRoutes('*');
+    consumer.apply(LoggerMiddleware).forRoutes('*');
   }
 }
