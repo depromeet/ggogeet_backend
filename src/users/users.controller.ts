@@ -62,7 +62,7 @@ export class UsersController {
   })
   @Get('/me')
   async findMe(@ReqUser() user: User, @Res() res) {
-    res.send({ data: await this.usersService.findUserById(user.id) });
+    res.send(await this.usersService.findUserById(user.id));
   }
 
   // TODO: 유저 정보 삭제 로직
@@ -87,9 +87,7 @@ export class UsersController {
   })
   @Get('/friends')
   async getFriends(@ReqUser() user, @Res() res) {
-    res.send({
-      data: { friends: await this.authService.getKakaoFriends(user) },
-    });
+    res.send(await this.authService.getKakaoFriends(user));
   }
 
   @ApiOperation({
@@ -103,9 +101,7 @@ export class UsersController {
   })
   @Get('/friends/:id')
   async getFriend(@ReqUser() user, @Param('id') id, @Res() res) {
-    res.send({
-      data: await this.authService.getKakaoFriendById(id, user),
-    });
+    res.send(await this.authService.getKakaoFriendById(id, user));
   }
 
   @ApiOperation({
@@ -119,7 +115,7 @@ export class UsersController {
   })
   @Get(':id')
   async findOne(@Param('id') id: number, @Res() res) {
-    res.send({ data: await this.usersService.findUserById(+id) });
+    res.send(await this.usersService.findUserById(+id));
   }
 
   @ApiOperation({
