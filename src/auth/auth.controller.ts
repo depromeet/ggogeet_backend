@@ -52,11 +52,15 @@ export class AuthController {
       },
     },
   })
-  async kakaoLogin(@Body('code') code: string, @Res() res) {
+  async kakaoLogin(
+    @Body('code') code: string,
+    @Body('redirectURI') redirectURI: string,
+    @Res() res,
+  ) {
     // 인증 코드로 카카오 토큰 받아오기
     const codeResponse = await this.authService.getKakaoAccessToken(
       code,
-      CallbackType.LOGIN,
+      redirectURI,
     );
     // 토큰으로 사용자 정보 받아오기
     const { statusCode, user } = await this.authService.getUserProfile(
@@ -100,10 +104,14 @@ export class AuthController {
   })
   // 추가 동의항목 동의 후 친구목록 반환
   @Get('/friends')
-  async addAgreeCategory(@Body('code') code: string, @Res() res) {
+  async addAgreeCategory(
+    @Body('code') code: string,
+    @Body('redirectURI') redirectURI: string,
+    @Res() res,
+  ) {
     const codeResponse = await this.authService.getKakaoAccessToken(
       code,
-      CallbackType.FRIEND,
+      redirectURI,
     );
     const { statusCode, user } = await this.authService.getUserProfile(
       codeResponse,
