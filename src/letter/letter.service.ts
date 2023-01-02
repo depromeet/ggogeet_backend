@@ -83,8 +83,8 @@ export class LetterService {
       where: { id: id, sender: { id: user.id } },
       relations: {
         receiver: true,
-        sender: true
-      }
+        sender: true,
+      },
     });
 
     if (!sendLetter) {
@@ -113,6 +113,7 @@ export class LetterService {
     await this.authService.sendMessageToUser(
       codeResponse.access_token,
       sendLetterDto.kakaoUuid,
+      sendLetter.id,
     );
   }
 }
