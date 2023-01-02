@@ -80,7 +80,7 @@ export class LetterController {
   @HttpCode(HttpStatus.OK)
   async getSendLetter(
     @ReqUser() user: User,
-    @Query('page', ParseIntPipe) page: number,
+    @Query('page') page: number,
   ) {
     return this.letterSentService.findAll(user, page);
   }

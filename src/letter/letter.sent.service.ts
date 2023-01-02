@@ -11,7 +11,7 @@ export class LetterSentService {
     private sendLetterRepository: Repository<SendLetter>,
   ) {}
 
-  async findAll(user: User, page: number): Promise<SendLetter[]> {
+  async findAll(user: User, page: number = 1): Promise<SendLetter[]> {
     const letters = this.sendLetterRepository.find({
       where: {
         sender: { id: user.id },
