@@ -28,7 +28,7 @@ import {
 } from '@nestjs/swagger';
 import { CreateDraftLetterDto } from './dto/requests/createDraftLetter.request.dto';
 import { LetterSentService } from './letter.sent.service';
-import { LetterReceviedService } from './letter.recevied.service';
+import { LetterReceivedService } from './letter.received.service';
 import { SendLetterDto } from './dto/requests/sendLetter.request.dto';
 import { CreateExternalImgLetterDto } from './dto/requests/createExternalLetterImg.request.dto';
 import { CreateExternalTextLetterDto } from './dto/requests/createExternalLetter.request.dto';
@@ -41,7 +41,7 @@ export class LetterController {
   constructor(
     private readonly letterService: LetterService,
     private readonly letterSentService: LetterSentService,
-    private readonly letterReceviedService: LetterReceviedService,
+    private readonly letterReceivedService: LetterReceivedService,
   ) {}
 
   @ApiOperation({
@@ -121,7 +121,7 @@ export class LetterController {
       sender: string;
     },
   ) {
-    return this.letterReceviedService.findAll(user, query);
+    return this.letterReceivedService.findAll(user, query);
   }
 
   @ApiOperation({
@@ -130,7 +130,7 @@ export class LetterController {
   })
   @Get('/received/:id')
   findOne(@ReqUser() user: User, @Param('id') id: number) {
-    return this.letterReceviedService.findOne(user, id);
+    return this.letterReceivedService.findOne(user, id);
   }
 
   @ApiOperation({
@@ -153,23 +153,23 @@ export class LetterController {
     status: HttpStatus.CREATED,
     description: '이미지 편지 업로드 성공',
   })
-  @Post('/recevied/images/upload')
+  @Post('/received/images/upload')
   @UseInterceptors(FileInterceptor('file'))
   uploadExternalImgLetter(@UploadedFile() file: Express.MulterS3.File) {
-    return this.letterReceviedService.uploadExternalLetterImage(file);
+    return this.letterReceivedService.uploadExternalLetterImage(file);
   }
 
   @ApiOperation({
     summary: '외부 텍스트 편지 생성 API',
     description: '외부에서 받은 텍스트로 된 편지를 생성합니다.',
   })
-  @Post('/recevied/texts')
+  @Post('/received/texts')
   @HttpCode(HttpStatus.CREATED)
   createExternalTextLetter(
     @ReqUser() user: User,
     @Body() createExternalTextLetterDto: CreateExternalTextLetterDto,
   ) {
-    return this.letterReceviedService.createTextLetter(
+    return this.letterReceivedService.createTextLetter(
       user,
       createExternalTextLetterDto,
     );
@@ -179,13 +179,13 @@ export class LetterController {
     summary: '외부 이미지 편지 생성 API',
     description: '외부에서 받은 이미지로 된 편지를 생성합니다.',
   })
-  @Post('/recevied/images')
+  @Post('/received/images')
   @HttpCode(HttpStatus.CREATED)
   createExternalImageLetter(
     @ReqUser() user: User,
     @Body() createExternalImgLetterDto: CreateExternalImgLetterDto,
   ) {
-    return this.letterReceviedService.createImageLetter(
+    return this.letterReceivedService.createImageLetter(
       user,
       createExternalImgLetterDto,
     );
@@ -196,8 +196,8 @@ export class LetterController {
     description: '받은 편지를 삭제합니다.',
   })
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Delete('/recevied/:id')
+  @Delete('/received/:id')
   delete(@Param('id') id: number) {
-    return this.letterReceviedService.delete(id);
+    return this.letterReceivedService.delete(id);
   }
 }

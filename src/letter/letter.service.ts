@@ -74,7 +74,7 @@ export class LetterService {
     sendLetterDto: SendLetterDto,
   ): Promise<void> {
     /*
-     * Validation of letter IDs and recevier
+     * Validation of letter IDs and receiver
      * Get Access Token through Kakao API
      * Create new incoming letters, save sender information, and update the status of outgoing letters
      * Send Message to KaKaotalk Friends API
