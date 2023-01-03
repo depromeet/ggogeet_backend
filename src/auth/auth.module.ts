@@ -9,6 +9,7 @@ import { User } from 'src/users/entities/user.entity';
 import { UserInfo } from 'src/users/entities/userInfo.entity';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { KakaoService } from 'src/kakao/kakao.service';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { AuthService } from './auth.service';
     TypeOrmModule.forFeature([User, UserInfo, Social, Friend]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, KakaoService],
   exports: [AuthService, JwtModule, PassportModule, JwtStrategy],
 })
 export class AuthModule {}
