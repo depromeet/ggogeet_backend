@@ -50,25 +50,23 @@ export class SentenceService {
   }
 
   async findUserSentenceBySituation(userId: number, situationId: number) {
-    const temp = await this.sentenceRepository
+    const sentenceList = await this.sentenceRepository
       .createQueryBuilder('sentence')
-      .select('sentence.id')
-      .addSelect('sentence.content')
       .where('sentence.userId = :id', { id: userId })
       .andWhere('sentence.type = :type', { type: SentenceType.USER })
       .andWhere('sentence.situationId = :situationId', {
         situationId: situationId,
       })
-      .take(7)
+      .take(5)
       .getMany();
-    return { situationId: situationId, sentence: temp };
+    return sentenceList.map((sentence) => {
+      return new SentenceResponseDto(sentence);
+    });
   }
 
   async findGuideSentenceBySituation(situationId: number) {
-    const temp = await this.sentenceRepository
+    const sentenceList = await this.sentenceRepository
       .createQueryBuilder('sentence')
-      .select('sentence.id')
-      .addSelect('sentence.content')
       .andWhere('sentence.type = :type', { type: SentenceType.GUIDE })
       .andWhere('sentence.situationId = :situationId', {
         situationId: situationId,
@@ -76,7 +74,9 @@ export class SentenceService {
       .orderBy('rand ()')
       .take(5)
       .getMany();
-    return { situationId: situationId, sentence: temp };
+    return sentenceList.map((sentence) => {
+      return new SentenceResponseDto(sentence);
+    });
   }
 
   async createSentence(
