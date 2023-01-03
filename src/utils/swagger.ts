@@ -12,6 +12,8 @@ export function setupSwagger(app: INestApplication): void {
       name: 'JWT',
       in: 'header',
     })
+    .addServer('http://localhost:3000')
+    .addServer('https://api.ggo-geet.com')
     .build();
 
   const document = SwaggerModule.createDocument(app, options);
