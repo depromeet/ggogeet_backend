@@ -12,7 +12,7 @@ import { SendLetter } from './entities/sendLetter.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { JwtStrategy } from 'src/auth/strategy/jwt.strategy';
 import { LetterSentService } from './letter.sent.service';
-import { LetterReceviedService } from './letter.recevied.service';
+import { LetterReceivedService } from './letter.received.service';
 
 @Module({
   imports: [
@@ -29,7 +29,7 @@ import { LetterReceviedService } from './letter.recevied.service';
   providers: [
     LetterService,
     LetterSentService,
-    LetterReceviedService,
+    LetterReceivedService,
     JwtStrategy,
   ],
 })

@@ -9,10 +9,10 @@ import { LetterBody } from './entities/letterBody.entity';
 import { LetterType } from './letter.constants';
 
 @Injectable()
-export class LetterReceviedService {
+export class LetterReceivedService {
   constructor(
     @InjectRepository(ReceivedLetter)
-    private receviedLetterRepository: Repository<ReceivedLetter>,
+    private receivedLetterRepository: Repository<ReceivedLetter>,
   ) {}
 
   async createTextLetter(
@@ -30,7 +30,7 @@ export class LetterReceviedService {
     receivedLetter.letterBody = letterBody;
     receivedLetter.senderNickname = createExternalTextLetter.senderNickname;
 
-    const result = await this.receviedLetterRepository.save(receivedLetter);
+    const result = await this.receivedLetterRepository.save(receivedLetter);
     return result;
   }
 
@@ -49,13 +49,13 @@ export class LetterReceviedService {
     receivedLetter.letterBody = letterBody;
     receivedLetter.senderNickname = createExternalImgLetterDto.senderNickname;
 
-    const result = await this.receviedLetterRepository.save(receivedLetter);
+    const result = await this.receivedLetterRepository.save(receivedLetter);
     return result;
   }
 
   async findAll(user: User, query: any): Promise<ReceivedLetter[]> {
     const order = query?.sort === "oldest" ? 1 : -1;
-    const letters = this.receviedLetterRepository.find({
+    const letters = this.receivedLetterRepository.find({
       where: {
         receiver: { id: user.id },
       },
@@ -67,7 +67,7 @@ export class LetterReceviedService {
   }
 
   async findOne(user: User, id: number): Promise<ReceivedLetter> {
-    const letter = await this.receviedLetterRepository.findOne({
+    const letter = await this.receivedLetterRepository.findOne({
       where: { id: id, receiver: { id: user.id } },
       relations: ['letterBody'],
     });
@@ -78,7 +78,7 @@ export class LetterReceviedService {
   }
 
   async delete(id: number): Promise<void> {
-    const result = await this.receviedLetterRepository.softDelete(id);
+    const result = await this.receivedLetterRepository.softDelete(id);
     if (result.affected === 0) {
       throw new BadRequestException('There is no id');
     }
