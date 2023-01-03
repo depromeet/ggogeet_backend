@@ -37,8 +37,9 @@ export class UsersController {
     description: '유저 목록을 가져옵니다.',
   })
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  async findAll() {
+    const users = await this.usersService.findAll();
+    return { data: users}
   }
 
   @ApiOperation({
@@ -52,7 +53,8 @@ export class UsersController {
   })
   @Get('/me')
   async findMe(@ReqUser() user: User) {
-    return this.usersService.findUserById(user);
+    const me = await this.usersService.findUserById(user);
+    return { data: me }
   }
 
   @ApiOperation({
@@ -66,7 +68,8 @@ export class UsersController {
   })
   @Get('/friends')
   async getFriends(@ReqUser() user: User) {
-    return await this.authService.getKakaoFriends(user);
+    const friends = await this.authService.getKakaoFriends(user);
+    return { data: friends }
   }
 
   @ApiOperation({
@@ -80,7 +83,8 @@ export class UsersController {
   })
   @Get('/friends/:id')
   async getFriend(@ReqUser() user: User, @Param('id') id) {
-    return this.authService.getKakaoFriendById(id, user);
+    const friend = await this.authService.getKakaoFriendById(id, user);
+    return { data: friend }
   }
 
   @ApiOperation({
@@ -88,7 +92,8 @@ export class UsersController {
     description: '유저 정보를 수정합니다.',
   })
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    const user = await this.usersService.update(+id, updateUserDto);
+    return { data: user }
   }
 }

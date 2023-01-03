@@ -42,8 +42,9 @@ export class NoticeController {
     description: '공지사항을 상세정보를 가져옵니다.',
   })
   @Get('/:id')
-  findOne(@Param('id') id: number) {
-    return this.noticeService.findOne(id);
+  async findOne(@Param('id') id: number) {
+    const notice = await this.noticeService.findOne(id);
+    return { data: notice }
   }
 
   @ApiOperation({
@@ -53,9 +54,10 @@ export class NoticeController {
   @ApiBearerAuth()
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() noticeData: CreateNoticeDto) {
+  async create(@Body() noticeData: CreateNoticeDto) {
     // todo: add validation
-    return this.noticeService.create(noticeData);
+    const notice = await this.noticeService.create(noticeData);
+    return { data: notice }
   }
 
   @ApiOperation({
@@ -64,9 +66,10 @@ export class NoticeController {
   })
   @ApiBearerAuth()
   @Patch(':id')
-  update(@Param('id') id: number, @Body() noticeDto: UpdateNoticeDto) {
+  async update(@Param('id') id: number, @Body() noticeDto: UpdateNoticeDto) {
     // todo: add validation
-    return this.noticeService.update(id, noticeDto);
+    const notice = await this.noticeService.update(id, noticeDto);
+    return { data: notice } 
   }
 
   @ApiOperation({
@@ -75,6 +78,7 @@ export class NoticeController {
   })
   @ApiBearerAuth()
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   delete(@Param('id') id: number) {
     // todo: add validation
     return this.noticeService.delete(id);
