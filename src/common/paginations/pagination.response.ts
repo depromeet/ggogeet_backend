@@ -42,11 +42,11 @@ export class PaginationResponse<T> {
     };
   }
 
-  private getTotalPage(totalCount: number, take: number) {
+  private getTotalPage(totalCount: number, take: number): number {
     return Math.ceil(totalCount / take);
   }
 
-  private getHasNextPage(page: number, totalPage: number) {
+  private getHasNextPage(page: number, totalPage: number): boolean {
     return page < totalPage;
   }
 }
