@@ -1,17 +1,12 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Social } from 'src/users/entities/social.entity';
 import { User } from 'src/users/entities/user.entity';
 import { UserInfo } from 'src/users/entities/userInfo.entity';
 import { Repository } from 'typeorm';
-import { Friend } from 'src/users/entities/friend.entity';
+import { Friend } from 'src/friend/entities/friend.entity';
 import { CreateKakaoUserDto } from './dto/requests/createKakaoUser.dto';
-import { ResponseFriendDto } from './dto/response/responseFriend.dto';
 import { KakaoService } from 'src/kakao/kakao.service';
 
 @Injectable()
@@ -149,7 +144,6 @@ export class AuthService {
         if (!isFriendExist) {
           await this.createKakakoFriends(element, user);
         }
-        // #TODO: 원래 있던 친구였으나 삭제된 경우 현재 친구목록에서 삭제된 경우
       });
     }
   }
@@ -173,35 +167,6 @@ export class AuthService {
       .getOne();
 
     return socialUser;
-  }
-
-  async getKakaoFriends(user: User): Promise<ResponseFriendDto[]> {
-    const friendList = await this.friendsRepository
-      .createQueryBuilder('friend')
-      .leftJoinAndSelect('friend.friendUser', 'user')
-      .where('friend.userId = :userId', { userId: user.id })
-      .getMany();
-    return friendList.map((friend) => {
-      return new ResponseFriendDto(friend);
-    });
-  }
-
-  async getKakaoFriendById(id: number, user: User): Promise<ResponseFriendDto> {
-    const friend = await this.friendsRepository
-      .createQueryBuilder('friend')
-      .leftJoinAndSelect('friend.friendUser', 'user')
-      .where('friend.id = :id', { id: id })
-      .andWhere('friend.userId = :userId', { userId: user.id })
-      .getOne();
-
-    if (!friend) {
-      throw new NotFoundException({
-        type: 'NOT_FOUND',
-        message: `Friend #${id} not found`,
-      });
-    }
-
-    return new ResponseFriendDto(friend);
   }
 
   async sendMessageToUser(

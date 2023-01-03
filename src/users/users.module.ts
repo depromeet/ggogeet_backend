@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Friend } from './entities/friend.entity';
 import { Social } from './entities/social.entity';
 import { User } from './entities/user.entity';
 import { UserInfo } from './entities/userInfo.entity';
@@ -12,7 +11,7 @@ import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, UserInfo, Social, Friend]),
+    TypeOrmModule.forFeature([User, UserInfo, Social]),
     PassportModule,
     AuthModule,
   ],

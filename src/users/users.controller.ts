@@ -20,7 +20,7 @@ import {
 import { UpdateUserDto } from './dto/requests/updateUser.dto';
 import { User } from './entities/user.entity';
 import { UserResponseDto } from './dto/response/user.response.dto';
-import { ResponseFriendDto } from 'src/auth/dto/response/responseFriend.dto';
+import { ResponseFriendDto } from 'src/friend/dto/response/responseFriend.dto';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard)
@@ -39,7 +39,7 @@ export class UsersController {
   @Get()
   async findAll() {
     const users = await this.usersService.findAll();
-    return { data: users}
+    return { data: users };
   }
 
   @ApiOperation({
@@ -54,37 +54,7 @@ export class UsersController {
   @Get('/me')
   async findMe(@ReqUser() user: User) {
     const me = await this.usersService.findUserById(user);
-    return { data: me }
-  }
-
-  @ApiOperation({
-    summary: '카카오 친구목록 가져오기 API',
-    description: '카카오 친구목록을 가져옵니다.',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: '친구목록을 반환합니다.',
-    type: [ResponseFriendDto],
-  })
-  @Get('/friends')
-  async getFriends(@ReqUser() user: User) {
-    const friends = await this.authService.getKakaoFriends(user);
-    return { data: friends }
-  }
-
-  @ApiOperation({
-    summary: '카카오 친구 정보 가져오기 API',
-    description: '카카오 친구 정보를 친구 관계 ID로 가져옵니다.',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: '친구 정보를 반환합니다.',
-    type: ResponseFriendDto,
-  })
-  @Get('/friends/:id')
-  async getFriend(@ReqUser() user: User, @Param('id') id) {
-    const friend = await this.authService.getKakaoFriendById(id, user);
-    return { data: friend }
+    return { data: me };
   }
 
   @ApiOperation({
@@ -94,6 +64,6 @@ export class UsersController {
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     const user = await this.usersService.update(+id, updateUserDto);
-    return { data: user }
+    return { data: user };
   }
 }

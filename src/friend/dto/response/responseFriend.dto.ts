@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Friend } from 'src/users/entities/friend.entity';
+import { Friend } from 'src/friend/entities/friend.entity';
 
 export class ResponseFriendDto {
   @ApiProperty({ example: 1, description: '유저 id' })

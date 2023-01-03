@@ -3,13 +3,13 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtStrategy } from 'src/auth/strategy/jwt.strategy';
-import { Friend } from 'src/users/entities/friend.entity';
 import { Social } from 'src/users/entities/social.entity';
 import { User } from 'src/users/entities/user.entity';
 import { UserInfo } from 'src/users/entities/userInfo.entity';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { KakaoService } from 'src/kakao/kakao.service';
+import { Friend } from 'src/friend/entities/friend.entity';
 
 @Module({
   imports: [
