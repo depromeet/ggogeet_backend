@@ -11,7 +11,7 @@ import { Sentence } from './entities/sentence.entity';
 export class SentenceService {
   constructor(
     @InjectRepository(Sentence)
-    private sentenceRepository: Repository<Sentence>
+    private sentenceRepository: Repository<Sentence>,
   ) {}
 
   async findAll(user: User): Promise<any> {
@@ -86,7 +86,7 @@ export class SentenceService {
     const newSentence = new Sentence();
     newSentence.type = SentenceType.USER;
     newSentence.userId = user.id;
-    newSentence.situationId = sentenceDto.situationId
+    newSentence.situationId = sentenceDto.situationId;
     newSentence.isShared = sentenceDto.isShared;
     newSentence.content = sentenceDto.content;
 

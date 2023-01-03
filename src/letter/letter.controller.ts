@@ -6,7 +6,6 @@ import {
   HttpCode,
   HttpStatus,
   Param,
-  ParseIntPipe,
   Post,
   Query,
   UploadedFile,
@@ -78,10 +77,7 @@ export class LetterController {
   })
   @Get('/sent')
   @HttpCode(HttpStatus.OK)
-  async getSendLetter(
-    @ReqUser() user: User,
-    @Query('sort') sort: string,
-  ) {
+  async getSendLetter(@ReqUser() user: User, @Query('sort') sort: string) {
     return this.letterSentService.findAll(user, sort);
   }
 

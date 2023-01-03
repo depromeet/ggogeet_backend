@@ -12,7 +12,7 @@ import { ReminderStautsResponseDto } from './dto/responses/reminderStatus.respon
 export class ReminderService {
   constructor(
     @InjectRepository(Reminder)
-    private reminderRepository: Repository<Reminder>
+    private reminderRepository: Repository<Reminder>,
   ) {}
 
   async createReminder(reminderDto: CreateReminderDto, user: User) {
@@ -24,7 +24,7 @@ export class ReminderService {
     reminder.alarmAt = reminderDto.alarmAt;
     reminder.isDone = false;
     reminder.user = user;
-    reminder.situationId = reminderDto.situationId
+    reminder.situationId = reminderDto.situationId;
     return this.reminderRepository.save(reminder);
   }
 
@@ -123,7 +123,7 @@ export class ReminderService {
       : reminder.alarmAt;
     reminder.situationId = updateReminderDto.situationId
       ? updateReminderDto.situationId
-      : reminder.situationId
+      : reminder.situationId;
 
     await this.reminderRepository.save(reminder);
 
