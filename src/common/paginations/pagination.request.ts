@@ -1,29 +1,30 @@
-import { IsNumberString, IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsOptional } from 'class-validator';
 
 export enum PaginationDefault {
   PAGE_DEFAULT = 1,
   TAKE_DEFAULT = 10,
+  SKIP_DEFAULT = 0,
 }
 
 export class PaginationRequest {
-  @IsNumberString()
+  @Type(() => Number)
   @IsOptional()
-  page?: number | PaginationDefault.PAGE_DEFAULT;
+  page?: number = PaginationDefault.PAGE_DEFAULT;
 
-  @IsNumberString()
+  @Type(() => Number)
   @IsOptional()
-  take?: number | PaginationDefault.TAKE_DEFAULT;
+  take?: number = PaginationDefault.TAKE_DEFAULT;
 
   getSkip() {
-    return (this.page - 1) * this.take;
+    return (this.page - 1) * this.take || PaginationDefault.SKIP_DEFAULT;
+  }
+
+  getPage() {
+    return this.page;
   }
 
   getTake() {
     return this.take;
-  }
-
-  constructor(page?: number, take?: number) {
-    this.page = page;
-    this.take = take;
   }
 }

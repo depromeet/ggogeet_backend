@@ -28,6 +28,11 @@ import {
 } from '@nestjs/swagger';
 import { ReminderResponseDto } from './dto/responses/reminder.response.dto';
 import { ReminderStautsResponseDto } from './dto/responses/reminderStatus.response.dto';
+import { FindAllReminderQueryDto } from './dto/requests/findAllReminder.request.dto';
+import {
+  ApiPaginationRequst,
+  ApiPaginationResponse,
+} from 'src/common/paginations/pagination.swagger';
 
 @Controller('reminders')
 @ApiTags('Reminder API')
@@ -46,21 +51,10 @@ export class ReminderController {
     summary: '리마인더 목록 조회 API',
     description: '유저의 리마인더 목록을 조회합니다.',
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: '리마인더 목록을 반환합니다.',
-    type: [CreateReminderDto],
-  })
+  @ApiPaginationRequst()
+  @ApiPaginationResponse(ReminderResponseDto)
   @Get()
-  findAll(
-    @Query()
-    query: {
-      offset: number;
-      limit: number;
-      done: boolean;
-    },
-    @ReqUser() user: User,
-  ) {
+  findAll(@Query() query: FindAllReminderQueryDto, @ReqUser() user: User) {
     return this.reminderService.findAll(query, user);
   }
 
@@ -74,8 +68,9 @@ export class ReminderController {
     type: ReminderResponseDto,
   })
   @Get(':id')
-  findOne(@Param('id') id: number, @ReqUser() user: User) {
-    return this.reminderService.findOne(id, user);
+  async findOne(@Param('id') id: number, @ReqUser() user: User) {
+    const reminder = await this.reminderService.findOne(id, user);
+    return { data: reminder }
   }
 
   @ApiOperation({
@@ -92,8 +87,9 @@ export class ReminderController {
   })
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() reminderDto: CreateReminderDto, @ReqUser() user: User) {
-    return this.reminderService.createReminder(reminderDto, user);
+  async create(@Body() reminderDto: CreateReminderDto, @ReqUser() user: User) {
+    const reminder = await this.reminderService.createReminder(reminderDto, user);
+    return { data: reminder }
   }
 
   @ApiOperation({
@@ -109,12 +105,13 @@ export class ReminderController {
     type: UpdateReminderDto,
   })
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: number,
     @Body() reminderDto: UpdateReminderDto,
     @ReqUser() user: User,
   ) {
-    return this.reminderService.update(id, reminderDto, user);
+    const reminder = await this.reminderService.update(id, reminderDto, user);
+    return { data: reminder }
   }
 
   @ApiOperation({
@@ -127,8 +124,9 @@ export class ReminderController {
     type: ReminderStautsResponseDto,
   })
   @Patch('done/:id')
-  done(@Param('id') id: number, @ReqUser() user: User) {
-    return this.reminderService.done(id, user);
+  async done(@Param('id') id: number, @ReqUser() user: User) {
+    const reminder = await this.reminderService.done(id, user);
+    return { data: reminder }
   }
 
   @ApiOperation({
@@ -141,8 +139,9 @@ export class ReminderController {
     type: ReminderStautsResponseDto,
   })
   @Patch('undone/:id')
-  undone(@Param('id') id: number, @ReqUser() user: User) {
-    return this.reminderService.undone(id, user);
+  async undone(@Param('id') id: number, @ReqUser() user: User) {
+    const reminder = await this.reminderService.undone(id, user);
+    return { data: reminder }
   }
 
   @ApiOperation({

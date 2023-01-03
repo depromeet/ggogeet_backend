@@ -17,6 +17,9 @@ export const GetPagination = createParamDecorator(
     const pagenationRequest: PaginationRequest = {
       page: page,
       take: take,
+      getPage: () => {
+        return page;
+      },
       getSkip: () => {
         return (page - 1) * take;
       },

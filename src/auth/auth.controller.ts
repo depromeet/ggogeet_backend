@@ -81,7 +81,7 @@ export class AuthController {
     const jwtAccessToken = await this.authService.getAccessToken(user.id);
     const jwtRefreshToken = await this.authService.getRefreshToken(user.id);
 
-    res.status(statusCode).send({ jwtAccessToken, jwtRefreshToken });
+    res.status(statusCode).send({ data: { jwtAccessToken, jwtRefreshToken } });
   }
 
   @ApiOperation({

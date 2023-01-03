@@ -54,7 +54,8 @@ export class LetterController {
     @ReqUser() user: User,
     @Body() createSendLetterDto: CreateDraftLetterDto,
   ) {
-    return this.letterService.createDraftLetter(user, createSendLetterDto);
+    const result = await this.letterService.createDraftLetter(user, createSendLetterDto);
+    return { data: result }
   }
 
   @ApiOperation({
@@ -68,7 +69,8 @@ export class LetterController {
     @Param('id') id: number,
     @Body() sendLetterDto: SendLetterDto,
   ) {
-    return this.letterService.sendLetter(user, id, sendLetterDto);
+    const letter = await this.letterService.sendLetter(user, id, sendLetterDto);
+    return { data: letter }
   }
 
   @ApiOperation({
@@ -78,7 +80,8 @@ export class LetterController {
   @Get('/sent')
   @HttpCode(HttpStatus.OK)
   async getSendLetter(@ReqUser() user: User, @Query('sort') sort: string) {
-    return this.letterSentService.findAll(user, sort);
+    const sentLetters = this.letterSentService.findAll(user, sort);
+    return { data: sentLetters }
   }
 
   @ApiOperation({
@@ -87,7 +90,8 @@ export class LetterController {
   })
   @Get('/sent/:id')
   async getSentLetter(@ReqUser() user: User, @Param('id') id: number) {
-    return this.letterSentService.findOne(user, id);
+    const sentLetter = await this.letterSentService.findOne(user, id);
+    return { data: sentLetter }
   }
 
   @ApiOperation({
@@ -96,7 +100,7 @@ export class LetterController {
   })
   @Delete('/sent/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteSentLetter(@ReqUser() user: User, @Param('id') id: number) {
+  deleteSentLetter(@ReqUser() user: User, @Param('id') id: number) {
     return this.letterSentService.delete(user, id);
   }
 
@@ -105,7 +109,7 @@ export class LetterController {
     description: '유저가 받은 편지함 조회을 조회합니다.',
   })
   @Get('/received')
-  findAll(
+  async findAll(
     @ReqUser() user: User,
     @Query()
     query: {
@@ -117,7 +121,8 @@ export class LetterController {
       sender: string;
     },
   ) {
-    return this.letterReceivedService.findAll(user, query);
+    const receviedLetters = await this.letterReceivedService.findAll(user, query);
+    return { data: receviedLetters}
   }
 
   @ApiOperation({
@@ -125,8 +130,9 @@ export class LetterController {
     description: '편지 상세 조회를 조회합니다.',
   })
   @Get('/received/:id')
-  findOne(@ReqUser() user: User, @Param('id') id: number) {
-    return this.letterReceivedService.findOne(user, id);
+  async findOne(@ReqUser() user: User, @Param('id') id: number) {
+    const receivedLetter = await this.letterReceivedService.findOne(user, id);
+    return { data: receivedLetter }
   }
 
   @ApiOperation({
@@ -151,8 +157,9 @@ export class LetterController {
   })
   @Post('/received/images/upload')
   @UseInterceptors(FileInterceptor('file'))
-  uploadExternalImgLetter(@UploadedFile() file: Express.MulterS3.File) {
-    return this.letterReceivedService.uploadExternalLetterImage(file);
+  async uploadExternalImgLetter(@UploadedFile() file: Express.MulterS3.File) {
+    const letter = await this.letterReceivedService.uploadExternalLetterImage(file);
+    return { data: letter }
   }
 
   @ApiOperation({
@@ -161,14 +168,15 @@ export class LetterController {
   })
   @Post('/received/texts')
   @HttpCode(HttpStatus.CREATED)
-  createExternalTextLetter(
+  async createExternalTextLetter(
     @ReqUser() user: User,
     @Body() createExternalTextLetterDto: CreateExternalTextLetterDto,
   ) {
-    return this.letterReceivedService.createTextLetter(
+    const letter = await this.letterReceivedService.createTextLetter(
       user,
       createExternalTextLetterDto,
     );
+    return { data: letter }
   }
 
   @ApiOperation({
@@ -177,14 +185,15 @@ export class LetterController {
   })
   @Post('/received/images')
   @HttpCode(HttpStatus.CREATED)
-  createExternalImageLetter(
+  async createExternalImageLetter(
     @ReqUser() user: User,
     @Body() createExternalImgLetterDto: CreateExternalImgLetterDto,
   ) {
-    return this.letterReceivedService.createImageLetter(
+    const letter = await this.letterReceivedService.createImageLetter(
       user,
       createExternalImgLetterDto,
     );
+    return { data: letter }
   }
 
   @ApiOperation({
