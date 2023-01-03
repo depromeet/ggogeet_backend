@@ -1,26 +1,18 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   HttpStatus,
   Param,
   Patch,
-  Post,
-  Req,
-  Res,
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from 'src/common/guards/jwtAuth.guard';
 import { AuthService } from 'src/auth/auth.service';
-import { CreateKakaoUserDto } from 'src/auth/dto/requests/createKakaoUser.dto';
 import { ReqUser } from 'src/common/decorators/user.decorators';
 import {
   ApiBearerAuth,
-  ApiBody,
-  ApiForbiddenResponse,
-  ApiNotFoundResponse,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -39,8 +31,6 @@ export class UsersController {
     private readonly usersService: UsersService,
     private readonly authService: AuthService,
   ) {}
-
-  // TODO : "meta" : ~~, "data" : [ {},{}...] 형태로 swagger 설정 어떻게?
 
   @ApiOperation({
     summary: '유저 목록 가져오기 API',
@@ -61,20 +51,9 @@ export class UsersController {
     type: UserResponseDto,
   })
   @Get('/me')
-  async findMe(@ReqUser() user: User, @Res() res) {
-    res.send(await this.usersService.findUserById(user.id));
+  async findMe(@ReqUser() user: User) {
+    return this.usersService.findUserById(user);
   }
-
-  // TODO: 유저 정보 삭제 로직
-
-  // @ApiOperation({
-  //   summary: '유저 삭제 API',
-  //   description: '유저를 삭제합니다.',
-  // })
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.usersService.remove(+id);
-  // }
 
   @ApiOperation({
     summary: '카카오 친구목록 가져오기 API',
@@ -86,8 +65,8 @@ export class UsersController {
     type: [ResponseFriendDto],
   })
   @Get('/friends')
-  async getFriends(@ReqUser() user, @Res() res) {
-    res.send(await this.authService.getKakaoFriends(user));
+  async getFriends(@ReqUser() user: User) {
+    return await this.authService.getKakaoFriends(user);
   }
 
   @ApiOperation({
@@ -100,22 +79,8 @@ export class UsersController {
     type: ResponseFriendDto,
   })
   @Get('/friends/:id')
-  async getFriend(@ReqUser() user, @Param('id') id, @Res() res) {
-    res.send(await this.authService.getKakaoFriendById(id, user));
-  }
-
-  @ApiOperation({
-    summary: '유저 조회 API',
-    description: '유저 정보를 가져옵니다. ',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: '유저 정보를 반환합니다.',
-    type: UserResponseDto,
-  })
-  @Get(':id')
-  async findOne(@Param('id') id: number, @Res() res) {
-    res.send(await this.usersService.findUserById(+id));
+  async getFriend(@ReqUser() user: User, @Param('id') id) {
+    return this.authService.getKakaoFriendById(id, user);
   }
 
   @ApiOperation({

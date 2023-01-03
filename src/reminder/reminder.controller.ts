@@ -28,6 +28,7 @@ import {
 } from '@nestjs/swagger';
 import { ReminderResponseDto } from './dto/responses/reminder.response.dto';
 import { ReminderStautsResponseDto } from './dto/responses/reminderStatus.response.dto';
+
 @Controller('reminders')
 @ApiTags('Reminder API')
 @ApiBearerAuth()

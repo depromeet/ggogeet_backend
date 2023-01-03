@@ -7,11 +7,9 @@ import {
   Query,
   Res,
 } from '@nestjs/common';
-import { CallbackType } from 'src/constants/kakaoCallback.constant';
 import { AuthService } from './auth.service';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ResponseFriendDto } from './dto/response/responseFriend.dto';
-import { json } from 'stream/consumers';
 
 @Controller('auth')
 @ApiTags('Auth API')
