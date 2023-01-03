@@ -23,6 +23,8 @@ import {
 import { SentenceResponseDto } from './dto/responses/sentence.response.dto';
 import { ReqUser } from 'src/common/decorators/user.decorators';
 import { User } from 'src/users/entities/user.entity';
+import { SituationSentenceResponseDto } from './dto/responses/manysentence.response.dto';
+import { Sentence } from './entities/sentence.entity';
 
 @Controller('sentence')
 @ApiTags('Sentence API')
@@ -31,21 +33,33 @@ import { User } from 'src/users/entities/user.entity';
 export class SentenceController {
   constructor(private readonly sentenceService: SentenceService) {}
 
-  @ApiOperation({
-    summary: '모든 문장 가져오기 API',
-    description: '상황별의 모든 문장을 가져옵니다.',
-  })
-  @Get()
-  async findAllSentence(@ReqUser() user: User) {
-    return await this.sentenceService.findAll(user);
-  }
+  // 1차 mvp에서 필요없다고 판단해서 일단 빼놓습니다
+  // @ApiOperation({
+  //   summary: '"모든" 문장 가져오기 API',
+  //   description:
+  //     '사용자별로 모든 문장(사용자 추가 문장 + 가이드 문장)을 가져옵니다. 상황별로 문장을 한번에 가져와서 필터링하고 싶은 경우 사용하면 됩니다. ',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   description: '모든 문장이 반환된 후 situationId로 상황을 구분하면 됩니다. userSentence:[ [{},{},{}],[{},{}],[],[{}],[],[],[].. ], ',
+  //   type: [SituationSentenceResponseDto],
+  // })
+  // @Get()
+  // async findAllSentence(@ReqUser() user: User) {
+  //   return await this.sentenceService.findAll(user);
+  // }
 
   @ApiOperation({
     summary: '상황별 문장 가져오기 API',
-    description: '상황별로 문장을 가져옵니다.',
+    description: '상황 id로 사용자 추가 문장, 가이드 문장을 가져옵니다.',
   })
-  @Get('situation')
-  async findSentence(@ReqUser() user: User, @Query('id') situationId: number) {
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '상황 id로 사용자 추가 문장, 가이드 문장을 가져옵니다.',
+    type: SituationSentenceResponseDto,
+  })
+  @Get('situation/:id')
+  async findSentence(@ReqUser() user: User, @Param('id') situationId: number) {
     const userSentence = await this.sentenceService.findUserSentenceBySituation(
       user.id,
       situationId,
@@ -80,7 +94,7 @@ export class SentenceController {
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: '내가 쓴 문장을 가져옵니다.',
+    description: '내가 쓴 문장을 문장 id로 가져옵니다',
     type: SentenceResponseDto,
   })
   @Get(':id')

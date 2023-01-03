@@ -9,6 +9,12 @@ export class SentenceResponseDto {
   id: number;
 
   @ApiProperty({
+    example: '생일축하해~',
+    description: '문장 내용',
+  })
+  content: string;
+
+  @ApiProperty({
     example: 3,
     description: '상황 id',
   })
@@ -35,6 +41,7 @@ export class SentenceResponseDto {
   constructor(sentence: Sentence) {
     this.id = sentence.id;
     this.situationId = sentence.situationId;
+    this.content = sentence.content;
     this.type = sentence.type;
     this.isShared = sentence.isShared;
     this.createdAt = sentence.createdAt;
