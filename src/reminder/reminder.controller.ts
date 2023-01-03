@@ -28,6 +28,11 @@ import {
 } from '@nestjs/swagger';
 import { ReminderResponseDto } from './dto/responses/reminder.response.dto';
 import { ReminderStautsResponseDto } from './dto/responses/reminderStatus.response.dto';
+import { FindAllReminderQueryDto } from './dto/requests/findAllReminder.request.dto';
+import {
+  ApiPaginationRequst,
+  ApiPaginationResponse,
+} from 'src/common/paginations/pagination.swagger';
 
 @Controller('reminders')
 @ApiTags('Reminder API')
@@ -46,21 +51,10 @@ export class ReminderController {
     summary: '리마인더 목록 조회 API',
     description: '유저의 리마인더 목록을 조회합니다.',
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: '리마인더 목록을 반환합니다.',
-    type: [CreateReminderDto],
-  })
+  @ApiPaginationRequst()
+  @ApiPaginationResponse(ReminderResponseDto)
   @Get()
-  findAll(
-    @Query()
-    query: {
-      offset: number;
-      limit: number;
-      done: boolean;
-    },
-    @ReqUser() user: User,
-  ) {
+  findAll(@Query() query: FindAllReminderQueryDto, @ReqUser() user: User) {
     return this.reminderService.findAll(query, user);
   }
 
