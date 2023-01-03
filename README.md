@@ -1,4 +1,4 @@
-#ggogeet backend
+# ggo-geet backend
 
 This repo is made fo ggogeet backend
 
