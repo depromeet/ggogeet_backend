@@ -46,7 +46,7 @@ export const ApiPaginationRequst = () => {
       description: '페이지 번호',
     }),
     ApiQuery({
-      name: 'limit',
+      name: 'take',
       required: false,
       type: Number,
       description: '페이지당 아이템 수',

@@ -7,6 +7,7 @@ import { Reminder } from './entities/reminder.entity';
 import { UpdateReminderDto } from './dto/requests/updateReminder.request.dto';
 import { ReminderResponseDto } from './dto/responses/reminder.response.dto';
 import { ReminderStautsResponseDto } from './dto/responses/reminderStatus.response.dto';
+import { FindAllReminderQueryDto } from './dto/requests/findAllReminder.request.dto';
 
 @Injectable()
 export class ReminderService {
@@ -28,37 +29,32 @@ export class ReminderService {
     return this.reminderRepository.save(reminder);
   }
 
-  async findAll(query: any, user: User) {
-    const limit: number = query.limit ? parseInt(query.limit) : 20;
-    const offset: number = query.offset ? parseInt(query.offset) : 0;
-    const order = query.order ? query.order : 'DESC';
-
+  async findAll(query: FindAllReminderQueryDto, user: User) {
     const constraint = {
       user: {
         id: user.id,
       },
     };
 
-    if (query.done) {
-      constraint['isDone'] = query.done == 'true';
+    if (query.done !== undefined) {
+      constraint['isDone'] = query.done;
     }
 
-    const reminder = await this.reminderRepository.findAndCount({
+    const take = query.getTake();
+    const skip = query.getSkip();
+
+    const [data, count] = await this.reminderRepository.findAndCount({
       where: constraint,
-      skip: offset,
-      take: limit,
-      order: {
-        eventAt: order,
-        isDone: 'ASC',
-      },
+      skip: skip,
+      take: take,
       select: ['id', 'title', 'eventAt', 'alertOn', 'isDone'],
     });
 
     return {
-      count: reminder[1],
-      offset: offset,
-      limit: limit,
-      data: reminder[0],
+      count: data,
+      offset: skip,
+      limit: take,
+      data: count,
     };
   }
 
