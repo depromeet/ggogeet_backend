@@ -2,5 +2,5 @@
 
 cd ~/ggogeet_backend
 git pull origin master
-docker build -t ggogeet_backend .
-docker run -d -p 3000:3000 ggogeet_backend
+sudo docker build -t ggogeet_backend .
+sudo docker run -d -p 3000:3000 ggogeet_backend
