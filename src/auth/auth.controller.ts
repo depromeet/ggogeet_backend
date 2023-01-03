@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ResponseFriendDto } from './dto/response/responseFriend.dto';
+import { ResponseFriendDto } from '../friend/dto/response/responseFriend.dto';
 
 @Controller('auth')
 @ApiTags('Auth API')
@@ -125,8 +125,7 @@ export class AuthController {
 
     await this.authService.updateKakaoFriends(codeResponse.access_token, user);
 
-    const friendslist = await this.authService.getKakaoFriends(user);
-    res.send(friendslist);
+    res.status(HttpStatus.OK).send();
   }
 
   //-----------------------------------------------------------------------------------------------------------

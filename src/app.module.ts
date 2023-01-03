@@ -11,7 +11,7 @@ import { AuthModule } from './auth/auth.module';
 import { User } from './users/entities/user.entity';
 import { UserInfo } from './users/entities/userInfo.entity';
 import { Social } from './users/entities/social.entity';
-import { Friend } from './users/entities/friend.entity';
+import { Friend } from './friend/entities/friend.entity';
 import { LetterModule } from './letter/letter.module';
 import { ReceivedLetter } from './letter/entities/receivedLetter.entity';
 import { ReminderModule } from './reminder/reminder.module';
@@ -29,6 +29,7 @@ import {
   utilities as nestWinstonModuleUtilities,
   WinstonModule,
 } from 'nest-winston';
+import { FriendModule } from './friend/friend.module';
 import winstonDaily from 'winston-daily-rotate-file';
 
 const ConfigSettingModule = ConfigModule.forRoot({
@@ -103,6 +104,7 @@ const WinstomSettingModule = WinstonModule.forRoot({
     SentenceModule,
     ReminderModule,
     ReplyModule,
+    FriendModule,
   ],
   controllers: [AppController],
   providers: [AppService],
