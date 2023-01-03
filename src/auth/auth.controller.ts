@@ -64,10 +64,12 @@ export class AuthController {
       code,
       redirectURI,
     );
+
     // 토큰으로 사용자 정보 받아오기
     const { statusCode, user } = await this.authService.getUserProfile(
       codeResponse,
     );
+
     // 친구 목록, 메세지 동의했으면 회원가입할때 친구 바로 저장
     if (codeResponse.scope.indexOf('friends') !== -1) {
       await this.authService.updateKakaoFriends(
@@ -109,7 +111,7 @@ export class AuthController {
     type: [ResponseFriendDto],
   })
   // 추가 동의항목 동의 후 친구목록 반환
-  @Get('/friends')
+  @Post('/friends')
   async addAgreeCategory(
     @Body('code') code: string,
     @Body('redirectURI') redirectURI: string,
@@ -119,9 +121,7 @@ export class AuthController {
       code,
       redirectURI,
     );
-    const { statusCode, user } = await this.authService.getUserProfile(
-      codeResponse,
-    );
+    const { user } = await this.authService.getUserProfile(codeResponse);
 
     await this.authService.updateKakaoFriends(codeResponse.access_token, user);
 

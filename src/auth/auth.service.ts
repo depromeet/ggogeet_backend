@@ -1,76 +1,37 @@
 import {
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as qs from 'qs';
-
 import { Social } from 'src/users/entities/social.entity';
 import { User } from 'src/users/entities/user.entity';
 import { UserInfo } from 'src/users/entities/userInfo.entity';
 import { Repository } from 'typeorm';
-import axios from 'axios';
 import { Friend } from 'src/users/entities/friend.entity';
 import { CreateKakaoUserDto } from './dto/requests/createKakaoUser.dto';
 import { ResponseFriendDto } from './dto/response/responseFriend.dto';
+import { KakaoService } from 'src/kakao/kakao.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
-    @InjectRepository(Social) private socialRepository: Repository<Social>,
-    @InjectRepository(UserInfo)
-    private userInfoRepository: Repository<UserInfo>,
     @InjectRepository(Friend) private friendsRepository: Repository<Friend>,
+    private readonly kakaoService: KakaoService,
     private readonly jwtService: JwtService,
   ) {}
 
   async getKakaoAccessToken(code: string, redirectURI: string) {
-    const kakaoTokenUrl = 'https://kauth.kakao.com/oauth/token';
-    const body = {
-      grant_type: 'authorization_code',
-      client_id: process.env.KAKAO_CLIENT_ID,
-      redirect_uri: redirectURI,
-      code,
-    };
-    const headers = {
-      'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-    };
-
-    try {
-      const response = await axios({
-        // 카카오에 토큰 요청해서 받은 값
-        method: 'post',
-        url: kakaoTokenUrl,
-        headers,
-        data: qs.stringify(body),
-      });
-      return response.data;
-    } catch (e) {
-      throw new UnauthorizedException(e, 'Wrong kakaoAccessCode');
-    }
+    return await this.kakaoService.getKakaoAccessToken(code, redirectURI);
   }
 
   async getUserProfile(codeResponse) {
-    const kakaoUserInfoUrl = 'https://kapi.kakao.com/v2/user/me';
-    const headerUserInfo = {
-      'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-      Authorization: 'Bearer ' + codeResponse.access_token,
-    };
-
-    // 카카오로부터 받은 사용자 정보들 중에서 필요한 값만 담아 응답값 반환
     try {
-      // 카카오로부터 받은 토큰 값 헤더에 담아 카카오 서버 /v2/user/me로 사용자 정보 요청
-      const responseUserInfo = await axios({
-        method: 'GET',
-        url: kakaoUserInfoUrl,
-        headers: headerUserInfo,
-      });
-
-      const profileJson = responseUserInfo.data;
+      const profileJson = await this.kakaoService.getKakaoProfile(
+        codeResponse.access_token,
+      );
       const kakao_account = profileJson.kakao_account;
 
       const kakaoInfo: CreateKakaoUserDto = {
@@ -175,34 +136,21 @@ export class AuthService {
   }
 
   async updateKakaoFriends(access_token: string, user: User) {
-    const kakaoFriendsUrl = 'https://kapi.kakao.com/v1/api/talk/friends';
+    const [friendsList, friendsCount] =
+      await this.kakaoService.getKakaoFriendsandCount(access_token);
 
-    const header = {
-      'Content-type': 'application/x-www-form-urlencoded;charset=utf-8',
-      Authorization: `Bearer ${access_token}`,
-    };
-
-    const responseFriendsInfo = await axios({
-      // 카카오 access 토큰으로 유저 친구 목록 요청
-      method: 'GET',
-      url: kakaoFriendsUrl,
-      headers: header,
-    });
-
-    if (responseFriendsInfo.status === 200) {
-      if (responseFriendsInfo.data.total_count > 0) {
-        responseFriendsInfo.data.elements.map(async (element) => {
-          // 존재하는 친구인지 검사
-          const isFriendExist = await this.friendsRepository.findOne({
-            where: { userId: user.id, kakaoUuid: element.kakaoUuid },
-          });
-          // 새로운 친구면 추가
-          if (!isFriendExist) {
-            await this.createKakakoFriends(element, user);
-          }
-          // #TODO: 원래 있던 친구였으나 삭제된 경우 현재 친구목록에서 삭제된 경우
+    if (friendsCount > 0) {
+      friendsList.map(async (element) => {
+        // 존재하는 친구인지 검사
+        const isFriendExist = await this.friendsRepository.findOne({
+          where: { userId: user.id, kakaoUuid: element.kakaoUuid },
         });
-      }
+        // 새로운 친구면 추가
+        if (!isFriendExist) {
+          await this.createKakakoFriends(element, user);
+        }
+        // #TODO: 원래 있던 친구였으나 삭제된 경우 현재 친구목록에서 삭제된 경우
+      });
     }
   }
 
@@ -261,35 +209,14 @@ export class AuthService {
     kakaoUuid: string,
     letterId: number,
   ) {
-    const kakaoMessageUrl =
-      'https://kapi.kakao.com/v1/api/talk/friends/message/send';
-
-    // 편지 조회하기 위한 access_token
-    const accessCode = 'abcd';
-    const body = {
-      template_id: 87992,
-      // #TODO: 편지 이미지 파일 첨부
-      template_args: `{\"letterId\": "${letterId}"}`,
-      receiver_uuids: `["${kakaoUuid}"]`,
-    };
-
-    const header = {
-      'Content-type': 'application/x-www-form-urlencoded;charset=utf-8',
-      Authorization: `Bearer ${access_token}`,
-    };
-
-    // 메세지 보내기
-    try {
-      const responseMessageInfo = await axios({
-        method: 'POST',
-        url: kakaoMessageUrl,
-        headers: header,
-        data: qs.stringify(body),
-      });
-      return responseMessageInfo.data;
-    } catch (e) {
-      // 일단 체크해두려고 넣어둠 :TODO
-      throw new InternalServerErrorException(e);
-    }
+    const template_id = 87992;
+    const template_args = `{\"letterId\": "${letterId}"}`;
+    const result = this.kakaoService.sendKakaoMessage(
+      access_token,
+      kakaoUuid,
+      template_id,
+      template_args,
+    );
+    return result;
   }
 }
