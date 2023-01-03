@@ -68,8 +68,9 @@ export class ReminderController {
     type: ReminderResponseDto,
   })
   @Get(':id')
-  findOne(@Param('id') id: number, @ReqUser() user: User) {
-    return this.reminderService.findOne(id, user);
+  async findOne(@Param('id') id: number, @ReqUser() user: User) {
+    const reminder = await this.reminderService.findOne(id, user);
+    return { data: reminder }
   }
 
   @ApiOperation({
@@ -86,8 +87,9 @@ export class ReminderController {
   })
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() reminderDto: CreateReminderDto, @ReqUser() user: User) {
-    return this.reminderService.createReminder(reminderDto, user);
+  async create(@Body() reminderDto: CreateReminderDto, @ReqUser() user: User) {
+    const reminder = await this.reminderService.createReminder(reminderDto, user);
+    return { data: reminder }
   }
 
   @ApiOperation({
@@ -103,12 +105,13 @@ export class ReminderController {
     type: UpdateReminderDto,
   })
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: number,
     @Body() reminderDto: UpdateReminderDto,
     @ReqUser() user: User,
   ) {
-    return this.reminderService.update(id, reminderDto, user);
+    const reminder = await this.reminderService.update(id, reminderDto, user);
+    return { data: reminder }
   }
 
   @ApiOperation({
@@ -121,8 +124,9 @@ export class ReminderController {
     type: ReminderStautsResponseDto,
   })
   @Patch('done/:id')
-  done(@Param('id') id: number, @ReqUser() user: User) {
-    return this.reminderService.done(id, user);
+  async done(@Param('id') id: number, @ReqUser() user: User) {
+    const reminder = await this.reminderService.done(id, user);
+    return { data: reminder }
   }
 
   @ApiOperation({
@@ -135,8 +139,9 @@ export class ReminderController {
     type: ReminderStautsResponseDto,
   })
   @Patch('undone/:id')
-  undone(@Param('id') id: number, @ReqUser() user: User) {
-    return this.reminderService.undone(id, user);
+  async undone(@Param('id') id: number, @ReqUser() user: User) {
+    const reminder = await this.reminderService.undone(id, user);
+    return { data: reminder }
   }
 
   @ApiOperation({

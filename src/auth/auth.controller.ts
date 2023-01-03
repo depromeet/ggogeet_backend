@@ -79,7 +79,7 @@ export class AuthController {
     const jwtAccessToken = await this.authService.getAccessToken(user.id);
     const jwtRefreshToken = await this.authService.getRefreshToken(user.id);
 
-    res.status(statusCode).send({ jwtAccessToken, jwtRefreshToken });
+    res.status(statusCode).send({data: { jwtAccessToken, jwtRefreshToken }});
   }
 
   @ApiOperation({
@@ -126,7 +126,7 @@ export class AuthController {
     await this.authService.updateKakaoFriends(codeResponse.access_token, user);
 
     const friendslist = await this.authService.getKakaoFriends(user);
-    res.send(friendslist);
+    res.send({data: friendslist});
   }
 
   //-----------------------------------------------------------------------------------------------------------
