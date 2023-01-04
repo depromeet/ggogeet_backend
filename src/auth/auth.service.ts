@@ -88,11 +88,19 @@ export class AuthService {
       newUser.userInfo = newUserInfo;
 
       await this.userRepository.save(newUser);
-      return { statusCode: 201, user: newUser };
+      return {
+        statusCode: 201,
+        user: newUser,
+        allowFriendsList: newUser.social.allowFriendsList,
+      };
     } else {
       // 기존 유저면 update
       exUser = await this.updateKakaoUser(exUser.id, kakaoInfo);
-      return { statusCode: 200, user: exUser };
+      return {
+        statusCode: 200,
+        user: exUser,
+        allowFriendsList: exUser.social.allowFriendsList,
+      };
     }
   }
 
