@@ -51,6 +51,11 @@ export class AuthController {
           example: 'refreshToken',
           description: 'Refresh 토큰',
         },
+        allowFriendsList: {
+          type: 'boolean',
+          example: 'true',
+          description: '친구목록,메세지 동의 여부',
+        },
       },
     },
   })
@@ -66,9 +71,8 @@ export class AuthController {
     );
 
     // 토큰으로 사용자 정보 받아오기
-    const { statusCode, user } = await this.authService.getUserProfile(
-      codeResponse,
-    );
+    const { statusCode, user, allowFriendsList } =
+      await this.authService.getUserProfile(codeResponse);
 
     // 친구 목록, 메세지 동의했으면 회원가입할때 친구 바로 저장
     if (codeResponse.scope.indexOf('friends') !== -1) {
@@ -81,7 +85,9 @@ export class AuthController {
     const jwtAccessToken = await this.authService.getAccessToken(user.id);
     const jwtRefreshToken = await this.authService.getRefreshToken(user.id);
 
-    res.status(statusCode).send({ data: { jwtAccessToken, jwtRefreshToken } });
+    res
+      .status(statusCode)
+      .send({ data: { jwtAccessToken, jwtRefreshToken, allowFriendsList } });
   }
 
   @ApiOperation({

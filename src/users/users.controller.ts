@@ -36,6 +36,11 @@ export class UsersController {
     summary: '유저 목록 가져오기 API',
     description: '유저 목록을 가져옵니다.',
   })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '서비스에 가입된 모든 유저를 가져옵니다',
+    type: [User],
+  })
   @Get()
   async findAll() {
     const users = await this.usersService.findAll();
