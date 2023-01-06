@@ -3,7 +3,7 @@ import {
   Get,
   HttpStatus,
   Param,
-  Post,
+  Patch,
   UseGuards,
 } from '@nestjs/common';
 import { FriendService } from './friend.service';
@@ -40,8 +40,8 @@ export class FriendController {
   }
 
   @ApiOperation({
-    summary: '카카오 친구 정보 가져오기 API',
-    description: '카카오 친구 정보를 친구 관계 ID로 가져옵니다.',
+    summary: '친구 정보 가져오기 API',
+    description: '친구 정보를 친구 ID로 가져옵니다.',
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -51,5 +51,14 @@ export class FriendController {
   @Get('/:id')
   findOne(@ReqUser() user: User, @Param('id') id: number) {
     return this.friendService.findOne(id, user);
+  }
+
+  @ApiOperation({
+    summary: '카카오 친구 목록 업데이트 API',
+    description: '친구 목록을 카카오 친구 기반으로 업데이트합니다.',
+  })
+  @Patch('/kakao/update')
+  updateFriends(@ReqUser() user: User) {
+    return this.friendService.updateFriends(user);
   }
 }

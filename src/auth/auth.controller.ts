@@ -10,6 +10,8 @@ import {
 import { AuthService } from './auth.service';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ResponseFriendDto } from '../friend/dto/response/responseFriend.dto';
+import { KakaoTokenRepository } from 'src/kakao/kakaoToken.memory.repository';
+import { KakaoToken } from 'src/kakao/kakaoToken';
 
 @Controller('auth')
 @ApiTags('Auth API')
@@ -65,18 +67,25 @@ export class AuthController {
       redirectURI,
     );
 
+    const kakaoToken = new KakaoToken(
+      codeResponse.access_token,
+      codeResponse.refresh_token,
+      codeResponse.expires_in,
+      codeResponse.refresh_token_expires_in,
+      codeResponse.tokenType,
+      codeResponse.scope,
+    );
+    console.log(kakaoToken);
+
+    const kakaoTokenRepository = new KakaoTokenRepository();
+
     // 토큰으로 사용자 정보 받아오기
     const { statusCode, user } = await this.authService.getUserProfile(
       codeResponse,
     );
 
-    // 친구 목록, 메세지 동의했으면 회원가입할때 친구 바로 저장
-    if (codeResponse.scope.indexOf('friends') !== -1) {
-      await this.authService.updateKakaoFriends(
-        codeResponse.access_token,
-        user,
-      );
-    }
+    kakaoTokenRepository.save(user.id, kakaoToken);
+
     // user.id로 jwt 토큰 발급
     const jwtAccessToken = await this.authService.getAccessToken(user.id);
     const jwtRefreshToken = await this.authService.getRefreshToken(user.id);
@@ -111,7 +120,7 @@ export class AuthController {
     type: [ResponseFriendDto],
   })
   // 추가 동의항목 동의 후 친구목록 반환
-  @Post('/friends')
+  @Post('/kakao/friends')
   async addAgreeCategory(
     @Body('code') code: string,
     @Body('redirectURI') redirectURI: string,
@@ -121,9 +130,19 @@ export class AuthController {
       code,
       redirectURI,
     );
+
     const { user } = await this.authService.getUserProfile(codeResponse);
 
-    await this.authService.updateKakaoFriends(codeResponse.access_token, user);
+    const kakaoTokenRepository = new KakaoTokenRepository();
+    const kakaoToken = new KakaoToken(
+      codeResponse.access_token,
+      codeResponse.refresh_token,
+      codeResponse.expires_in,
+      codeResponse.refresh_token_expires_in,
+      codeResponse.tokenType,
+      codeResponse.scope,
+    );
+    kakaoTokenRepository.save(user.id, kakaoToken);
 
     res.status(HttpStatus.OK).send();
   }
