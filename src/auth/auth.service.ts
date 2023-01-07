@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Social } from 'src/users/entities/social.entity';
@@ -54,16 +58,14 @@ export class AuthService {
             : null,
         allow_scope: codeResponse.scope,
         is_allow_friend:
-          codeResponse.scope.allow_scope.indexOf('friends') !== -1
-            ? true
-            : false,
+          codeResponse.scope.indexOf('friends') !== -1 ? true : false,
       };
 
       // 존재하는 유저인지 확인 후 유저 정보 반환
       const user = await this.validateKakao(kakaoInfo);
       return user;
     } catch (e) {
-      throw new UnauthorizedException();
+      throw new InternalServerErrorException(e);
     }
   }
 
