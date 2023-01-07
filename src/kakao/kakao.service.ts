@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import {
   InternalServerErrorException,
   UnauthorizedException,
@@ -130,8 +131,7 @@ export class KakaoService {
 
     const body = {
       template_id: template_id,
-      template_args: template_args,
-      receiver_uuids: [kakao_uuid],
+      receiver_uuids: '[' + '"' + kakao_uuid + '"' + ']',
     };
 
     try {

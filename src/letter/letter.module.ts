@@ -13,6 +13,7 @@ import { AuthModule } from 'src/auth/auth.module';
 import { JwtStrategy } from 'src/auth/strategy/jwt.strategy';
 import { LetterSentService } from './letter.sent.service';
 import { LetterReceivedService } from './letter.received.service';
+import { Friend } from 'src/friend/entities/friend.entity';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { LetterReceivedService } from './letter.received.service';
       useFactory: multerAttachedImgOptionsFactory,
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([ReceivedLetter, User, SendLetter]),
+    TypeOrmModule.forFeature([ReceivedLetter, User, SendLetter, Friend]),
     PassportModule,
     AuthModule,
   ],

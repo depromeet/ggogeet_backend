@@ -7,6 +7,7 @@ import { AuthModule } from 'src/auth/auth.module';
 import { Friend } from './entities/friend.entity';
 import { JwtStrategy } from 'src/auth/strategy/jwt.strategy';
 import { User } from 'src/users/entities/user.entity';
+import { KakaoService } from 'src/kakao/kakao.service';
 
 @Module({
   imports: [
@@ -15,6 +16,6 @@ import { User } from 'src/users/entities/user.entity';
     AuthModule,
   ],
   controllers: [FriendController],
-  providers: [FriendService, JwtStrategy],
+  providers: [FriendService, JwtStrategy, KakaoService],
 })
 export class FriendModule {}

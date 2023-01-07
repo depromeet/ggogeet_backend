@@ -6,11 +6,12 @@ import { SendLetter } from './entities/sendLetter.entity';
 import { SendLetterStatus } from './letter.constants';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { SendLetterDto } from './dto/requests/sendLetter.request.dto';
-import { CallbackType } from 'src/constants/kakaoCallback.constant';
 import { AuthService } from 'src/auth/auth.service';
 import { ReceivedLetter } from './entities/receivedLetter.entity';
 import { LetterUtils } from './letter.utils';
+import { KakaoTokenRepository } from 'src/kakao/kakaoToken.memory.repository';
+import { KakaoToken } from 'src/kakao/kakaoToken';
+import { Friend } from 'src/friend/entities/friend.entity';
 
 @Injectable()
 export class LetterService {
@@ -21,6 +22,8 @@ export class LetterService {
     private sendLetterRepository: Repository<SendLetter>,
     @InjectRepository(ReceivedLetter)
     private receivedLetterRepository: Repository<ReceivedLetter>,
+    @InjectRepository(Friend)
+    private friendRepository: Repository<Friend>,
     private readonly authService: AuthService,
   ) {}
 
@@ -68,11 +71,7 @@ export class LetterService {
     return result;
   }
 
-  async sendLetter(
-    user: User,
-    id: number,
-    sendLetterDto: SendLetterDto,
-  ): Promise<void> {
+  async sendLetter(user: User, id: number): Promise<void> {
     /*
      * Validation of letter IDs and receiver
      * Get Access Token through Kakao API
@@ -94,10 +93,22 @@ export class LetterService {
       throw new NotFoundException('There is no receiver');
     }
 
-    const codeResponse = await this.authService.getKakaoAccessToken(
-      sendLetterDto.kakaoAccessCode,
-      CallbackType.FRIEND,
-    );
+    const kakaoTokenRepository = new KakaoTokenRepository();
+    const kakaoToken: KakaoToken = kakaoTokenRepository.findByUserId(user.id);
+    const acessToken = kakaoToken.getAcessToken();
+
+    const friend = await this.friendRepository.findOne({
+      where: {
+        user: { id: user.id },
+        friendUser: { id: sendLetter.receiver.id },
+      },
+    });
+
+    if (!friend) {
+      throw new NotFoundException('There is no friend');
+    }
+
+    const kakaoUuid = friend.kakaoUuid;
 
     const receivedLetter = new ReceivedLetter();
     receivedLetter.sender = user;
@@ -111,8 +122,8 @@ export class LetterService {
     });
 
     await this.authService.sendMessageToUser(
-      codeResponse.access_token,
-      sendLetterDto.kakaoUuid,
+      acessToken,
+      kakaoUuid,
       sendLetter.id,
     );
   }
