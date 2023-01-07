@@ -28,7 +28,6 @@ import {
 import { CreateDraftLetterDto } from './dto/requests/createDraftLetter.request.dto';
 import { LetterSentService } from './letter.sent.service';
 import { LetterReceivedService } from './letter.received.service';
-import { SendLetterDto } from './dto/requests/sendLetter.request.dto';
 import { CreateExternalImgLetterDto } from './dto/requests/createExternalLetterImg.request.dto';
 import { CreateExternalTextLetterDto } from './dto/requests/createExternalLetter.request.dto';
 
@@ -54,8 +53,11 @@ export class LetterController {
     @ReqUser() user: User,
     @Body() createSendLetterDto: CreateDraftLetterDto,
   ) {
-    const result = await this.letterService.createDraftLetter(user, createSendLetterDto);
-    return { data: result }
+    const result = await this.letterService.createDraftLetter(
+      user,
+      createSendLetterDto,
+    );
+    return { data: result };
   }
 
   @ApiOperation({
@@ -64,13 +66,9 @@ export class LetterController {
   })
   @Post(':id/complete')
   @HttpCode(HttpStatus.CREATED)
-  async sendLetter(
-    @ReqUser() user: User,
-    @Param('id') id: number,
-    @Body() sendLetterDto: SendLetterDto,
-  ) {
-    const letter = await this.letterService.sendLetter(user, id, sendLetterDto);
-    return { data: letter }
+  async sendLetter(@ReqUser() user: User, @Param('id') id: number) {
+    const letter = await this.letterService.sendLetter(user, id);
+    return { data: letter };
   }
 
   @ApiOperation({
@@ -81,7 +79,7 @@ export class LetterController {
   @HttpCode(HttpStatus.OK)
   async getSendLetter(@ReqUser() user: User, @Query('sort') sort: string) {
     const sentLetters = this.letterSentService.findAll(user, sort);
-    return { data: sentLetters }
+    return { data: sentLetters };
   }
 
   @ApiOperation({
@@ -91,7 +89,7 @@ export class LetterController {
   @Get('/sent/:id')
   async getSentLetter(@ReqUser() user: User, @Param('id') id: number) {
     const sentLetter = await this.letterSentService.findOne(user, id);
-    return { data: sentLetter }
+    return { data: sentLetter };
   }
 
   @ApiOperation({
@@ -121,8 +119,11 @@ export class LetterController {
       sender: string;
     },
   ) {
-    const receviedLetters = await this.letterReceivedService.findAll(user, query);
-    return { data: receviedLetters}
+    const receviedLetters = await this.letterReceivedService.findAll(
+      user,
+      query,
+    );
+    return { data: receviedLetters };
   }
 
   @ApiOperation({
@@ -132,7 +133,7 @@ export class LetterController {
   @Get('/received/:id')
   async findOne(@ReqUser() user: User, @Param('id') id: number) {
     const receivedLetter = await this.letterReceivedService.findOne(user, id);
-    return { data: receivedLetter }
+    return { data: receivedLetter };
   }
 
   @ApiOperation({
@@ -158,8 +159,10 @@ export class LetterController {
   @Post('/received/images/upload')
   @UseInterceptors(FileInterceptor('file'))
   async uploadExternalImgLetter(@UploadedFile() file: Express.MulterS3.File) {
-    const letter = await this.letterReceivedService.uploadExternalLetterImage(file);
-    return { data: letter }
+    const letter = await this.letterReceivedService.uploadExternalLetterImage(
+      file,
+    );
+    return { data: letter };
   }
 
   @ApiOperation({
@@ -176,7 +179,7 @@ export class LetterController {
       user,
       createExternalTextLetterDto,
     );
-    return { data: letter }
+    return { data: letter };
   }
 
   @ApiOperation({
@@ -193,7 +196,7 @@ export class LetterController {
       user,
       createExternalImgLetterDto,
     );
-    return { data: letter }
+    return { data: letter };
   }
 
   @ApiOperation({
