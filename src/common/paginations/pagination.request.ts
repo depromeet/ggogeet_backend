@@ -14,16 +14,16 @@ export class PaginationRequest {
   @IsOptional()
   take?: number | PaginationDefault.TAKE_DEFAULT;
 
+  constructor(page?: number, take?: number) {
+    this.page = page;
+    this.take = take;
+  }
+
   getSkip() {
     return (this.page - 1) * this.take;
   }
 
   getTake() {
     return this.take;
-  }
-
-  constructor(page?: number, take?: number) {
-    this.page = page;
-    this.take = take;
   }
 }
