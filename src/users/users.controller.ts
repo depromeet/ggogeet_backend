@@ -20,7 +20,6 @@ import {
 import { UpdateUserDto } from './dto/requests/updateUser.dto';
 import { User } from './entities/user.entity';
 import { UserResponseDto } from './dto/response/user.response.dto';
-import { ResponseFriendDto } from 'src/friend/dto/response/responseFriend.dto';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard)
@@ -53,7 +52,7 @@ export class UsersController {
   })
   @Get('/me')
   async findMe(@ReqUser() user: User) {
-    const me = await this.usersService.findUserById(user);
+    const me = await this.usersService.findUserByMe(user);
     return { data: me };
   }
 

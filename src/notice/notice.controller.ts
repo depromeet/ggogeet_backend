@@ -44,7 +44,7 @@ export class NoticeController {
   @Get('/:id')
   async findOne(@Param('id') id: number) {
     const notice = await this.noticeService.findOne(id);
-    return { data: notice }
+    return { data: notice };
   }
 
   @ApiOperation({
@@ -57,7 +57,7 @@ export class NoticeController {
   async create(@Body() noticeData: CreateNoticeDto) {
     // todo: add validation
     const notice = await this.noticeService.create(noticeData);
-    return { data: notice }
+    return { data: notice };
   }
 
   @ApiOperation({
@@ -69,7 +69,7 @@ export class NoticeController {
   async update(@Param('id') id: number, @Body() noticeDto: UpdateNoticeDto) {
     // todo: add validation
     const notice = await this.noticeService.update(id, noticeDto);
-    return { data: notice } 
+    return { data: notice };
   }
 
   @ApiOperation({

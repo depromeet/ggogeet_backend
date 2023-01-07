@@ -7,4 +7,5 @@ export class CreateKakaoUserDto {
   birthday: string;
   gender: string;
   allow_scope: string;
+  is_allow_friend: boolean;
 }

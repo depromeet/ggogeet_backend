@@ -67,7 +67,7 @@ export class SentenceController {
     const guideSentence =
       await this.sentenceService.findGuideSentenceBySituation(situationId);
 
-    return { data: { userSentence, guideSentence }};
+    return { data: { userSentence, guideSentence } };
   }
 
   @ApiOperation({
@@ -85,8 +85,11 @@ export class SentenceController {
     @ReqUser() user: User,
     @Body() sentenceDto: CreateSentenceDto,
   ) {
-    const sentence = await this.sentenceService.createSentence(user, sentenceDto);
-    return { data: sentence }
+    const sentence = await this.sentenceService.createSentence(
+      user,
+      sentenceDto,
+    );
+    return { data: sentence };
   }
 
   @ApiOperation({
@@ -101,7 +104,7 @@ export class SentenceController {
   @Get(':id')
   async findOneSentence(@ReqUser() user: User, @Param('id') id: number) {
     const sentence = await this.sentenceService.findOne(user, id);
-    return { data: sentence }
+    return { data: sentence };
   }
 
   @ApiOperation({

@@ -14,6 +14,7 @@ import { JwtStrategy } from 'src/auth/strategy/jwt.strategy';
 import { LetterSentService } from './letter.sent.service';
 import { LetterReceivedService } from './letter.received.service';
 import { Friend } from 'src/friend/entities/friend.entity';
+import { KakaoService } from 'src/kakao/kakao.service';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { Friend } from 'src/friend/entities/friend.entity';
     LetterSentService,
     LetterReceivedService,
     JwtStrategy,
+    KakaoService,
   ],
 })
 export class LetterModule {}
