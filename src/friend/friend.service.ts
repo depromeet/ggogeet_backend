@@ -18,15 +18,18 @@ export class FriendService {
     private readonly kakaoService: KakaoService,
   ) {}
 
-  async findAll(user: User): Promise<ResponseFriendDto[]> {
+  async findAll(user: User): Promise<any> {
     const friendList = await this.friendRepository
       .createQueryBuilder('friend')
       .leftJoinAndSelect('friend.friendUser', 'user')
       .where('friend.userId = :userId', { userId: user.id })
       .getMany();
-    return friendList.map((friend) => {
+    const result = friendList.map((friend) => {
       return new ResponseFriendDto(friend);
     });
+    return {
+      data: result,
+    };
   }
 
   async findOne(id: number, user: User): Promise<ResponseFriendDto> {
