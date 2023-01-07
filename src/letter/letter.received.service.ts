@@ -7,6 +7,7 @@ import { CreateExternalImgLetterDto } from './dto/requests/createExternalLetterI
 import { CreateExternalTextLetterDto } from './dto/requests/createExternalLetter.request.dto';
 import { LetterBody } from './entities/letterBody.entity';
 import { LetterType } from './letter.constants';
+import { PaginationBuilder } from 'src/common/paginations/paginationBuilder.response';
 
 @Injectable()
 export class LetterReceivedService {
@@ -54,16 +55,43 @@ export class LetterReceivedService {
   }
 
   async findAll(user: User, query: any): Promise<ReceivedLetter[]> {
-    const order = query?.sort === 'oldest' ? 1 : -1;
-    const letters = this.receivedLetterRepository.find({
-      where: {
-        receiver: { id: user.id },
-      },
-      relations: ['letterBody'],
-      order: { receivedAt: order },
-    });
+    const order = query.order === 'ASC' ? 'ASC' : 'DESC';
 
-    return letters;
+    const letter = this.receivedLetterRepository
+      .createQueryBuilder('receivedLetter')
+      .where('receiverId = :id', { id: user.id });
+
+    if (query.startDate !== undefined && query.endDate !== undefined) {
+      letter.andWhere('receivedAt BETWEEN :startDate AND :endDate', {
+        startDate: query.startDate,
+        endDate: query.endDate,
+      });
+    }
+
+    if (query.receivers !== undefined) {
+      letter.andWhere('receiverId IN (:receivers)', {
+        receivers: query.receivers,
+      });
+    }
+
+    if (query.tags != undefined) {
+      letter.andWhere('tagId IN (:tags)', { tags: query.tags });
+    }
+
+    const [data, count] = await letter
+      .leftJoinAndSelect('receivedLetter.letterBody', 'letterBody')
+      .select(['receviedLetter.id', 'receviedLetter.sendAt'])
+      .skip(query.getSkip())
+      .take(query.getTake())
+      .orderBy('receivedAt', order)
+      .getManyAndCount();
+
+    return new PaginationBuilder()
+      .setData(data)
+      .setTotalCount(count)
+      .setPage(query.getPage())
+      .setTake(query.getTake())
+      .build();
   }
 
   async findOne(user: User, id: number): Promise<ReceivedLetter> {

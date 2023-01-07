@@ -30,6 +30,16 @@ import { LetterSentService } from './letter.sent.service';
 import { LetterReceivedService } from './letter.received.service';
 import { CreateExternalImgLetterDto } from './dto/requests/createExternalLetterImg.request.dto';
 import { CreateExternalTextLetterDto } from './dto/requests/createExternalLetter.request.dto';
+import {
+  ApiPaginationRequst,
+  ApiPaginationResponse,
+} from 'src/common/paginations/pagination.swagger';
+import {
+  findAllReceviedLetterDto,
+  findAllSentLetterDto,
+} from './dto/requests/findAllLetter.request.dto';
+import { SendLetter } from './entities/sendLetter.entity';
+import { ReceivedLetter } from './entities/receivedLetter.entity';
 
 @Controller('letters')
 @ApiTags('Letter API')
@@ -75,11 +85,15 @@ export class LetterController {
     summary: '보낸 편지함 조회 API',
     description: '보낸 편지를 조회합니다.',
   })
-  @Get('/sent')
+  @ApiPaginationRequst()
+  @ApiPaginationResponse(SendLetter)
   @HttpCode(HttpStatus.OK)
-  async getSendLetter(@ReqUser() user: User, @Query('sort') sort: string) {
-    const sentLetters = this.letterSentService.findAll(user, sort);
-    return { data: sentLetters };
+  @Get('/sent')
+  async getSendLetter(
+    @ReqUser() user: User,
+    @Query() query: findAllSentLetterDto,
+  ) {
+    return this.letterSentService.findAll(user, query);
   }
 
   @ApiOperation({
@@ -106,18 +120,14 @@ export class LetterController {
     summary: '받은 편지함 조회 API',
     description: '유저가 받은 편지함 조회을 조회합니다.',
   })
+  @ApiPaginationRequst()
+  @ApiPaginationResponse(ReceivedLetter)
+  @HttpCode(HttpStatus.OK)
   @Get('/received')
   async findAll(
     @ReqUser() user: User,
     @Query()
-    query: {
-      offset: number;
-      limit: number;
-      order: string;
-      fromDate: string;
-      toDate: string;
-      sender: string;
-    },
+    query: findAllReceviedLetterDto,
   ) {
     const receviedLetters = await this.letterReceivedService.findAll(
       user,
