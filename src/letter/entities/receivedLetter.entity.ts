@@ -32,7 +32,10 @@ export class ReceivedLetter {
   sender: User;
 
   @OneToOne(() => LetterBody, { cascade: true })
-  @JoinColumn()
+  @JoinColumn({
+    name: 'letterBodyId',
+    referencedColumnName: 'id',
+  })
   letterBody: LetterBody;
 
   @Column({ type: 'varchar', length: '255' })

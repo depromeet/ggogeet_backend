@@ -12,6 +12,7 @@ import { KakaoTokenRepository } from 'src/kakao/kakaoToken.memory.repository';
 import { KakaoToken } from 'src/kakao/kakaoToken';
 import { Friend } from 'src/friend/entities/friend.entity';
 import { KakaoService } from 'src/kakao/kakao.service';
+import { TempLetterRepository } from './repository/tempLetter.repository';
 
 @Injectable()
 export class LetterService {
@@ -90,7 +91,14 @@ export class LetterService {
       throw new NotFoundException('There is no id');
     }
     if (sendLetter.receiver == null) {
-      throw new NotFoundException('There is no receiver');
+      if (sendLetter.receiverNickname == null) {
+        throw new NotFoundException('There is no receiver');
+      } else {
+        const tempLetterRepository = new TempLetterRepository();
+        tempLetterRepository.save();
+        // todo: save temp Letter Info
+        return null;
+      }
     }
 
     const kakaoTokenRepository = new KakaoTokenRepository();
