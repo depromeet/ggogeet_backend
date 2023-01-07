@@ -8,6 +8,7 @@ import { UpdateReminderDto } from './dto/requests/updateReminder.request.dto';
 import { ReminderResponseDto } from './dto/responses/reminder.response.dto';
 import { ReminderStautsResponseDto } from './dto/responses/reminderStatus.response.dto';
 import { FindAllReminderQueryDto } from './dto/requests/findAllReminder.request.dto';
+import { PaginationBuilder } from 'src/common/paginations/paginationBuilder.response';
 
 @Injectable()
 export class ReminderService {
@@ -50,12 +51,12 @@ export class ReminderService {
       select: ['id', 'title', 'eventAt', 'alertOn', 'isDone'],
     });
 
-    return {
-      count: data,
-      offset: skip,
-      limit: take,
-      data: count,
-    };
+    return new PaginationBuilder()
+      .setData(data)
+      .setTotalCount(count)
+      .setPage(query.getPage())
+      .setTake(query.getTake())
+      .build();
   }
 
   async findOne(id: number, user: User): Promise<ReminderResponseDto> {
