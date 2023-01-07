@@ -11,7 +11,7 @@ export class UsersService {
     @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
 
-  async findUserById(user: User) {
+  async findUserByMe(user: User) {
     const userInfo = await this.userRepository.findOne({
       where: { id: user.id },
       relations: { userInfo: true, social: true },
@@ -33,5 +33,15 @@ export class UsersService {
 
   async findAll() {
     return await this.userRepository.find();
+  }
+
+  async findUserBySocialId(socialId: number): Promise<User> {
+    const socialUser = await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.social', 'social')
+      .where('social.clientId = :clientId', { clientId: socialId })
+      .getOne();
+
+    return socialUser;
   }
 }

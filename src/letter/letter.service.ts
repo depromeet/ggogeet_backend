@@ -6,12 +6,12 @@ import { SendLetter } from './entities/sendLetter.entity';
 import { SendLetterStatus } from './letter.constants';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { AuthService } from 'src/auth/auth.service';
 import { ReceivedLetter } from './entities/receivedLetter.entity';
 import { LetterUtils } from './letter.utils';
 import { KakaoTokenRepository } from 'src/kakao/kakaoToken.memory.repository';
 import { KakaoToken } from 'src/kakao/kakaoToken';
 import { Friend } from 'src/friend/entities/friend.entity';
+import { KakaoService } from 'src/kakao/kakao.service';
 
 @Injectable()
 export class LetterService {
@@ -24,7 +24,7 @@ export class LetterService {
     private receivedLetterRepository: Repository<ReceivedLetter>,
     @InjectRepository(Friend)
     private friendRepository: Repository<Friend>,
-    private readonly authService: AuthService,
+    private readonly kakaoService: KakaoService,
   ) {}
 
   async createDraftLetter(
@@ -121,10 +121,14 @@ export class LetterService {
       status: SendLetterStatus.SENT,
     });
 
-    await this.authService.sendMessageToUser(
+    const template_id = 87992;
+    const template_args = `{\"letterId\": "${sendLetter.id}"}`;
+    const result = this.kakaoService.sendKakaoMessage(
       acessToken,
       kakaoUuid,
-      sendLetter.id,
+      template_id,
+      template_args,
     );
+    return result;
   }
 }

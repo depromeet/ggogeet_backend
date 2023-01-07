@@ -10,6 +10,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { KakaoService } from 'src/kakao/kakao.service';
 import { Friend } from 'src/friend/entities/friend.entity';
+import { UsersService } from 'src/users/users.service';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { Friend } from 'src/friend/entities/friend.entity';
     TypeOrmModule.forFeature([User, UserInfo, Social, Friend]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, KakaoService],
+  providers: [AuthService, JwtStrategy, KakaoService, UsersService],
   exports: [AuthService, JwtModule, PassportModule, JwtStrategy],
 })
 export class AuthModule {}
