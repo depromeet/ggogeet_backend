@@ -8,6 +8,8 @@ import { CreateExternalTextLetterDto } from './dto/requests/createExternalLetter
 import { LetterBody } from './entities/letterBody.entity';
 import { LetterType } from './letter.constants';
 import { PaginationBuilder } from 'src/common/paginations/paginationBuilder.response';
+import { TempLetterRepository } from './repository/tempLetter.repository';
+import { ReceviedTempLetterResponseDto } from './dto/responses/receviedTempLetter.response.dto';
 
 @Injectable()
 export class LetterReceivedService {
@@ -119,5 +121,27 @@ export class LetterReceivedService {
     return {
       filePath: file.location,
     };
+  }
+
+  async findOneTemp(id: number) {
+    const tempLetterRepository = new TempLetterRepository();
+    const isActive = tempLetterRepository.findById(id);
+
+    if (!isActive) {
+      throw new BadRequestException({
+        message: 'Letter is Already Time Out or Deleted',
+        statusCode: 400,
+      });
+    }
+
+    const result = new ReceviedTempLetterResponseDto();
+    result.id = 1;
+    result.title = 'test';
+    result.content = 'test';
+    result.sender = 'test';
+    result.receiver = 'test';
+    result.createdAt = new Date();
+
+    return result;
   }
 }
