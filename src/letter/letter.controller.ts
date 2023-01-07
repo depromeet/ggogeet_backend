@@ -43,8 +43,6 @@ import { ReceivedLetter } from './entities/receivedLetter.entity';
 
 @Controller('letters')
 @ApiTags('Letter API')
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
 export class LetterController {
   constructor(
     private readonly letterService: LetterService,
@@ -57,6 +55,8 @@ export class LetterController {
     description:
       '신규 편지를 생성합니다, 편지를 보내기 위해서는 Complete API를 호출해주세요.',
   })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Post('/draft')
   @HttpCode(HttpStatus.CREATED)
   async createDraftLetter(
@@ -74,6 +74,8 @@ export class LetterController {
     summary: '편지 전송 API',
     description: '편지를 친구에게 보냅니다.',
   })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Post(':id/complete')
   @HttpCode(HttpStatus.CREATED)
   async sendLetter(@ReqUser() user: User, @Param('id') id: number) {
@@ -87,6 +89,8 @@ export class LetterController {
   })
   @ApiPaginationRequst()
   @ApiPaginationResponse(SendLetter)
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @Get('/sent')
   async getSendLetter(
@@ -100,6 +104,8 @@ export class LetterController {
     summary: '보낸 편지 상세 조회 API',
     description: '보낸 편지를 상세 조회합니다.',
   })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Get('/sent/:id')
   async getSentLetter(@ReqUser() user: User, @Param('id') id: number) {
     const sentLetter = await this.letterSentService.findOne(user, id);
@@ -110,6 +116,8 @@ export class LetterController {
     summary: '보낸 편지 삭제하기 API',
     description: '보낸 편지를 삭제합니다.',
   })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Delete('/sent/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   deleteSentLetter(@ReqUser() user: User, @Param('id') id: number) {
@@ -120,6 +128,8 @@ export class LetterController {
     summary: '받은 편지함 조회 API',
     description: '유저가 받은 편지함 조회을 조회합니다.',
   })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiPaginationRequst()
   @ApiPaginationResponse(ReceivedLetter)
   @HttpCode(HttpStatus.OK)
@@ -140,6 +150,8 @@ export class LetterController {
     summary: '받은 편지 상세 조회 API',
     description: '편지 상세 조회를 조회합니다.',
   })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Get('/received/:id')
   async findOne(@ReqUser() user: User, @Param('id') id: number) {
     const receivedLetter = await this.letterReceivedService.findOne(user, id);
@@ -147,9 +159,20 @@ export class LetterController {
   }
 
   @ApiOperation({
+    summary: '임시로 받은 편지 조회 API',
+    description: '임시로 받은 편지를 조회합니다.',
+  })
+  @Get('/received/temp/:id')
+  async findOneTemp(@Param('id') id: number) {
+    return this.letterReceivedService.findOneTemp(id);
+  }
+
+  @ApiOperation({
     summary: '이미지 편지 업로드 API',
     description: '외부에서 받은 이미지로 된 편지를 업로드합니다.',
   })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -179,6 +202,8 @@ export class LetterController {
     summary: '외부 텍스트 편지 생성 API',
     description: '외부에서 받은 텍스트로 된 편지를 생성합니다.',
   })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Post('/received/texts')
   @HttpCode(HttpStatus.CREATED)
   async createExternalTextLetter(
@@ -196,6 +221,8 @@ export class LetterController {
     summary: '외부 이미지 편지 생성 API',
     description: '외부에서 받은 이미지로 된 편지를 생성합니다.',
   })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Post('/received/images')
   @HttpCode(HttpStatus.CREATED)
   async createExternalImageLetter(
@@ -213,6 +240,8 @@ export class LetterController {
     summary: '받은 편지 삭제 API',
     description: '받은 편지를 삭제합니다.',
   })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('/received/:id')
   delete(@Param('id') id: number) {
