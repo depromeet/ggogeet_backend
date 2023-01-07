@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import {
   InternalServerErrorException,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import axios from 'axios';
@@ -49,15 +50,64 @@ export class KakaoService {
       });
 
       if (response.status == 500) {
-        throw new InternalServerErrorException('Kakao Internal Server Error');
+        throw new InternalServerErrorException({
+          message: 'Kakao Internal Server Error',
+          error: 'Kakao Internal Server Issue Cannot Get Friends',
+          status: 500,
+        });
       }
 
       return response.data;
     } catch (e) {
-      throw new UnauthorizedException(e, 'Wrong kakaoAccessCode');
+      throw new UnauthorizedException({
+        message: 'Wrong kakaoAccessCode',
+        error: "Can't refresh kakao access token",
+        statusCode: 401,
+      });
     }
   }
 
+  async refreshKakaoAccessToken(refresh_token: string): Promise<any> {
+    const authEndpoint = '/oauth/token';
+    const url = `${this.authHostUrl}${authEndpoint}`;
+
+    const body = {
+      grant_type: 'refresh_token',
+      client_id: process.env.KAKAO_CLIENT_ID,
+      refresh_token: refresh_token,
+    };
+
+    try {
+      const response = await axios({
+        method: 'post',
+        url: url,
+        headers: this.defaultHeaders,
+        data: qs.stringify(body),
+      });
+
+      if (response.status == 500) {
+        throw new InternalServerErrorException({
+          message: 'Kakao Internal Server Error',
+          error: 'Kakao Internal Server Issue Cannot Get Friends',
+          status: 500,
+        });
+      }
+
+      const { access_token, token_type, expires_in } = response.data;
+
+      return {
+        access_token,
+        token_type,
+        expires_in,
+      };
+    } catch (e) {
+      throw new UnauthorizedException({
+        message: 'Wrong kakaoAccessCode',
+        error: "Can't refresh kakao access token",
+        statusCode: 401,
+      });
+    }
+  }
   /*
    * Get Kakao Friends and Count
    * @param access_token
@@ -68,7 +118,6 @@ export class KakaoService {
     const url = `${this.hostUrl}${friendsEndpoint}`;
 
     try {
-      console.log(this.addAuthHeader(access_token));
       const response = await axios({
         method: 'get',
         url: url,
@@ -76,12 +125,24 @@ export class KakaoService {
       });
 
       if (response.status == 500) {
-        throw new InternalServerErrorException('Kakao Internal Server Error');
+        throw new InternalServerErrorException({
+          message: 'Kakao Internal Server Error',
+          error: 'Kakao Internal Server Issue Cannot Get Friends',
+          status: 500,
+        });
+      }
+
+      if (response.status == 400) {
+        return [[], 0];
       }
 
       return [response.data.elements, response.data.total_count];
     } catch (e) {
-      throw new UnauthorizedException(e, 'Wrong kakaoAccessCode');
+      throw new UnauthorizedException({
+        message: 'Wrong kakaoAccessCode',
+        error: "Can't get kakao friends",
+        statusCode: 401,
+      });
     }
   }
 
@@ -103,12 +164,23 @@ export class KakaoService {
       });
 
       if (response.status == 500) {
-        throw new InternalServerErrorException('Kakao Internal Server Error');
+        throw new InternalServerErrorException({
+          message: 'Kakao Internal Server Error',
+          error: 'Kakao Internal Server Issue Cannot Get Friends',
+          status: 500,
+        });
+      }
+
+      if (response.status == 400) {
+        throw new UnauthorizedException({
+          message: 'Not Registered User',
+          error: 'Cannot Get Kakao Profile',
+          status: 400,
+        });
       }
 
       return response.data;
     } catch (e) {
-      console.log('error', e);
       throw new UnauthorizedException(e, 'Wrong kakaoAccessCode');
     }
   }
@@ -143,12 +215,28 @@ export class KakaoService {
       });
 
       if (response.status == 500) {
-        throw new InternalServerErrorException('Kakao Internal Server Error');
+        throw new InternalServerErrorException({
+          message: 'Kakao Internal Server Error',
+          error: 'Kakao Internal Server Issue Cannot Get Friends',
+          status: 500,
+        });
+      }
+
+      if (response.status == 400) {
+        throw new NotFoundException({
+          message: 'Kakao Friend is not found',
+          error: 'Cannot Send Kakao Message',
+          status: 400,
+        });
       }
 
       return response.data;
     } catch (e) {
-      throw new UnauthorizedException(e, 'Wrong kakaoAccessCode');
+      throw new UnauthorizedException({
+        message: 'Wrong kakaoAccessCode',
+        error: "Can't get kakao friends",
+        statusCode: 401,
+      });
     }
   }
 }
