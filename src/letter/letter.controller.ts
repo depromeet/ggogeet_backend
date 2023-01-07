@@ -84,6 +84,22 @@ export class LetterController {
   }
 
   @ApiOperation({
+    summary: '편지 외부 전송 API',
+    description: '편지를 친구가 아닌 외부에 보냅니다.',
+  })
+  @ApiResponse({
+    status: 201,
+    description: '임시 편지가 성공적으로 생성되었습니다.',
+  })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @Post(':id/temp-complete')
+  @HttpCode(HttpStatus.CREATED)
+  async sendTempLetter(@ReqUser() user: User, @Param('id') id: number) {
+    return this.letterService.sendTempLetter(user, id);
+  }
+
+  @ApiOperation({
     summary: '보낸 편지함 조회 API',
     description: '보낸 편지를 조회합니다.',
   })

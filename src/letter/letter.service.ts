@@ -91,14 +91,7 @@ export class LetterService {
       throw new NotFoundException('There is no id');
     }
     if (sendLetter.receiver == null) {
-      if (sendLetter.receiverNickname == null) {
-        throw new NotFoundException('There is no receiver');
-      } else {
-        const tempLetterRepository = new TempLetterRepository();
-        tempLetterRepository.save();
-        // todo: save temp Letter Info
-        return null;
-      }
+      throw new NotFoundException('There is no receiver');
     }
 
     const kakaoTokenRepository = new KakaoTokenRepository();
@@ -138,5 +131,30 @@ export class LetterService {
       template_args,
     );
     return result;
+  }
+
+  async sendTempLetter(user: User, id: number): Promise<any> {
+    const sendLetter = await this.sendLetterRepository.findOne({
+      where: { id: id, sender: { id: user.id } },
+      relations: {
+        sender: true,
+      },
+    });
+
+    if (!sendLetter) {
+      throw new NotFoundException('There is no id');
+    }
+    if (sendLetter.receiverNickname == null) {
+      throw new NotFoundException('There is no receiver');
+    }
+
+    const tempLetterRepository = new TempLetterRepository();
+    const result = tempLetterRepository.save(sendLetter.id);
+    return {
+      data: {
+        tempLetterId: result,
+        ttl: 3600 * 24 * 2,
+      },
+    };
   }
 }
