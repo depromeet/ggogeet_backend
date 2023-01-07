@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Social } from 'src/users/entities/social.entity';
@@ -65,6 +61,7 @@ export class AuthService {
       const user = await this.validateKakao(kakaoInfo);
       return user;
     } catch (e) {
+      console.log(e);
       throw new InternalServerErrorException(e);
     }
   }
