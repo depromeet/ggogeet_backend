@@ -84,7 +84,6 @@ export class AuthController {
       codeResponse.tokenType,
       codeResponse.scope,
     );
-    console.log(kakaoToken);
 
     const kakaoTokenRepository = new KakaoTokenRepository();
 

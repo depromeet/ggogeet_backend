@@ -55,7 +55,6 @@ export class FriendService {
     const kakaoTokenRepository = new KakaoTokenRepository();
     const kakaoToken: KakaoToken = kakaoTokenRepository.findByUserId(user.id);
     const acessToken = kakaoToken.getAcessToken();
-    console.log('acessToken', acessToken);
 
     if (!acessToken) {
       throw new NotFoundException({
@@ -89,7 +88,6 @@ export class FriendService {
     friend.kakaoFriendName = element.profile_nickname;
 
     friend.friendUser = await this.findUserByClientId(element.id);
-    console.log('친구 꼬깃 아이디----------', friend.friendUser);
     friend.user = user;
 
     await this.friendRepository.save(friend);

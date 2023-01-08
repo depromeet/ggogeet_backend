@@ -61,7 +61,6 @@ export class AuthService {
       const user = await this.validateKakao(kakaoInfo);
       return user;
     } catch (e) {
-      console.log(e);
       throw new InternalServerErrorException(e);
     }
   }
