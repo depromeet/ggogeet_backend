@@ -12,11 +12,15 @@ import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ResponseFriendDto } from '../friend/dto/response/responseFriend.dto';
 import { KakaoTokenRepository } from 'src/kakao/kakaoToken.memory.repository';
 import { KakaoToken } from 'src/kakao/kakaoToken';
+import { FriendService } from 'src/friend/friend.service';
 
 @Controller('auth')
 @ApiTags('Auth API')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly friendsService: FriendService,
+  ) {}
 
   @ApiOperation({
     summary: '카카오 로그인 API',
@@ -149,6 +153,8 @@ export class AuthController {
       codeResponse.scope,
     );
     kakaoTokenRepository.save(user.id, kakaoToken);
+
+    await this.friendsService.updateFriends(user);
 
     res.status(HttpStatus.OK).send();
   }
