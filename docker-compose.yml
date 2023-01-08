@@ -9,7 +9,7 @@ services:
     ports:
       - "3000:3000"
     volumes: 
-      - './logs:/app/logs'
+      - './logs:/usr/src/app/logs'
     stdin_open: true
     tty: true
     depends_on:
