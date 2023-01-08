@@ -54,7 +54,7 @@ export class FriendService {
     const kakaoTokenRepository = new KakaoTokenRepository();
     const kakaoToken: KakaoToken = kakaoTokenRepository.findByUserId(user.id);
     const acessToken = kakaoToken.getAcessToken();
-
+    console.log('userid---------', user.id);
     console.log('acessToken', acessToken);
 
     if (!acessToken) {
@@ -73,14 +73,30 @@ export class FriendService {
       });
     }
 
-    friendsList.map(async (element) => {
-      const isFriendExist = await this.friendRepository.findOne({
-        where: { userId: user.id, kakaoUuid: element.kakaoUuid },
-      });
-      if (!isFriendExist) {
-        await this.createKakakoFriends(element, user);
-      }
-    });
+    for (const element of friendsList) {
+      console.log('element--------', element);
+      await this.friendRepository
+        .findOne({
+          where: { userId: user.id, kakaoUuid: element.kakaoUuid },
+        })
+        .then(async (res) => {
+          console.log('들어왔다ㅏ');
+          if (!res) {
+            await this.createKakakoFriends(element, user);
+          }
+        });
+    }
+    // friendsList.map((element) => {
+    //   console.log('element-----', element);
+    //   const isFriendExist = this.friendRepository.findOne({
+    //     where: { userId: user.id, kakaoUuid: element.kakaoUuid },
+    //   });
+    //   console.log('isFriendsExist-----', isFriendExist);
+    //   if (!isFriendExist) {
+    //     console.log('create들어옴');
+    //     this.createKakakoFriends(element, user);
+    //   }
+    // });
   }
 
   async createKakakoFriends(element, user: User) {
@@ -89,6 +105,7 @@ export class FriendService {
     friend.kakaoFriendName = element.profile_nickname;
 
     friend.friendUser = await this.findUserByClientId(element.id);
+    console.log('친구 꼬깃 아이디----------', friend.friendUser);
     friend.user = user;
 
     await this.friendRepository.save(friend);
