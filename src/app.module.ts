@@ -31,6 +31,8 @@ import {
 } from 'nest-winston';
 import { FriendModule } from './friend/friend.module';
 import winstonDaily from 'winston-daily-rotate-file';
+import { APP_FILTER } from '@nestjs/core';
+import { HttpExceptionFilter } from './common/exceptions/httpExceptionFilter';
 
 const ConfigSettingModule = ConfigModule.forRoot({
   isGlobal: true,
@@ -107,7 +109,13 @@ const WinstomSettingModule = WinstonModule.forRoot({
     FriendModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   constructor(private dataSource: DataSource) {}
