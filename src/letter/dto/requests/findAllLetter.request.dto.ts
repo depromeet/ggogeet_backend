@@ -17,7 +17,7 @@ export class findAllReceviedLetterDto extends PaginationRequest {
   })
   @IsOptional()
   @IsNumberString()
-  readonly tags: string[];
+  readonly tags?: string[];
 
   @ApiPropertyOptional({
     example: '2022-01-01 00:00:00',
