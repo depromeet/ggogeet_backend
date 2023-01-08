@@ -1,0 +1,26 @@
+version: "3.7"
+
+services:
+  backend:
+    container_name: backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes: 
+      - './logs:/app/logs'
+    stdin_open: true
+    tty: true
+    depends_on:
+      - redis
+  redis:
+      image: redis
+      command: redis-server --port 6379
+      container_name: redis
+      hostname: redis
+      labels:
+        - "name=redis"
+        - "mode=standalone"
+      ports:
+        - 6379:6379
