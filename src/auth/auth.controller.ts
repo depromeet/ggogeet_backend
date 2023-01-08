@@ -20,6 +20,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly friendsService: FriendService,
+    private readonly kakaoTokenRepository: KakaoTokenRepository,
   ) {}
 
   @ApiOperation({
@@ -81,17 +82,13 @@ export class AuthController {
       codeResponse.refresh_token,
       codeResponse.expires_in,
       codeResponse.refresh_token_expires_in,
-      codeResponse.tokenType,
-      codeResponse.scope,
     );
-
-    const kakaoTokenRepository = new KakaoTokenRepository();
 
     // 토큰으로 사용자 정보 받아오기
     const { statusCode, user, allowFriendsList } =
       await this.authService.getUserProfile(codeResponse);
 
-    kakaoTokenRepository.save(user.id, kakaoToken);
+    await this.kakaoTokenRepository.save(user.id, kakaoToken);
 
     // user.id로 jwt 토큰 발급
     const jwtAccessToken = await this.authService.getAccessToken(user.id);
@@ -142,16 +139,14 @@ export class AuthController {
 
     const { user } = await this.authService.getUserProfile(codeResponse);
 
-    const kakaoTokenRepository = new KakaoTokenRepository();
     const kakaoToken = new KakaoToken(
       codeResponse.access_token,
       codeResponse.refresh_token,
       codeResponse.expires_in,
       codeResponse.refresh_token_expires_in,
-      codeResponse.tokenType,
-      codeResponse.scope,
     );
-    kakaoTokenRepository.save(user.id, kakaoToken);
+
+    await this.kakaoTokenRepository.save(user.id, kakaoToken);
 
     await this.friendsService.updateFriends(user);
 

@@ -12,6 +12,7 @@ import { KakaoService } from 'src/kakao/kakao.service';
 import { Friend } from 'src/friend/entities/friend.entity';
 import { UsersService } from 'src/users/users.service';
 import { FriendService } from 'src/friend/friend.service';
+import { KakaoTokenRepository } from 'src/kakao/kakaoToken.memory.repository';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { FriendService } from 'src/friend/friend.service';
     KakaoService,
     UsersService,
     FriendService,
+    KakaoTokenRepository,
   ],
   exports: [AuthService, JwtModule, PassportModule, JwtStrategy],
 })

@@ -15,6 +15,7 @@ import { LetterSentService } from './letter.sent.service';
 import { LetterReceivedService } from './letter.received.service';
 import { Friend } from 'src/friend/entities/friend.entity';
 import { KakaoService } from 'src/kakao/kakao.service';
+import { KakaoTokenRepository } from 'src/kakao/kakaoToken.memory.repository';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { KakaoService } from 'src/kakao/kakao.service';
     LetterReceivedService,
     JwtStrategy,
     KakaoService,
+    KakaoTokenRepository,
   ],
 })
 export class LetterModule {}

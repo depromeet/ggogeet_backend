@@ -1,14 +1,52 @@
+import { DEFAULT_REDIS_NAMESPACE, InjectRedis } from '@liaoliaots/nestjs-redis';
 import { KakaoToken } from './kakaoToken';
+import Redis from 'ioredis';
 
 export class KakaoTokenRepository {
-  private static store: Map<number, KakaoToken> = new Map();
+  constructor(
+    @InjectRedis(DEFAULT_REDIS_NAMESPACE) private readonly redis: Redis,
+  ) {}
 
-  public save(userId: number, kakaoToken: KakaoToken): void {
-    KakaoTokenRepository.store.set(userId, kakaoToken);
+  async save(userId: number, kakaoToken: KakaoToken): Promise<void> {
+    const { acessTokenKey, refreshTokenKey } = this.getTokenKey(userId);
+
+    await this.redis.set(
+      acessTokenKey,
+      kakaoToken.getAcessToken(),
+      'EX',
+      kakaoToken.getExpiresIn(),
+    );
+
+    await this.redis.set(
+      refreshTokenKey,
+      kakaoToken.getRefreshToken(),
+      'EX',
+      kakaoToken.getRefreshTokenExpiresIn(),
+    );
   }
 
-  public findByUserId(userId: number): KakaoToken {
-    const result = KakaoTokenRepository.store.get(userId);
-    return result;
+  async findByUserId(userId: number): Promise<KakaoToken> {
+    const { acessTokenKey, refreshTokenKey } = this.getTokenKey(userId);
+    const acessToken = await this.redis.get(acessTokenKey);
+    const expiresIn = await this.redis.ttl(acessTokenKey);
+    const refreshToken = await this.redis.get(refreshTokenKey);
+    const refreshTokenExpiresIn = await this.redis.ttl(refreshTokenKey);
+
+    return new KakaoToken(
+      acessToken,
+      refreshToken,
+      expiresIn,
+      refreshTokenExpiresIn,
+    );
+  }
+
+  private getTokenKey(userId: number): {
+    acessTokenKey: string;
+    refreshTokenKey: string;
+  } {
+    return {
+      acessTokenKey: `${userId.toString()}:acessToken`,
+      refreshTokenKey: `${userId.toString()}:refreshToken`,
+    };
   }
 }

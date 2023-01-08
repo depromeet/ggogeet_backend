@@ -17,6 +17,7 @@ export class FriendService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly kakaoService: KakaoService,
+    private readonly kakaoTokenRepository: KakaoTokenRepository,
   ) {}
 
   async findAll(user: User): Promise<any> {
@@ -52,8 +53,9 @@ export class FriendService {
   }
 
   async updateFriends(user: User) {
-    const kakaoTokenRepository = new KakaoTokenRepository();
-    const kakaoToken: KakaoToken = kakaoTokenRepository.findByUserId(user.id);
+    const kakaoToken: KakaoToken = await this.kakaoTokenRepository.findByUserId(
+      user.id,
+    );
     const acessToken = kakaoToken.getAcessToken();
 
     if (!acessToken) {

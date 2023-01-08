@@ -27,6 +27,7 @@ export class LetterService {
     @InjectRepository(Friend)
     private friendRepository: Repository<Friend>,
     private readonly kakaoService: KakaoService,
+    private readonly kakaoTokenRepository: KakaoTokenRepository,
   ) {}
 
   async createDraftLetter(
@@ -96,8 +97,9 @@ export class LetterService {
       throw new NotFoundException('There is no receiver');
     }
 
-    const kakaoTokenRepository = new KakaoTokenRepository();
-    const kakaoToken: KakaoToken = kakaoTokenRepository.findByUserId(user.id);
+    const kakaoToken: KakaoToken = await this.kakaoTokenRepository.findByUserId(
+      user.id,
+    );
     const acessToken = kakaoToken.getAcessToken();
 
     const friend = await this.friendRepository.findOne({
