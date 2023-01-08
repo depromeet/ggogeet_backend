@@ -68,7 +68,7 @@ const logDir = 'logs';
 const dailyLoggerOptions = (level: string) => {
   return {
     level,
-    datePattern: 'YYYY-MM-DD HH:mm:ss',
+    datePattern: 'YYYY-MM-DD',
     dirname: logDir + `/${level}`,
     filename: `${level}-%DATE%.log`,
     maxFiles: '14d',
