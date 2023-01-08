@@ -1,6 +1,7 @@
 export class TempLetterRepository {
   private static id = 0;
   private static store: Map<number, Map<number, Date>> = new Map();
+  private static callStore: Map<number, boolean> = new Map();
 
   public save(id: number): number {
     const ttl = 3600 * 24 * 2;
@@ -10,6 +11,7 @@ export class TempLetterRepository {
     const timeAndId: Map<number, Date> = new Map();
     timeAndId.set(id, timeOutDate);
     TempLetterRepository.store.set(TempLetterRepository.id, timeAndId);
+    TempLetterRepository.callStore.set(TempLetterRepository.id, false);
     TempLetterRepository.id++;
     return TempLetterRepository.id;
   }
@@ -23,6 +25,19 @@ export class TempLetterRepository {
         return false;
       }
       return true;
+    }
+  }
+
+  public setIdCallBack(id: number): void {
+    TempLetterRepository.callStore.set(id, true);
+  }
+
+  public findByIdCallBack(id: number): boolean {
+    const result = TempLetterRepository.callStore.get(id);
+    if (result) {
+      return true;
+    } else {
+      return false;
     }
   }
 }

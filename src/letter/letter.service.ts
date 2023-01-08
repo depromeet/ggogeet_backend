@@ -13,6 +13,7 @@ import { KakaoToken } from 'src/kakao/kakaoToken';
 import { Friend } from 'src/friend/entities/friend.entity';
 import { KakaoService } from 'src/kakao/kakao.service';
 import { TempLetterRepository } from './repository/tempLetter.repository';
+import { KakaoMessageCallbackDto } from './dto/requests/kakaoCallback.request.dto';
 
 @Injectable()
 export class LetterService {
@@ -154,6 +155,23 @@ export class LetterService {
       data: {
         tempLetterId: result,
         expiredDate: '2023-01-14',
+      },
+    };
+  }
+
+  getKaKaoTempLetterCallback(query: KakaoMessageCallbackDto) {
+    const tempLetterRepository = new TempLetterRepository();
+    const letter_id = parseInt(query.TEMP_LETTER_ID);
+    const sendLetterId = tempLetterRepository.setIdCallBack(letter_id);
+    return sendLetterId;
+  }
+
+  getKaKaoTempLetterCallbackCheck(id: number) {
+    const tempLetterRepository = new TempLetterRepository();
+    const result = tempLetterRepository.findByIdCallBack(id);
+    return {
+      data: {
+        sent: result,
       },
     };
   }

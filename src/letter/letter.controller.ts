@@ -40,6 +40,7 @@ import {
 } from './dto/requests/findAllLetter.request.dto';
 import { SendLetter } from './entities/sendLetter.entity';
 import { ReceivedLetter } from './entities/receivedLetter.entity';
+import { KakaoMessageCallbackDto } from './dto/requests/kakaoCallback.request.dto';
 
 @Controller('letters')
 @ApiTags('Letter API')
@@ -97,6 +98,30 @@ export class LetterController {
   @HttpCode(HttpStatus.CREATED)
   async sendTempLetter(@ReqUser() user: User, @Param('id') id: number) {
     return this.letterService.sendTempLetter(user, id);
+  }
+
+  @ApiOperation({
+    summary: '편지 외부 전송 콜백 API',
+    description: '카카오로 전송된 편지의 Callback을 받습니다.',
+  })
+  @Get('/temp-complete/kakao/callback')
+  @HttpCode(HttpStatus.CREATED)
+  async getKaKaoTempLetterCallback(@Query() query: KakaoMessageCallbackDto) {
+    return this.letterService.getKaKaoTempLetterCallback(query);
+  }
+
+  @ApiOperation({
+    summary: '편지 외부 전송 콜백 확인 API',
+    description: '카카오로 전송된 편지의 Callback을 확인합니다.',
+  })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @Get(':id/temp-complete/kakao/callback/confirm')
+  async getKaKaoTempLetterCallbackCheck(
+    @ReqUser() user: User,
+    @Param('id') id: number,
+  ) {
+    return this.letterService.getKaKaoTempLetterCallbackCheck(id);
   }
 
   @ApiOperation({
