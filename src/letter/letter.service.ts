@@ -153,7 +153,7 @@ export class LetterService {
     return {
       data: {
         tempLetterId: result,
-        ttl: 3600 * 24 * 2,
+        expiredDate: '2023-01-14',
       },
     };
   }
