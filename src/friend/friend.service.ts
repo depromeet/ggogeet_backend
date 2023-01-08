@@ -7,6 +7,7 @@ import { In, Repository } from 'typeorm';
 import { KakaoTokenRepository } from 'src/kakao/kakaoToken.memory.repository';
 import { KakaoToken } from 'src/kakao/kakaoToken';
 import { KakaoService } from 'src/kakao/kakao.service';
+import { isRFC3339 } from 'class-validator';
 
 @Injectable()
 export class FriendService {
@@ -54,7 +55,6 @@ export class FriendService {
     const kakaoTokenRepository = new KakaoTokenRepository();
     const kakaoToken: KakaoToken = kakaoTokenRepository.findByUserId(user.id);
     const acessToken = kakaoToken.getAcessToken();
-    console.log('userid---------', user.id);
     console.log('acessToken', acessToken);
 
     if (!acessToken) {
@@ -73,30 +73,14 @@ export class FriendService {
       });
     }
 
-    for (const element of friendsList) {
-      console.log('element--------', element);
-      await this.friendRepository
-        .findOne({
-          where: { userId: user.id, kakaoUuid: element.kakaoUuid },
-        })
-        .then(async (res) => {
-          console.log('들어왔다ㅏ');
-          if (!res) {
-            await this.createKakakoFriends(element, user);
-          }
-        });
+    for await (const element of friendsList) {
+      const isExist = await this.friendRepository.findOne({
+        where: { userId: user.id, kakaoUuid: element.uuid },
+      });
+      if (!isExist) {
+        await this.createKakakoFriends(element, user);
+      }
     }
-    // friendsList.map((element) => {
-    //   console.log('element-----', element);
-    //   const isFriendExist = this.friendRepository.findOne({
-    //     where: { userId: user.id, kakaoUuid: element.kakaoUuid },
-    //   });
-    //   console.log('isFriendsExist-----', isFriendExist);
-    //   if (!isFriendExist) {
-    //     console.log('create들어옴');
-    //     this.createKakakoFriends(element, user);
-    //   }
-    // });
   }
 
   async createKakakoFriends(element, user: User) {
