@@ -135,7 +135,7 @@ export class KakaoService {
       if (response.status == 400) {
         return [[], 0];
       }
-      console.log('친구목록---------------', response.data.elements);
+
       return [response.data.elements, response.data.total_count];
     } catch (e) {
       throw new UnauthorizedException({
@@ -156,7 +156,6 @@ export class KakaoService {
     const url = `${this.hostUrl}${profileEndpoint}`;
 
     try {
-      console.log(this.addAuthHeader(access_token));
       const response = await axios({
         method: 'get',
         url: url,
