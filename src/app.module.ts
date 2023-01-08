@@ -24,6 +24,7 @@ import { SentenceModule } from './sentence/sentence.module';
 import { Sentence } from './sentence/entities/sentence.entity';
 import { ReplyModule } from './reply/reply.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
+import { RedisModule } from '@liaoliaots/nestjs-redis';
 import * as winston from 'winston';
 import {
   utilities as nestWinstonModuleUtilities,
@@ -65,6 +66,13 @@ const TypeOrmSettingModule = TypeOrmModule.forRoot({
   logging: 'all',
 });
 
+const RedisSettingModule = RedisModule.forRoot({
+  config: {
+    host: process.env.REDIS_HOST,
+    port: parseInt(process.env.REDIS_PORT, 10) || 6379,
+  },
+});
+
 const logDir = 'logs';
 
 const dailyLoggerOptions = (level: string) => {
@@ -98,6 +106,7 @@ const WinstomSettingModule = WinstonModule.forRoot({
   imports: [
     ConfigSettingModule,
     TypeOrmSettingModule,
+    RedisSettingModule,
     WinstomSettingModule,
     UsersModule,
     NoticeModule,
