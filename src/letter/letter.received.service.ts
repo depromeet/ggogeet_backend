@@ -10,6 +10,8 @@ import { LetterType } from './letter.constants';
 import { PaginationBuilder } from 'src/common/paginations/paginationBuilder.response';
 import { TempLetterRepository } from './repository/tempLetter.repository';
 import { ReceviedTempLetterResponseDto } from './dto/responses/receviedTempLetter.response.dto';
+import { ReceviedAllResponseDto } from './dto/responses/letterStorage.response.dto';
+import { ReceivedLetterDetailResponseDto } from './dto/responses/letterDetail.response.dto';
 
 @Injectable()
 export class LetterReceivedService {
@@ -61,6 +63,7 @@ export class LetterReceivedService {
 
     const letter = this.receivedLetterRepository
       .createQueryBuilder('receivedLetter')
+      .leftJoinAndSelect('receivedLetter.letterBody', 'letterBody')
       .where('receiverId = :id', { id: user.id });
 
     if (query.startDate !== undefined && query.endDate !== undefined) {
@@ -77,17 +80,21 @@ export class LetterReceivedService {
     }
 
     if (query.tags != undefined) {
-      letter.andWhere('tagId IN (:tags)', { tags: query.tags });
+      letter.andWhere('situationId IN (:situations)', {
+        situations: query.tags,
+      });
     }
 
-    const [data, count] = await letter
-      .leftJoinAndSelect('receivedLetter.letterBody', 'letterBody')
-      .select(['receviedLetter.id', 'receviedLetter.sendAt'])
+    const [dataList, count] = await letter
+
       .skip(query.getSkip())
       .take(query.getTake())
-      .orderBy('receivedAt', order)
+      .orderBy('receivedLetter.receivedAt', order)
       .getManyAndCount();
-
+    console.log(dataList);
+    const data = dataList.map((element) => {
+      return new ReceviedAllResponseDto(element);
+    });
     return new PaginationBuilder()
       .setData(data)
       .setTotalCount(count)
@@ -96,15 +103,20 @@ export class LetterReceivedService {
       .build();
   }
 
-  async findOne(user: User, id: number): Promise<ReceivedLetter> {
+  async findOne(
+    user: User,
+    id: number,
+  ): Promise<ReceivedLetterDetailResponseDto> {
     const letter = await this.receivedLetterRepository.findOne({
       where: { id: id, receiver: { id: user.id } },
       relations: ['letterBody'],
     });
+    console.log(letter);
     if (!letter) {
-      throw new BadRequestException('There is no id');
+      throw new BadRequestException('접근할 수 없는 편지입니다.');
     }
-    return letter;
+
+    return new ReceivedLetterDetailResponseDto(letter);
   }
 
   async delete(id: number): Promise<void> {

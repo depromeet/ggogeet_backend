@@ -85,6 +85,7 @@ export class LetterService {
       relations: {
         receiver: true,
         sender: true,
+        letterBody: true,
       },
     });
 

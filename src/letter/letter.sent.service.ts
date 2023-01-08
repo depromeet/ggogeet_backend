@@ -5,6 +5,8 @@ import { SendLetter } from './entities/sendLetter.entity';
 import { Repository } from 'typeorm';
 import { findAllSentLetterDto } from './dto/requests/findAllLetter.request.dto';
 import { PaginationBuilder } from 'src/common/paginations/paginationBuilder.response';
+import { SendAllResponseDto } from './dto/responses/letterStorage.response.dto';
+import { SendLetterDetailResponseDto } from './dto/responses/letterDetail.response.dto';
 
 @Injectable()
 export class LetterSentService {
@@ -37,16 +39,21 @@ export class LetterSentService {
     }
 
     if (query.tags != undefined) {
-      letter.andWhere('tagId IN (:tags)', { tags: query.tags });
+      letter.andWhere('situationId IN (:situations)', {
+        situations: query.tags,
+      });
     }
 
-    const [data, count] = await letter
+    const [dataList, count] = await letter
       .leftJoinAndSelect('sendLetter.letterBody', 'letterBody')
-      .select(['sendLetter.id', 'sendLetter.sendAt'])
       .skip(query.getSkip())
       .take(query.getTake())
-      .orderBy('sendAt', order)
+      .orderBy('sendLetter.sendAt', order)
       .getManyAndCount();
+
+    const data = dataList.map((element) => {
+      return new SendAllResponseDto(element);
+    });
 
     return new PaginationBuilder()
       .setData(data)
@@ -56,7 +63,7 @@ export class LetterSentService {
       .build();
   }
 
-  async findOne(user: User, id: number): Promise<SendLetter> {
+  async findOne(user: User, id: number): Promise<SendLetterDetailResponseDto> {
     const letter = await this.sendLetterRepository.findOne({
       where: { id: id, sender: { id: user.id } },
       relations: ['letterBody'],
@@ -64,7 +71,7 @@ export class LetterSentService {
     if (!letter) {
       throw new Error('There is no id');
     }
-    return letter;
+    return new SendLetterDetailResponseDto(letter);
   }
 
   async delete(user: User, id: number): Promise<void> {

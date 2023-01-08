@@ -184,7 +184,7 @@ export class LetterController {
       user,
       query,
     );
-    return { data: receviedLetters };
+    return receviedLetters;
   }
 
   @ApiOperation({
