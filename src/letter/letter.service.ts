@@ -93,28 +93,28 @@ export class LetterService {
 
     if (!sendLetter) {
       throw new NotFoundException({
-        statusCode: 400,
+        statusCode: 404,
         message: 'There is no id',
         error: 'Bad Request to this Id, There is no id',
       });
     }
     if (sendLetter.receiver == null) {
       throw new NotFoundException({
-        statusCode: 400,
+        statusCode: 404,
         message: 'This Letter is not available',
         error: 'Bad Request to this Id, This Letter is not available',
       });
     }
     if (sendLetter.status == SendLetterStatus.SENT) {
       throw new NotFoundException({
-        statusCode: 400,
+        statusCode: 404,
         message: 'This Letter already sent',
         error: 'Bad Request to this Id, This Letter already sent',
       });
     }
     if (sendLetter.status == SendLetterStatus.SENT) {
       throw new NotFoundException({
-        statusCode: 400,
+        statusCode: 404,
         message: 'This Letter already sent',
         error: 'Bad Request to this Id, This Letter already sent',
       });
@@ -134,7 +134,7 @@ export class LetterService {
 
     if (!friend) {
       throw new NotFoundException({
-        statusCode: 400,
+        statusCode: 404,
         message: 'This Friend is not available',
         error: 'Bad Request to this Id, This Friend is not available',
       });
@@ -174,14 +174,14 @@ export class LetterService {
 
     if (!sendLetter) {
       throw new NotFoundException({
-        statusCode: 400,
+        statusCode: 404,
         message: 'There is no id',
         error: 'Bad Request to this Id, There is no id',
       });
     }
     if (sendLetter.receiverNickname == null) {
       throw new NotFoundException({
-        statusCode: 400,
+        statusCode: 404,
         message: 'There is no receiverNickname',
         error:
           'There is no receiverNickname, If you want to send this letter, please set receiverNickname',

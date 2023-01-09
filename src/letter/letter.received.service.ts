@@ -1,4 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { ReceivedLetter } from './entities/receivedLetter.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -112,9 +118,13 @@ export class LetterReceivedService {
       where: { id: id, receiver: { id: user.id } },
       relations: ['letterBody'],
     });
-    console.log(letter);
     if (!letter) {
-      throw new BadRequestException('접근할 수 없는 편지입니다.');
+      throw new NotFoundException({
+        statusCode: 404,
+        message: 'This Letter is not available',
+        error:
+          "Bad Request to this Letter Id OR You don't have access to this letter.",
+      });
     }
 
     return new ReceivedLetterDetailResponseDto(letter);
@@ -123,13 +133,24 @@ export class LetterReceivedService {
   async delete(id: number): Promise<void> {
     const result = await this.receivedLetterRepository.softDelete(id);
     if (result.affected === 0) {
-      throw new BadRequestException('There is no id');
+      throw new HttpException(
+        {
+          statusCode: 204,
+          message: 'This Letter is not found',
+          error: 'Data is not exist',
+        },
+        HttpStatus.NO_CONTENT,
+      );
     }
   }
 
   async uploadExternalLetterImage(file: Express.MulterS3.File): Promise<any> {
     if (!file) {
-      throw new BadRequestException('There is no file');
+      throw new NotFoundException({
+        statusCode: 404,
+        message: 'There is no image file',
+        error: 'Image file is not uploaded',
+      });
     }
     return {
       filePath: file.location,
