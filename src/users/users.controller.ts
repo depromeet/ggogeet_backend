@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Get,
   HttpStatus,
@@ -17,7 +16,6 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { UpdateUserDto } from './dto/requests/updateUser.dto';
 import { User } from './entities/user.entity';
 import { UserResponseDto } from './dto/response/user.response.dto';
 
@@ -66,8 +64,8 @@ export class UsersController {
     description: '유저 정보를 수정합니다.',
   })
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    const user = await this.usersService.update(+id, updateUserDto);
+  async update(@Param('id') id: string) {
+    const user = await this.usersService.update(+id);
     return { data: user };
   }
 }

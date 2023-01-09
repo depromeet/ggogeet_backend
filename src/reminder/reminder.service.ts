@@ -128,7 +128,7 @@ export class ReminderService {
   }
 
   async delete(id: number, user: User) {
-    const result = await this.reminderRepository.softDelete({
+    await this.reminderRepository.softDelete({
       id: id,
       user: {
         id: user.id,
