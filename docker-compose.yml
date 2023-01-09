@@ -24,3 +24,12 @@ services:
         - "mode=standalone"
       ports:
         - 6379:6379
+  nginx:
+    container_name: nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
