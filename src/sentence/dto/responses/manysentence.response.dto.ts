@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Sentence } from 'src/sentence/entities/sentence.entity';
 import { SentenceResponseDto } from './sentence.response.dto';
 
 export class SituationSentenceResponseDto {

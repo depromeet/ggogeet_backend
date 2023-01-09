@@ -2,6 +2,7 @@ import {
   BadRequestException,
   HttpException,
   HttpStatus,
+
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -12,12 +13,13 @@ import { User } from 'src/users/entities/user.entity';
 import { CreateExternalImgLetterDto } from './dto/requests/createExternalLetterImg.request.dto';
 import { CreateExternalTextLetterDto } from './dto/requests/createExternalLetter.request.dto';
 import { LetterBody } from './entities/letterBody.entity';
-import { LetterType } from './letter.constants';
+import { LetterType, SendLetterStatus } from './letter.constants';
 import { PaginationBuilder } from 'src/common/paginations/paginationBuilder.response';
 import { TempLetterRepository } from './repository/tempLetter.repository';
 import { ReceviedTempLetterResponseDto } from './dto/responses/receviedTempLetter.response.dto';
 import { ReceviedAllResponseDto } from './dto/responses/letterStorage.response.dto';
 import { ReceivedLetterDetailResponseDto } from './dto/responses/letterDetail.response.dto';
+import { SendLetter } from './entities/sendLetter.entity';
 
 @Injectable()
 export class LetterReceivedService {
@@ -25,6 +27,8 @@ export class LetterReceivedService {
     @InjectRepository(ReceivedLetter)
     private receivedLetterRepository: Repository<ReceivedLetter>,
     private tempLetterRepository: TempLetterRepository,
+    @InjectRepository(SendLetter)
+    private sendLetterRepository: Repository<SendLetter>,
   ) {}
 
   async createTextLetter(
@@ -157,23 +161,38 @@ export class LetterReceivedService {
     };
   }
 
-  async findOneTemp(id: number) {
+  async findOneTemp(id: number): Promise<ReceviedTempLetterResponseDto> {
     const isActive = this.tempLetterRepository.findById(id);
 
     if (!isActive) {
       throw new BadRequestException({
         message: 'Letter is Already Time Out or Deleted',
-        statusCode: 400,
+        error: 'Letter is Already Time Out or Deleted',
+      });
+    }
+
+    const sendLetter = await this.sendLetterRepository.findOne({
+      where: { id: id },
+      relations: {
+        receiver: true,
+        letterBody: true,
+        sender: true,
+      },
+    });
+
+    if (!sendLetter || sendLetter.status == SendLetterStatus.SENT) {
+      throw new NotFoundException({
+        message: 'There is no id',
+        error: 'Bad Request to this Id, There is no id',
       });
     }
 
     const result = new ReceviedTempLetterResponseDto();
-    result.id = 1;
-    result.title = 'test';
-    result.content = 'test';
-    result.sender = 'test';
-    result.receiver = 'test';
-    result.createdAt = new Date();
+    result.id = id;
+    result.senderNickname = sendLetter.sender.nickname;
+    result.receivedAt = sendLetter.createdAt;
+    result.content = sendLetter.letterBody.content;
+    result.situationId = sendLetter.letterBody.situationId;
 
     return result;
   }
