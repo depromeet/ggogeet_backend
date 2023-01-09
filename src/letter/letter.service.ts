@@ -97,6 +97,13 @@ export class LetterService {
     if (sendLetter.receiver == null) {
       throw new NotFoundException('There is no receiver');
     }
+    if (sendLetter.status == SendLetterStatus.SENT) {
+      throw new NotFoundException({
+        statusCode: 400,
+        message: 'This Letter already sent',
+        error: 'Bad Request to this Id, This Letter already sent',
+      });
+    }
 
     const kakaoToken: KakaoToken = await this.kakaoTokenRepository.findByUserId(
       user.id,
