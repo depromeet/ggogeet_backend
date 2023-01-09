@@ -23,7 +23,7 @@ export class LetterSentService {
   async findAll(
     user: User,
     query: findAllSentLetterDto,
-  ): Promise<SendLetter[]> {
+  ): Promise<SendAllResponseDto[]> {
     const order = query.order === 'ASC' ? 'ASC' : 'DESC';
 
     const letter = this.sendLetterRepository
@@ -43,9 +43,9 @@ export class LetterSentService {
       });
     }
 
-    if (query.tags != undefined) {
+    if (query.situations != undefined) {
       letter.andWhere('situationId IN (:situations)', {
-        situations: query.tags,
+        situations: query.situations,
       });
     }
 
@@ -87,14 +87,12 @@ export class LetterSentService {
   async delete(user: User, id: number): Promise<void> {
     const result = await this.sendLetterRepository.softDelete(id);
     if (result.affected === 0) {
-      throw new HttpException(
-        {
-          statusCode: 204,
-          message: 'This Letter is not found',
-          error: 'Data is not exist',
-        },
-        HttpStatus.NO_CONTENT,
-      );
+      throw new NotFoundException({
+        statusCode: 404,
+        message: 'This Letter is not available',
+        error:
+          "Bad Request to this Letter Id OR You don't have access to this letter.",
+      });
     }
   }
 }

@@ -43,7 +43,15 @@ import {
 import { SendLetter } from './entities/sendLetter.entity';
 import { ReceivedLetter } from './entities/receivedLetter.entity';
 import { KakaoMessageCallbackDto } from './dto/requests/kakaoCallback.request.dto';
-import { ReceviedTempLetterResponseDto } from './dto/responses/receviedTempLetter.response.dto';
+import {
+  ReceivedLetterDetailResponseDto,
+  SendLetterDetailResponseDto,
+  tempLetterResponseDto,
+} from './dto/responses/letterDetail.response.dto';
+import {
+  ReceviedAllResponseDto,
+  SendAllResponseDto,
+} from './dto/responses/letterStorage.response.dto';
 
 @Controller('letters')
 export class LetterController {
@@ -136,7 +144,7 @@ export class LetterController {
     description: '보낸 편지를 조회합니다.',
   })
   @ApiPaginationRequst()
-  @ApiPaginationResponse(SendLetter)
+  @ApiPaginationResponse(SendAllResponseDto)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
@@ -152,6 +160,11 @@ export class LetterController {
   @ApiOperation({
     summary: '보낸 편지 상세 조회 API',
     description: '보낸 편지를 상세 조회합니다.',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '보낸 편지',
+    type: SendLetterDetailResponseDto,
   })
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
@@ -182,7 +195,7 @@ export class LetterController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiPaginationRequst()
-  @ApiPaginationResponse(ReceivedLetter)
+  @ApiPaginationResponse(ReceviedAllResponseDto)
   @HttpCode(HttpStatus.OK)
   @Get('/received')
   async findAll(
@@ -202,6 +215,11 @@ export class LetterController {
     summary: '받은 편지 상세 조회 API',
     description: '편지 상세 조회를 조회합니다.',
   })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '받은 편지',
+    type: ReceivedLetterDetailResponseDto,
+  })
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Get('/received/:id')
@@ -217,8 +235,8 @@ export class LetterController {
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: '임시로 받은 편지 조회 성공',
-    type: ReceviedTempLetterResponseDto,
+    description: '임시로 받은 편지 조회',
+    type: tempLetterResponseDto,
   })
   @ApiNotFoundResponse({
     status: HttpStatus.NOT_FOUND,

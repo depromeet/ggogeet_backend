@@ -12,12 +12,12 @@ export class findAllReceviedLetterDto extends PaginationRequest {
   readonly senders: string[];
 
   @ApiPropertyOptional({
-    description: '검색할 태그 ID 리스트',
+    description: '검색할 상황 ID 리스트',
     example: ['1', '2'],
   })
   @IsOptional()
   @IsNumberString()
-  readonly tags?: string[];
+  readonly situations: string[];
 
   @ApiPropertyOptional({
     example: '2022-01-01 00:00:00',
@@ -53,12 +53,12 @@ export class findAllSentLetterDto extends PaginationRequest {
   readonly receivers: string[];
 
   @ApiPropertyOptional({
-    description: '검색할 태그 ID 리스트',
+    description: '검색할 상황 ID 리스트',
     example: ['1', '2'],
   })
   @IsOptional()
   @IsNumberString()
-  readonly tags: string[];
+  readonly situations: string[];
 
   @ApiPropertyOptional({
     example: '2022-01-01 00:00:00',

@@ -2,7 +2,6 @@ import {
   BadRequestException,
   HttpException,
   HttpStatus,
-
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -18,7 +17,10 @@ import { PaginationBuilder } from 'src/common/paginations/paginationBuilder.resp
 import { TempLetterRepository } from './repository/tempLetter.repository';
 import { ReceviedTempLetterResponseDto } from './dto/responses/receviedTempLetter.response.dto';
 import { ReceviedAllResponseDto } from './dto/responses/letterStorage.response.dto';
-import { ReceivedLetterDetailResponseDto } from './dto/responses/letterDetail.response.dto';
+import {
+  ReceivedLetterDetailResponseDto,
+  tempLetterResponseDto,
+} from './dto/responses/letterDetail.response.dto';
 import { SendLetter } from './entities/sendLetter.entity';
 
 @Injectable()
@@ -27,6 +29,8 @@ export class LetterReceivedService {
     @InjectRepository(ReceivedLetter)
     private receivedLetterRepository: Repository<ReceivedLetter>,
     private tempLetterRepository: TempLetterRepository,
+    @InjectRepository(SendLetter)
+    private sendLetterRepository: Repository<SendLetter>,
     @InjectRepository(SendLetter)
     private sendLetterRepository: Repository<SendLetter>,
   ) {}
@@ -69,7 +73,7 @@ export class LetterReceivedService {
     return result;
   }
 
-  async findAll(user: User, query: any): Promise<ReceivedLetter[]> {
+  async findAll(user: User, query: any): Promise<ReceviedAllResponseDto[]> {
     const order = query.order === 'ASC' ? 'ASC' : 'DESC';
 
     const letter = this.receivedLetterRepository
@@ -90,9 +94,9 @@ export class LetterReceivedService {
       });
     }
 
-    if (query.tags != undefined) {
+    if (query.situations != undefined) {
       letter.andWhere('situationId IN (:situations)', {
-        situations: query.tags,
+        situations: query.situations,
       });
     }
 
@@ -137,14 +141,12 @@ export class LetterReceivedService {
   async delete(id: number): Promise<void> {
     const result = await this.receivedLetterRepository.softDelete(id);
     if (result.affected === 0) {
-      throw new HttpException(
-        {
-          statusCode: 204,
-          message: 'This Letter is not found',
-          error: 'Data is not exist',
-        },
-        HttpStatus.NO_CONTENT,
-      );
+      throw new NotFoundException({
+        statusCode: 404,
+        message: 'This Letter is not available',
+        error:
+          "Bad Request to this Letter Id OR You don't have access to this letter.",
+      });
     }
   }
 
@@ -167,7 +169,8 @@ export class LetterReceivedService {
     if (!isActive) {
       throw new BadRequestException({
         message: 'Letter is Already Time Out or Deleted',
-        error: 'Letter is Already Time Out or Deleted',
+        error:
+          'Your letter access time has expired and you can no longer read it',
       });
     }
 
@@ -187,6 +190,14 @@ export class LetterReceivedService {
       });
     }
 
+    //TODO: Redis로 테스트 해봐야함
+    // const sendLetter = await this.sendLetterRepository.findOne({
+    //   where: { id: id },
+    //   relations: { letterBody: true, sender: true },
+    // });
+
+    // const tempLetter = new tempLetterResponseDto(sendLetter);
+    // console.log(tempLetter);
     const result = new ReceviedTempLetterResponseDto();
     result.id = id;
     result.senderNickname = sendLetter.sender.nickname;
