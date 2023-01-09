@@ -230,7 +230,7 @@ export class LetterController {
   })
   @Get('/received/temp/:id')
   async findOneTemp(@Param('id') id: number) {
-    const tempReceivedLetter = this.letterReceivedService.findOneTemp(id);
+    const tempReceivedLetter = await this.letterReceivedService.findOneTemp(id);
     return { data: tempReceivedLetter };
   }
 
