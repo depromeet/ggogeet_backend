@@ -1,40 +1,12 @@
 # ggo-geet backend
 
-This repo is made fo ggogeet backend
-
 
 ## Description
 
-Started from [Nest](https://github.com/nestjs/nest) framework TypeScript starter. repository.
-
-## Installation
-
-```bash
-$ npm install
-```
+This is ggo-gett Backend Repo
 
 ## Running the app
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+To Build this App and Running
+``` bash
+docker-compose up --build -d
 ```
