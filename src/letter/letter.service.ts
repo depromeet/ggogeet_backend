@@ -92,10 +92,18 @@ export class LetterService {
     });
 
     if (!sendLetter) {
-      throw new NotFoundException('There is no id');
+      throw new NotFoundException({
+        statusCode: 400,
+        message: 'There is no id',
+        error: 'Bad Request to this Id, There is no id',
+      });
     }
     if (sendLetter.receiver == null) {
-      throw new NotFoundException('There is no receiver');
+      throw new NotFoundException({
+        statusCode: 400,
+        message: 'This Letter is not available',
+        error: 'Bad Request to this Id, This Letter is not available',
+      });
     }
     if (sendLetter.status == SendLetterStatus.SENT) {
       throw new NotFoundException({
@@ -118,7 +126,11 @@ export class LetterService {
     });
 
     if (!friend) {
-      throw new NotFoundException('There is no friend');
+      throw new NotFoundException({
+        statusCode: 400,
+        message: 'This Friend is not available',
+        error: 'Bad Request to this Id, This Friend is not available',
+      });
     }
 
     const kakaoUuid = friend.kakaoUuid;
@@ -154,10 +166,19 @@ export class LetterService {
     });
 
     if (!sendLetter) {
-      throw new NotFoundException('There is no id');
+      throw new NotFoundException({
+        statusCode: 400,
+        message: 'There is no id',
+        error: 'Bad Request to this Id, There is no id',
+      });
     }
     if (sendLetter.receiverNickname == null) {
-      throw new NotFoundException('There is no receiver');
+      throw new NotFoundException({
+        statusCode: 400,
+        message: 'There is no receiverNickname',
+        error:
+          'There is no receiverNickname, If you want to send this letter, please set receiverNickname',
+      });
     }
 
     await this.tempLetterRepository.save(sendLetter.id);
