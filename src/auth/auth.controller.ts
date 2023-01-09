@@ -87,10 +87,11 @@ export class AuthController {
     // 토큰으로 사용자 정보 받아오기
     const { statusCode, user, allowFriendsList } =
       await this.authService.getUserProfile(codeResponse);
-
     await this.kakaoTokenRepository.save(user.id, kakaoToken);
 
-    await this.friendsService.updateFriends(user);
+    if (allowFriendsList == true) {
+      await this.friendsService.updateFriends(user);
+    }
 
     // user.id로 jwt 토큰 발급
     const jwtAccessToken = await this.authService.getAccessToken(user.id);
