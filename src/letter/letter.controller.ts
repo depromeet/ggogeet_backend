@@ -18,9 +18,11 @@ import { JwtAuthGuard } from 'src/common/guards/jwtAuth.guard';
 import { User } from 'src/users/entities/user.entity';
 import { LetterService } from './letter.service';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
   ApiConsumes,
+  ApiNotFoundResponse,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -41,6 +43,7 @@ import {
 import { SendLetter } from './entities/sendLetter.entity';
 import { ReceivedLetter } from './entities/receivedLetter.entity';
 import { KakaoMessageCallbackDto } from './dto/requests/kakaoCallback.request.dto';
+import { ReceviedTempLetterResponseDto } from './dto/responses/receviedTempLetter.response.dto';
 
 @Controller('letters')
 export class LetterController {
@@ -212,9 +215,23 @@ export class LetterController {
     summary: '임시로 받은 편지 조회 API',
     description: '임시로 받은 편지를 조회합니다.',
   })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '임시로 받은 편지 조회 성공',
+    type: ReceviedTempLetterResponseDto,
+  })
+  @ApiNotFoundResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: '임시로 받은 편지가 없습니다.',
+  })
+  @ApiBadRequestResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: '잘못된 요청입니다.',
+  })
   @Get('/received/temp/:id')
   async findOneTemp(@Param('id') id: number) {
-    return this.letterReceivedService.findOneTemp(id);
+    const tempReceivedLetter = this.letterReceivedService.findOneTemp(id);
+    return { data: tempReceivedLetter };
   }
 
   @ApiTags('Received Letter API')
