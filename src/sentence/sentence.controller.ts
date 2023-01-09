@@ -7,7 +7,6 @@ import {
   HttpStatus,
   Param,
   Post,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/common/guards/jwtAuth.guard';
@@ -24,7 +23,6 @@ import { SentenceResponseDto } from './dto/responses/sentence.response.dto';
 import { ReqUser } from 'src/common/decorators/user.decorators';
 import { User } from 'src/users/entities/user.entity';
 import { SituationSentenceResponseDto } from './dto/responses/manysentence.response.dto';
-import { Sentence } from './entities/sentence.entity';
 
 @Controller('sentence')
 @ApiTags('Sentence API')

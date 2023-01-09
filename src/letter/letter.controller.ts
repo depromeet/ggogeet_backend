@@ -18,9 +18,11 @@ import { JwtAuthGuard } from 'src/common/guards/jwtAuth.guard';
 import { User } from 'src/users/entities/user.entity';
 import { LetterService } from './letter.service';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
   ApiConsumes,
+  ApiNotFoundResponse,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -236,9 +238,18 @@ export class LetterController {
     description: '임시로 받은 편지 조회',
     type: tempLetterResponseDto,
   })
+  @ApiNotFoundResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: '임시로 받은 편지가 없습니다.',
+  })
+  @ApiBadRequestResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: '잘못된 요청입니다.',
+  })
   @Get('/received/temp/:id')
   async findOneTemp(@Param('id') id: number) {
-    return this.letterReceivedService.findOneTemp(id);
+    const tempReceivedLetter = await this.letterReceivedService.findOneTemp(id);
+    return { data: tempReceivedLetter };
   }
 
   @ApiTags('Received Letter API')

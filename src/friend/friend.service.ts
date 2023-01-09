@@ -3,11 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ResponseFriendDto } from './dto/response/responseFriend.dto';
 import { User } from 'src/users/entities/user.entity';
 import { Friend } from './entities/friend.entity';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { KakaoTokenRepository } from 'src/kakao/kakaoToken.memory.repository';
 import { KakaoToken } from 'src/kakao/kakaoToken';
 import { KakaoService } from 'src/kakao/kakao.service';
-import { isRFC3339 } from 'class-validator';
 
 @Injectable()
 export class FriendService {

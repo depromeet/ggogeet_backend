@@ -12,7 +12,7 @@ import { User } from 'src/users/entities/user.entity';
 import { CreateExternalImgLetterDto } from './dto/requests/createExternalLetterImg.request.dto';
 import { CreateExternalTextLetterDto } from './dto/requests/createExternalLetter.request.dto';
 import { LetterBody } from './entities/letterBody.entity';
-import { LetterType } from './letter.constants';
+import { LetterType, SendLetterStatus } from './letter.constants';
 import { PaginationBuilder } from 'src/common/paginations/paginationBuilder.response';
 import { TempLetterRepository } from './repository/tempLetter.repository';
 import { ReceviedTempLetterResponseDto } from './dto/responses/receviedTempLetter.response.dto';
@@ -29,6 +29,8 @@ export class LetterReceivedService {
     @InjectRepository(ReceivedLetter)
     private receivedLetterRepository: Repository<ReceivedLetter>,
     private tempLetterRepository: TempLetterRepository,
+    @InjectRepository(SendLetter)
+    private sendLetterRepository: Repository<SendLetter>,
     @InjectRepository(SendLetter)
     private sendLetterRepository: Repository<SendLetter>,
   ) {}
@@ -161,7 +163,7 @@ export class LetterReceivedService {
     };
   }
 
-  async findOneTemp(id: number) {
+  async findOneTemp(id: number): Promise<ReceviedTempLetterResponseDto> {
     const isActive = this.tempLetterRepository.findById(id);
 
     if (!isActive) {
@@ -169,7 +171,22 @@ export class LetterReceivedService {
         message: 'Letter is Already Time Out or Deleted',
         error:
           'Your letter access time has expired and you can no longer read it',
-        statusCode: 400,
+      });
+    }
+
+    const sendLetter = await this.sendLetterRepository.findOne({
+      where: { id: id },
+      relations: {
+        receiver: true,
+        letterBody: true,
+        sender: true,
+      },
+    });
+
+    if (!sendLetter || sendLetter.status == SendLetterStatus.SENT) {
+      throw new NotFoundException({
+        message: 'There is no id',
+        error: 'Bad Request to this Id, There is no id',
       });
     }
 
@@ -182,12 +199,11 @@ export class LetterReceivedService {
     // const tempLetter = new tempLetterResponseDto(sendLetter);
     // console.log(tempLetter);
     const result = new ReceviedTempLetterResponseDto();
-    result.id = 1;
-    result.title = 'test';
-    result.content = 'test';
-    result.sender = 'test';
-    result.receiver = 'test';
-    result.createdAt = new Date();
+    result.id = id;
+    result.senderNickname = sendLetter.sender.nickname;
+    result.receivedAt = sendLetter.createdAt;
+    result.content = sendLetter.letterBody.content;
+    result.situationId = sendLetter.letterBody.situationId;
 
     return result;
   }
