@@ -61,7 +61,7 @@ export class KakaoService {
     } catch (e) {
       throw new UnauthorizedException({
         message: 'Wrong kakaoAccessCode',
-        error: "Can't refresh kakao access token",
+        error: "Can't get kakao access token",
         statusCode: 401,
       });
     }
