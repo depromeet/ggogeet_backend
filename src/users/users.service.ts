@@ -23,7 +23,11 @@ export class UsersService {
     const user = await this.userRepository.findOneBy({ id });
 
     if (!user) {
-      throw new NotFoundException(`User #${id} not found`);
+      throw new NotFoundException({
+        statusCode: 404,
+        message: 'This User is not available',
+        error: 'Bad Request to this Id, This User is not available',
+      });
     }
 
     // TODO : add update user
@@ -40,6 +44,13 @@ export class UsersService {
       .leftJoinAndSelect('user.social', 'social')
       .where('social.clientId = :clientId', { clientId: socialId })
       .getOne();
+    if (!socialUser) {
+      throw new NotFoundException({
+        statusCode: 404,
+        message: 'This kakao User is not available',
+        error: 'Bad Request to this kakao Id, This kakao user is not available',
+      });
+    }
 
     return socialUser;
   }

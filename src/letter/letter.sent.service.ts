@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { SendLetter } from './entities/sendLetter.entity';
@@ -69,7 +74,12 @@ export class LetterSentService {
       relations: ['letterBody'],
     });
     if (!letter) {
-      throw new Error('There is no id');
+      throw new NotFoundException({
+        statusCode: 404,
+        message: 'This Letter is not available',
+        error:
+          "Bad Request to this Letter Id OR You don't have access to this letter.",
+      });
     }
     return new SendLetterDetailResponseDto(letter);
   }
@@ -77,7 +87,14 @@ export class LetterSentService {
   async delete(user: User, id: number): Promise<void> {
     const result = await this.sendLetterRepository.softDelete(id);
     if (result.affected === 0) {
-      throw new Error('There is no id');
+      throw new HttpException(
+        {
+          statusCode: 204,
+          message: 'This Letter is not found',
+          error: 'Data is not exist',
+        },
+        HttpStatus.NO_CONTENT,
+      );
     }
   }
 }

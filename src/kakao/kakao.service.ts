@@ -132,7 +132,7 @@ export class KakaoService {
         });
       }
 
-      if (response.status == 400) {
+      if (response.status == 404) {
         return [[], 0];
       }
 
@@ -170,11 +170,11 @@ export class KakaoService {
         });
       }
 
-      if (response.status == 400) {
+      if (response.status == 404) {
         throw new UnauthorizedException({
           message: 'Not Registered User',
           error: 'Cannot Get Kakao Profile',
-          status: 400,
+          status: 404,
         });
       }
 
@@ -221,11 +221,11 @@ export class KakaoService {
         });
       }
 
-      if (response.status == 400) {
+      if (response.status == 404) {
         throw new NotFoundException({
           message: 'Kakao Friend is not found',
           error: 'Cannot Send Kakao Message',
-          status: 400,
+          status: 404,
         });
       }
 
