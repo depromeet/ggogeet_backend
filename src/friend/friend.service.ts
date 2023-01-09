@@ -73,16 +73,19 @@ export class FriendService {
     }
 
     for await (const element of friendsList) {
-      const isExist = await this.friendRepository.findOne({
+      const exFriend = await this.friendRepository.findOne({
         where: { userId: user.id, kakaoUuid: element.uuid },
       });
-      if (!isExist) {
-        await this.createKakakoFriends(element, user);
+      if (!exFriend) {
+        await this.createKakaoFriends(element, user);
+      } else if (exFriend.kakaoFriendName != element.profile_nickname) {
+        exFriend.kakaoFriendName = element.profile_nickname;
+        await this.friendRepository.save(exFriend);
       }
     }
   }
 
-  async createKakakoFriends(element, user: User) {
+  async createKakaoFriends(element, user: User) {
     const friend = new Friend();
     friend.kakaoUuid = element.uuid;
     friend.kakaoFriendName = element.profile_nickname;
