@@ -43,7 +43,6 @@ import { ReceivedLetter } from './entities/receivedLetter.entity';
 import { KakaoMessageCallbackDto } from './dto/requests/kakaoCallback.request.dto';
 
 @Controller('letters')
-@ApiTags('Letter API')
 export class LetterController {
   constructor(
     private readonly letterService: LetterService,
@@ -51,6 +50,7 @@ export class LetterController {
     private readonly letterReceivedService: LetterReceivedService,
   ) {}
 
+  @ApiTags('Letter API')
   @ApiOperation({
     summary: '편지 생성 API',
     description:
@@ -71,6 +71,7 @@ export class LetterController {
     return { data: result };
   }
 
+  @ApiTags('Letter API')
   @ApiOperation({
     summary: '편지 전송 API',
     description: '편지를 친구에게 보냅니다.',
@@ -84,6 +85,7 @@ export class LetterController {
     return { data: letter };
   }
 
+  @ApiTags('Letter API')
   @ApiOperation({
     summary: '편지 외부 전송 API',
     description: '편지를 친구가 아닌 외부에 보냅니다.',
@@ -100,6 +102,7 @@ export class LetterController {
     return this.letterService.sendTempLetter(user, id);
   }
 
+  @ApiTags('Letter API')
   @ApiOperation({
     summary: '편지 외부 전송 콜백 API',
     description: '카카오로 전송된 편지의 Callback을 받습니다.',
@@ -110,6 +113,7 @@ export class LetterController {
     return this.letterService.getKaKaoTempLetterCallback(query);
   }
 
+  @ApiTags('Letter API')
   @ApiOperation({
     summary: '편지 외부 전송 콜백 확인 API',
     description: '카카오로 전송된 편지의 Callback을 확인합니다.',
@@ -123,7 +127,7 @@ export class LetterController {
   ) {
     return this.letterService.getKaKaoTempLetterCallbackCheck(id);
   }
-
+  @ApiTags('Sent Letter API')
   @ApiOperation({
     summary: '보낸 편지함 조회 API',
     description: '보낸 편지를 조회합니다.',
@@ -141,6 +145,7 @@ export class LetterController {
     return this.letterSentService.findAll(user, query);
   }
 
+  @ApiTags('Sent Letter API')
   @ApiOperation({
     summary: '보낸 편지 상세 조회 API',
     description: '보낸 편지를 상세 조회합니다.',
@@ -153,6 +158,7 @@ export class LetterController {
     return { data: sentLetter };
   }
 
+  @ApiTags('Sent Letter API')
   @ApiOperation({
     summary: '보낸 편지 삭제하기 API',
     description: '보낸 편지를 삭제합니다.',
@@ -165,6 +171,7 @@ export class LetterController {
     return this.letterSentService.delete(user, id);
   }
 
+  @ApiTags('Received Letter API')
   @ApiOperation({
     summary: '받은 편지함 조회 API',
     description: '유저가 받은 편지함 조회을 조회합니다.',
@@ -187,6 +194,7 @@ export class LetterController {
     return receviedLetters;
   }
 
+  @ApiTags('Received Letter API')
   @ApiOperation({
     summary: '받은 편지 상세 조회 API',
     description: '편지 상세 조회를 조회합니다.',
@@ -199,6 +207,7 @@ export class LetterController {
     return { data: receivedLetter };
   }
 
+  @ApiTags('Received Letter API')
   @ApiOperation({
     summary: '임시로 받은 편지 조회 API',
     description: '임시로 받은 편지를 조회합니다.',
@@ -208,6 +217,7 @@ export class LetterController {
     return this.letterReceivedService.findOneTemp(id);
   }
 
+  @ApiTags('Received Letter API')
   @ApiOperation({
     summary: '이미지 편지 업로드 API',
     description: '외부에서 받은 이미지로 된 편지를 업로드합니다.',
@@ -239,6 +249,7 @@ export class LetterController {
     return { data: letter };
   }
 
+  @ApiTags('Received Letter API')
   @ApiOperation({
     summary: '외부 텍스트 편지 생성 API',
     description: '외부에서 받은 텍스트로 된 편지를 생성합니다.',
@@ -258,6 +269,7 @@ export class LetterController {
     return { data: letter };
   }
 
+  @ApiTags('Received Letter API')
   @ApiOperation({
     summary: '외부 이미지 편지 생성 API',
     description: '외부에서 받은 이미지로 된 편지를 생성합니다.',
@@ -277,6 +289,7 @@ export class LetterController {
     return { data: letter };
   }
 
+  @ApiTags('Received Letter API')
   @ApiOperation({
     summary: '받은 편지 삭제 API',
     description: '받은 편지를 삭제합니다.',
