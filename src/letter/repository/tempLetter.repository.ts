@@ -1,43 +1,28 @@
+import Redis from 'ioredis';
+import { InjectRedis } from '@liaoliaots/nestjs-redis';
+
 export class TempLetterRepository {
-  private static id = 0;
-  private static store: Map<number, Map<number, Date>> = new Map();
-  private static callStore: Map<number, boolean> = new Map();
+  constructor(@InjectRedis('default') private readonly redis: Redis) {}
+  private readonly ttl = 3600 * 24 * 3;
 
-  public save(id: number): number {
-    const ttl = 3600 * 24 * 2;
-    const timeOutDate = new Date(
-      new Date().getTime() + ttl * 1000 * 60 * 60 * 24,
-    );
-    const timeAndId: Map<number, Date> = new Map();
-    timeAndId.set(id, timeOutDate);
-    TempLetterRepository.store.set(TempLetterRepository.id, timeAndId);
-    TempLetterRepository.callStore.set(TempLetterRepository.id, false);
-    TempLetterRepository.id++;
-    return TempLetterRepository.id;
+  async save(id: number, isSent = false): Promise<number> {
+    const sentResult = isSent ? '1' : '0';
+    const tempLetterKey = this.getTokenKey(id);
+    await this.redis.set(tempLetterKey, sentResult, 'EX', this.ttl);
+    return id;
   }
 
-  public findById(id: number): boolean {
-    const result = TempLetterRepository.store.get(id);
-    const k = result.keys()[0];
-    if (k) {
-      if (k.getTime() < new Date().getTime()) {
-        TempLetterRepository.store.delete(id);
-        return false;
-      }
-      return true;
-    }
-  }
-
-  public setIdCallBack(id: number): void {
-    TempLetterRepository.callStore.set(id, true);
-  }
-
-  public findByIdCallBack(id: number): boolean {
-    const result = TempLetterRepository.callStore.get(id);
-    if (result) {
+  async findById(id: number): Promise<boolean> {
+    const tempLetterKey = this.getTokenKey(id);
+    const result = await this.redis.get(tempLetterKey);
+    if (result == '1') {
       return true;
     } else {
       return false;
     }
+  }
+
+  private getTokenKey(id: number): string {
+    return `tempLetter:${id.toString()}`;
   }
 }

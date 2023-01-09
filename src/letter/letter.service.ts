@@ -27,6 +27,8 @@ export class LetterService {
     @InjectRepository(Friend)
     private friendRepository: Repository<Friend>,
     private readonly kakaoService: KakaoService,
+    private readonly kakaoTokenRepository: KakaoTokenRepository,
+    private readonly tempLetterRepository: TempLetterRepository,
   ) {}
 
   async createDraftLetter(
@@ -96,8 +98,9 @@ export class LetterService {
       throw new NotFoundException('There is no receiver');
     }
 
-    const kakaoTokenRepository = new KakaoTokenRepository();
-    const kakaoToken: KakaoToken = kakaoTokenRepository.findByUserId(user.id);
+    const kakaoToken: KakaoToken = await this.kakaoTokenRepository.findByUserId(
+      user.id,
+    );
     const acessToken = kakaoToken.getAcessToken();
 
     const friend = await this.friendRepository.findOne({
@@ -150,8 +153,7 @@ export class LetterService {
       throw new NotFoundException('There is no receiver');
     }
 
-    const tempLetterRepository = new TempLetterRepository();
-    const result = tempLetterRepository.save(sendLetter.id);
+    const result = this.tempLetterRepository.save(sendLetter.id);
     return {
       data: {
         tempLetterId: result,
@@ -161,15 +163,13 @@ export class LetterService {
   }
 
   getKaKaoTempLetterCallback(query: KakaoMessageCallbackDto) {
-    const tempLetterRepository = new TempLetterRepository();
-    const letter_id = parseInt(query.TEMP_LETTER_ID);
-    const sendLetterId = tempLetterRepository.setIdCallBack(letter_id);
+    const letterId = parseInt(query.TEMP_LETTER_ID);
+    const sendLetterId = this.tempLetterRepository.save(letterId, false);
     return sendLetterId;
   }
 
   getKaKaoTempLetterCallbackCheck(id: number) {
-    const tempLetterRepository = new TempLetterRepository();
-    const result = tempLetterRepository.findByIdCallBack(id);
+    const result = this.tempLetterRepository.findById(id);
     return {
       data: {
         sent: result,

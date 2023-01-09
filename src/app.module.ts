@@ -34,6 +34,7 @@ import { FriendModule } from './friend/friend.module';
 import winstonDaily from 'winston-daily-rotate-file';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './common/exceptions/httpExceptionFilter';
+import { KakaoModule } from './kakao/kakao.module';
 
 const ConfigSettingModule = ConfigModule.forRoot({
   isGlobal: true,
@@ -116,6 +117,7 @@ const WinstomSettingModule = WinstonModule.forRoot({
     ReminderModule,
     ReplyModule,
     FriendModule,
+    KakaoModule,
   ],
   controllers: [AppController],
   providers: [
