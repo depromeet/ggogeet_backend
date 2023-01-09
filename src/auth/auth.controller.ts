@@ -93,6 +93,8 @@ export class AuthController {
 
     kakaoTokenRepository.save(user.id, kakaoToken);
 
+    await this.friendsService.updateFriends(user);
+
     // user.id로 jwt 토큰 발급
     const jwtAccessToken = await this.authService.getAccessToken(user.id);
     const jwtRefreshToken = await this.authService.getRefreshToken(user.id);
