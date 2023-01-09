@@ -160,10 +160,10 @@ export class LetterService {
       throw new NotFoundException('There is no receiver');
     }
 
-    const result = this.tempLetterRepository.save(sendLetter.id);
+    await this.tempLetterRepository.save(sendLetter.id);
     return {
       data: {
-        tempLetterId: result,
+        tempLetterId: sendLetter.id,
         expiredDate: '2023-01-14',
       },
     };
