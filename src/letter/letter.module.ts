@@ -16,6 +16,8 @@ import { LetterReceivedService } from './letter.received.service';
 import { Friend } from 'src/friend/entities/friend.entity';
 import { KakaoService } from 'src/kakao/kakao.service';
 import { KakaoTokenRepository } from 'src/kakao/kakaoToken.memory.repository';
+import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { TempLetterRepository } from './repository/tempLetter.repository';
 
 @Module({
   imports: [
@@ -27,6 +29,7 @@ import { KakaoTokenRepository } from 'src/kakao/kakaoToken.memory.repository';
     TypeOrmModule.forFeature([ReceivedLetter, User, SendLetter, Friend]),
     PassportModule,
     AuthModule,
+    RedisModule,
   ],
   controllers: [LetterController],
   providers: [
@@ -36,6 +39,7 @@ import { KakaoTokenRepository } from 'src/kakao/kakaoToken.memory.repository';
     JwtStrategy,
     KakaoService,
     KakaoTokenRepository,
+    TempLetterRepository,
   ],
 })
 export class LetterModule {}

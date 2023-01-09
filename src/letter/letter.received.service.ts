@@ -18,6 +18,7 @@ export class LetterReceivedService {
   constructor(
     @InjectRepository(ReceivedLetter)
     private receivedLetterRepository: Repository<ReceivedLetter>,
+    private tempLetterRepository: TempLetterRepository,
   ) {}
 
   async createTextLetter(
@@ -136,8 +137,7 @@ export class LetterReceivedService {
   }
 
   async findOneTemp(id: number) {
-    const tempLetterRepository = new TempLetterRepository();
-    const isActive = tempLetterRepository.findById(id);
+    const isActive = this.tempLetterRepository.findById(id);
 
     if (!isActive) {
       throw new BadRequestException({
