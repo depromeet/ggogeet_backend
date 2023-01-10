@@ -1,7 +1,5 @@
 import {
   BadRequestException,
-  HttpException,
-  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -17,10 +15,7 @@ import { PaginationBuilder } from 'src/common/paginations/paginationBuilder.resp
 import { TempLetterRepository } from './repository/tempLetter.repository';
 import { ReceviedTempLetterResponseDto } from './dto/responses/receviedTempLetter.response.dto';
 import { ReceviedAllResponseDto } from './dto/responses/letterStorage.response.dto';
-import {
-  ReceivedLetterDetailResponseDto,
-  tempLetterResponseDto,
-} from './dto/responses/letterDetail.response.dto';
+import { ReceivedLetterDetailResponseDto } from './dto/responses/letterDetail.response.dto';
 import { SendLetter } from './entities/sendLetter.entity';
 
 @Injectable()
@@ -29,8 +24,6 @@ export class LetterReceivedService {
     @InjectRepository(ReceivedLetter)
     private receivedLetterRepository: Repository<ReceivedLetter>,
     private tempLetterRepository: TempLetterRepository,
-    @InjectRepository(SendLetter)
-    private sendLetterRepository: Repository<SendLetter>,
     @InjectRepository(SendLetter)
     private sendLetterRepository: Repository<SendLetter>,
   ) {}
