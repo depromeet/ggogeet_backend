@@ -197,14 +197,14 @@ export class LetterService {
     };
   }
 
-  getKaKaoTempLetterCallback(query: KakaoMessageCallbackDto) {
+  async getKaKaoTempLetterCallback(query: KakaoMessageCallbackDto) {
     const letterId = parseInt(query.TEMP_LETTER_ID);
-    const sendLetterId = this.tempLetterRepository.save(letterId, false);
+    const sendLetterId = await this.tempLetterRepository.save(letterId, true);
     return sendLetterId;
   }
 
-  getKaKaoTempLetterCallbackCheck(id: number) {
-    const result = this.tempLetterRepository.findById(id);
+  async getKaKaoTempLetterCallbackCheck(id: number) {
+    const result = await this.tempLetterRepository.findById(id);
     return {
       data: {
         sent: result,
