@@ -190,14 +190,6 @@ export class LetterReceivedService {
       });
     }
 
-    //TODO: Redis로 테스트 해봐야함
-    // const sendLetter = await this.sendLetterRepository.findOne({
-    //   where: { id: id },
-    //   relations: { letterBody: true, sender: true },
-    // });
-
-    // const tempLetter = new tempLetterResponseDto(sendLetter);
-    // console.log(tempLetter);
     const result = new ReceviedTempLetterResponseDto();
     result.id = id;
     result.senderNickname = sendLetter.sender.nickname;
