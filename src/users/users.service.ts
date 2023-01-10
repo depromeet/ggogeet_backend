@@ -44,13 +44,6 @@ export class UsersService {
       .leftJoinAndSelect('user.social', 'social')
       .where('social.clientId = :clientId', { clientId: socialId })
       .getOne();
-    if (!socialUser) {
-      throw new NotFoundException({
-        statusCode: 404,
-        message: 'This kakao User is not available',
-        error: 'Bad Request to this kakao Id, This kakao user is not available',
-      });
-    }
 
     return socialUser;
   }
