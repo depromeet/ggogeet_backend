@@ -90,9 +90,12 @@ export class FriendService {
     const friend = new Friend();
     friend.kakaoUuid = element.uuid;
     friend.kakaoFriendName = element.profile_nickname;
+    const friendUserId = await this.findUserByClientId(element.id);
+    if (!friendUserId) {
+      return;
+    }
 
-    friend.friendUser = await this.findUserByClientId(element.id);
-    friend.user = user;
+    friend.friendUser = friend.user = user;
 
     await this.friendRepository.save(friend);
   }
