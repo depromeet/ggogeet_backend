@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ReceivedLetter } from './entities/receivedLetter.entity';
 import { LetterUtils } from './letter.utils';
-import { KakaoTokenRepository } from 'src/kakao/kakaoToken.memory.repository';
+import { KakaoTokenRepository } from 'src/kakao/repository/kakaoToken.memory.repository';
 import { KakaoToken } from 'src/kakao/kakaoToken';
 import { Friend } from 'src/friend/entities/friend.entity';
 import { KakaoService } from 'src/kakao/kakao.service';

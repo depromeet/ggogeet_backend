@@ -10,7 +10,7 @@ import {
 import { AuthService } from './auth.service';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ResponseFriendDto } from '../friend/dto/response/responseFriend.dto';
-import { KakaoTokenRepository } from 'src/kakao/kakaoToken.memory.repository';
+import { KakaoTokenRepository } from 'src/kakao/repository/kakaoToken.memory.repository';
 import { KakaoToken } from 'src/kakao/kakaoToken';
 import { FriendService } from 'src/friend/friend.service';
 

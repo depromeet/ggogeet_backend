@@ -15,7 +15,7 @@ import { LetterSentService } from './letter.sent.service';
 import { LetterReceivedService } from './letter.received.service';
 import { Friend } from 'src/friend/entities/friend.entity';
 import { KakaoService } from 'src/kakao/kakao.service';
-import { KakaoTokenRepository } from 'src/kakao/kakaoToken.memory.repository';
+import { KakaoTokenRepository } from 'src/kakao/repository/kakaoToken.memory.repository';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
 import { TempLetterRepository } from './repository/tempLetter.repository';
 

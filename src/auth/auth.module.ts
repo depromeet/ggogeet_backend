@@ -12,7 +12,7 @@ import { KakaoService } from 'src/kakao/kakao.service';
 import { Friend } from 'src/friend/entities/friend.entity';
 import { UsersService } from 'src/users/users.service';
 import { FriendService } from 'src/friend/friend.service';
-import { KakaoTokenRepository } from 'src/kakao/kakaoToken.memory.repository';
+import { KakaoTokenRepository } from 'src/kakao/repository/kakaoToken.memory.repository';
 
 @Module({
   imports: [

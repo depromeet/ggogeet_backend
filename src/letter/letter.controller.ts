@@ -203,11 +203,7 @@ export class LetterController {
     @Query()
     query: findAllReceviedLetterDto,
   ) {
-    const receviedLetters = await this.letterReceivedService.findAll(
-      user,
-      query,
-    );
-    return receviedLetters;
+    return await this.letterReceivedService.findAll(user, query);
   }
 
   @ApiTags('Received Letter API')

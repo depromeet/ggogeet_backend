@@ -1,10 +1,13 @@
 import { DEFAULT_REDIS_NAMESPACE, InjectRedis } from '@liaoliaots/nestjs-redis';
-import { KakaoToken } from './kakaoToken';
+import { KakaoToken } from '../kakaoToken';
 import Redis from 'ioredis';
+import { KakaoService } from '../kakao.service';
+import { InternalServerErrorException } from '@nestjs/common';
 
 export class KakaoTokenRepository {
   constructor(
     @InjectRedis(DEFAULT_REDIS_NAMESPACE) private readonly redis: Redis,
+    private readonly kakaoService: KakaoService,
   ) {}
 
   async save(userId: number, kakaoToken: KakaoToken): Promise<void> {
@@ -31,6 +34,26 @@ export class KakaoTokenRepository {
     const expiresIn = await this.redis.ttl(acessTokenKey);
     const refreshToken = await this.redis.get(refreshTokenKey);
     const refreshTokenExpiresIn = await this.redis.ttl(refreshTokenKey);
+    if (acessToken === null) {
+      try {
+        const { access_token, expires_in } =
+          await this.kakaoService.refreshKakaoAccessToken(refreshToken);
+        await this.save(
+          userId,
+          new KakaoToken(
+            access_token,
+            refreshToken,
+            expires_in,
+            refreshTokenExpiresIn,
+          ),
+        );
+      } catch (e) {
+        throw new InternalServerErrorException({
+          message: 'Cannot refresh Kakao access token',
+          error: 'KAKAO_REFRESH_TOKEN_ERROR',
+        });
+      }
+    }
 
     return new KakaoToken(
       acessToken,

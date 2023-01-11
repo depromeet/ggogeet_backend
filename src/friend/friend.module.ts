@@ -8,7 +8,7 @@ import { Friend } from './entities/friend.entity';
 import { JwtStrategy } from 'src/auth/strategy/jwt.strategy';
 import { User } from 'src/users/entities/user.entity';
 import { KakaoService } from 'src/kakao/kakao.service';
-import { KakaoTokenRepository } from 'src/kakao/kakaoToken.memory.repository';
+import { KakaoTokenRepository } from 'src/kakao/repository/kakaoToken.memory.repository';
 
 @Module({
   imports: [
