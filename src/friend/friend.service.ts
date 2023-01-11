@@ -4,7 +4,7 @@ import { ResponseFriendDto } from './dto/response/responseFriend.dto';
 import { User } from 'src/users/entities/user.entity';
 import { Friend } from './entities/friend.entity';
 import { Repository } from 'typeorm';
-import { KakaoTokenRepository } from 'src/kakao/kakaoToken.memory.repository';
+import { KakaoTokenRepository } from 'src/kakao/repository/kakaoToken.memory.repository';
 import { KakaoToken } from 'src/kakao/kakaoToken';
 import { KakaoService } from 'src/kakao/kakao.service';
 
@@ -95,7 +95,8 @@ export class FriendService {
       return;
     }
 
-    friend.friendUser = friend.user = user;
+    friend.friendUser = friendUserId;
+    friend.user = user;
 
     await this.friendRepository.save(friend);
   }
