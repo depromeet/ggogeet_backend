@@ -91,14 +91,14 @@ export class FriendService {
     friend.kakaoUuid = element.uuid;
     friend.kakaoFriendName = element.profile_nickname;
     const friendUserId = await this.findUserByClientId(element.id);
-    if (!friendUserId) {
+    if (friendUserId == null || friendUserId == undefined) {
       return;
     }
 
     friend.friendUser = friendUserId;
     friend.user = user;
 
-    await this.friendRepository.save(friend);
+    return await this.friendRepository.save(friend);
   }
 
   async findUserByClientId(clientId: string): Promise<User> {
