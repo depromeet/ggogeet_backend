@@ -30,6 +30,7 @@ export class Friend {
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'friendUserId' })
+  @Column({ nullable: false })
   friendUser: User;
 
   @CreateDateColumn()
