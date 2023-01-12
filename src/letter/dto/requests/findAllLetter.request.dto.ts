@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsArray, IsDateString, IsOptional } from 'class-validator';
+import { IsDateString, IsOptional } from 'class-validator';
 import { PaginationRequest } from 'src/common/paginations/pagination.request';
 
 export class findAllReceviedLetterDto extends PaginationRequest {
@@ -8,7 +8,6 @@ export class findAllReceviedLetterDto extends PaginationRequest {
     example: ['1', '2'],
   })
   @IsOptional()
-  @IsArray()
   readonly senders: string[];
 
   @ApiPropertyOptional({
@@ -16,7 +15,6 @@ export class findAllReceviedLetterDto extends PaginationRequest {
     example: ['1', '2'],
   })
   @IsOptional()
-  @IsArray()
   readonly situations: string[];
 
   @ApiPropertyOptional({
@@ -49,7 +47,6 @@ export class findAllSentLetterDto extends PaginationRequest {
     example: ['1', '2'],
   })
   @IsOptional()
-  @IsArray()
   readonly receivers: string[];
 
   @ApiPropertyOptional({
@@ -57,7 +54,6 @@ export class findAllSentLetterDto extends PaginationRequest {
     example: ['1', '2'],
   })
   @IsOptional()
-  @IsArray()
   readonly situations: string[];
 
   @ApiPropertyOptional({
