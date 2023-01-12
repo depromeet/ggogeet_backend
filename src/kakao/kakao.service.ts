@@ -203,6 +203,7 @@ export class KakaoService {
     const body = {
       template_id: template_id,
       receiver_uuids: '[' + '"' + kakao_uuid + '"' + ']',
+      template_args: template_args,
     };
 
     try {
