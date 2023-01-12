@@ -28,9 +28,8 @@ export class Friend {
   @Column({ name: 'userId' })
   userId: number;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: 'friendUserId' })
-  @Column({ nullable: false })
   friendUser: User;
 
   @CreateDateColumn()
