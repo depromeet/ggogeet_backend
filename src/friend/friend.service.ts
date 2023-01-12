@@ -25,6 +25,7 @@ export class FriendService {
       .leftJoinAndSelect('friend.friendUser', 'user')
       .where('friend.userId = :userId', { userId: user.id })
       .getMany();
+    console.log(friendList);
     const result = friendList.map((friend) => {
       return new ResponseFriendDto(friend);
     });
@@ -87,14 +88,13 @@ export class FriendService {
   }
 
   async createKakaoFriends(element, user: User) {
-    const friend = new Friend();
-    friend.kakaoUuid = element.uuid;
-    friend.kakaoFriendName = element.profile_nickname;
     const friendUserId = await this.findUserByClientId(element.id);
     if (friendUserId == null || friendUserId == undefined) {
       return;
     }
-
+    const friend = new Friend();
+    friend.kakaoUuid = element.uuid;
+    friend.kakaoFriendName = element.profile_nickname;
     friend.friendUser = friendUserId;
     friend.user = user;
 
@@ -107,6 +107,7 @@ export class FriendService {
       .leftJoinAndSelect('user.social', 'social')
       .where('social.clientId = :clientId', { clientId: clientId })
       .getOne();
+    console.log(socialUser);
 
     return socialUser;
   }
