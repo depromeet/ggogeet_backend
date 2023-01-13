@@ -154,7 +154,7 @@ export class LetterService {
     });
 
     const template_id = 87992;
-    const template_args = `{\"letterId\": "${sendLetter.id}"}`;
+    const template_args = `{\"letterId\": "${receivedLetter.id}"}`;
     const result = this.kakaoService.sendKakaoMessage(
       acessToken,
       kakaoUuid,
