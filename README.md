@@ -80,10 +80,18 @@ www.ggo-geet.com
  
 
 ### **Skill**
-
+---
 ### Backend
 
-![Untitled](https://github.com/seonghun-dev/ReadmeImage/blob/main/src/ggogeet/Untitled%209.png?raw=true)
+🔧 **Stack**  
+
+![Untitled](https://github.com/seonghun-dev/ReadmeImage/blob/main/src/ggogeet/Untitled%209.png?raw=true)  
+
+
+
+⚒️ **System Architecture**  
+
+![KakaoTalk_20230112_231800711](https://user-images.githubusercontent.com/76957700/212344998-53693cb4-1977-4932-a050-5e7eb9188285.png)
 
 **Directory structure**
 
