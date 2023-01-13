@@ -48,7 +48,7 @@ export class ReminderService {
       where: constraint,
       skip: skip,
       take: take,
-      select: ['id', 'title', 'eventAt', 'alertOn', 'isDone'],
+      select: ['id', 'title', 'eventAt', 'alertOn', 'isDone', 'content'],
     });
 
     return new PaginationBuilder()
