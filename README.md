@@ -1,8 +1,9 @@
 # README
 
-![Untitled](https://github.com/seonghun-dev/ReadmeImage/blob/main/src/ggogeet/Untitled.png?raw=true)
+![Untitled](https://github.com/seonghun-dev/ReadmeImage/blob/main/src/ggogeet/Untitled.png?raw=true)  
+  
 
-## 꼬깃 접어 전하는 마음, ggo-geet
+## ✉️ 꼬깃 접어 전하는 마음, ggo-geet ✉️
 
 말로 전하기 어려운 마음을 즐겁게 전할 수 있게 해주는 편지 서비스
 
@@ -16,9 +17,11 @@
 
 살아오며 더 이상 편지를 쓰지 않게 된 이유는 아주 많습니다.
 
-### 꼬깃 보내기
 
-전하고 싶은 마음을 적어보세요.
+  
+ 📤 **꼬깃 보내기**
+
+> **전하고 싶은 마음을 적어보세요.**
 
 ![Untitled](https://github.com/seonghun-dev/ReadmeImage/blob/main/src/ggogeet/Untitled%203.png?raw=true)
 
@@ -30,7 +33,7 @@
 
 ![Untitled](https://github.com/seonghun-dev/ReadmeImage/blob/main/src/ggogeet/Untitled%205.png?raw=true)
 
-> **꼬깃 가이드**
+✍️ **꼬깃 가이드**
 > 
 > 
 > 꼬깃을 작성할 때, 사이드와 메모를 통해서 작성에 도움을 받을 수 있어요.
@@ -45,9 +48,9 @@
 회원과 비회원 모두 카카오톡을 통해서 편지를 확인할 수 있습니다.
 
 
-### 꼬깃 보관함
+📭 **꼬깃 보관함**
 
-주고받은 마음을 분류해 보관하세요.
+>**주고받은 마음을 분류해 보관하세요.**
 
 ![Untitled](https://github.com/seonghun-dev/ReadmeImage/blob/main/src/ggogeet/Untitled%207.png?raw=true)
 
@@ -56,15 +59,15 @@
 외부에서 받은 편지를 추가할 수 있습니다.
 
 
-### 꼬깃 메모
+📝 **꼬깃 메모**
 
-전하려는 마음을 잊지 마세요.
+> **전하려는 마음을 잊지 마세요.**
 
 ![Untitled](https://github.com/seonghun-dev/ReadmeImage/blob/main/src/ggogeet/Untitled%208.png?raw=true)
 
 
 
-## Web Site
+## 💻Web Site
 
 www.ggo-geet.com
 
@@ -79,21 +82,20 @@ www.ggo-geet.com
 [Github](https://github.com/depromeet/ggogeet_backend)
  
 
-### **Skill**
----
+## 🔧 Skill
 ### Backend
 
-🔧 **Stack**  
+- **Stack**
 
 ![Untitled](https://github.com/seonghun-dev/ReadmeImage/blob/main/src/ggogeet/Untitled%209.png?raw=true)  
 
 
 
-⚒️ **System Architecture**  
+- **System Architecture**
 
 ![KakaoTalk_20230112_231800711](https://user-images.githubusercontent.com/76957700/212344998-53693cb4-1977-4932-a050-5e7eb9188285.png)
 
-**Directory structure**
+**📂 Directory structure**
 
 ```
 ├── nginx
@@ -142,7 +144,7 @@ www.ggo-geet.com
 
 ```
 
-## Owner
+## 🫶 Owner
 
 <table>
 
