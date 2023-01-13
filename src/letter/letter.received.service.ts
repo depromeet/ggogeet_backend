@@ -82,8 +82,8 @@ export class LetterReceivedService {
     }
 
     if (query.receivers !== undefined) {
-      letter.andWhere('receiverId IN (:receivers)', {
-        receivers: query.receivers,
+      letter.andWhere('senderId IN (:senders)', {
+        senders: query.senders,
       });
     }
 
