@@ -47,6 +47,7 @@ const TypeOrmSettingModule = TypeOrmModule.forRoot({
   username: process.env.MYSQL_USER,
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DB,
+  timezone: 'Asia/Seoul',
 
   entities: [
     Notice,
