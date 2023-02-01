@@ -21,7 +21,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const req = ctx.getRequest<Request>();
 
     if (!(exception instanceof HttpException)) {
-      exception = new InternalServerErrorException();
       this.logger.error(
         `[${req.method}] ${req.url} ${res.statusCode} - ${exception}}`,
       );
