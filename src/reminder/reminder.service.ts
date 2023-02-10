@@ -27,7 +27,8 @@ export class ReminderService {
     reminder.isDone = false;
     reminder.user = user;
     reminder.situationId = reminderDto.situationId;
-    return this.reminderRepository.save(reminder);
+    await this.reminderRepository.save(reminder);
+    return new ReminderResponseDto(reminder);
   }
 
   async findAll(query: FindAllReminderQueryDto, user: User) {
