@@ -31,22 +31,6 @@ import { SituationSentenceResponseDto } from './dto/responses/manysentence.respo
 export class SentenceController {
   constructor(private readonly sentenceService: SentenceService) {}
 
-  // 1차 mvp에서 필요없다고 판단해서 일단 빼놓습니다
-  // @ApiOperation({
-  //   summary: '"모든" 문장 가져오기 API',
-  //   description:
-  //     '사용자별로 모든 문장(사용자 추가 문장 + 가이드 문장)을 가져옵니다. 상황별로 문장을 한번에 가져와서 필터링하고 싶은 경우 사용하면 됩니다. ',
-  // })
-  // @ApiResponse({
-  //   status: HttpStatus.OK,
-  //   description: '모든 문장이 반환된 후 situationId로 상황을 구분하면 됩니다. userSentence:[ [{},{},{}],[{},{}],[],[{}],[],[],[].. ], ',
-  //   type: [SituationSentenceResponseDto],
-  // })
-  // @Get()
-  // async findAllSentence(@ReqUser() user: User) {
-  //   return await this.sentenceService.findAll(user);
-  // }
-
   @ApiOperation({
     summary: '상황별 문장 가져오기 API',
     description: '상황 id로 사용자 추가 문장, 가이드 문장을 가져옵니다.',
