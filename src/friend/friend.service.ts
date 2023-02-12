@@ -74,7 +74,38 @@ export class FriendService {
       });
     }
 
-    for await (const element of friendsList) {
+    class FriendsInfo {
+      kakaoUuid: string;
+      kakaoFriendName: string;
+
+      constructor(kakaoUuid: string, kakaoFriendName: string) {
+        this.kakaoUuid = kakaoUuid;
+        this.kakaoFriendName = kakaoFriendName;
+      }
+
+      equals(friend: FriendsInfo) {
+        return (
+          this.kakaoUuid === friend.kakaoUuid &&
+          this.kakaoFriendName === friend.kakaoFriendName
+        );
+      }
+    }
+
+    const exFriend = await this.friendRepository.find({
+      where: { userId: user.id },
+      select: ['kakaoUuid', 'kakaoFriendName'],
+    });
+
+    const exFriendList = exFriend.map((friend) => {
+      return new FriendsInfo(friend.kakaoUuid, friend.kakaoFriendName);
+    });
+
+    const newFreindUuidList = friendsList.filter((friend) => {
+      const f = new FriendsInfo(friend.uuid, friend.profile_nickname);
+      return !exFriendList.some((t) => f.equals(t));
+    });
+
+    for await (const element of newFreindUuidList) {
       const exFriend = await this.friendRepository.findOne({
         where: { userId: user.id, kakaoUuid: element.uuid },
       });
