@@ -16,6 +16,7 @@ const mockRepository = () => ({
   findOne: jest.fn().mockResolvedValue(Sentence),
   update: jest.fn(),
   softDelete: jest.fn(),
+  delete: jest.fn(),
 });
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
@@ -86,6 +87,26 @@ describe('SentenceService', () => {
       jest.spyOn(sentenceRepository, 'save').mockResolvedValue(sentence);
       const result = sentenceService.createSentence(user, sentenceDto);
       expect(result).resolves.toEqual(sentenceResponseDto);
+    });
+  });
+
+  describe('delete Sentence', () => {
+    const id = 1;
+    it('Delete Sentence success', () => {
+      const deleteResult: { affected: number } = { affected: 1 };
+      jest.spyOn(sentenceRepository, 'delete').mockResolvedValue(deleteResult);
+      sentenceService.deleteSentence(id, user);
+    });
+    it("Can't find sentence", () => {
+      const deleteResult: { affected: number } = { affected: 0 };
+      jest.spyOn(sentenceRepository, 'delete').mockResolvedValue(deleteResult);
+      const result = sentenceService.deleteSentence(id, user);
+      expect(result).rejects.toThrowError(
+        new NotFoundException({
+          type: 'NOT_FOUND',
+          message: `Sentence #1 not found`,
+        }),
+      );
     });
   });
 });
