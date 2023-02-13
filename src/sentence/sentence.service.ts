@@ -14,26 +14,6 @@ export class SentenceService {
     private sentenceRepository: Repository<Sentence>,
   ) {}
 
-  async findAll(user: User): Promise<any> {
-    const userSentence = [];
-    const guideSentence = [];
-
-    for (let situationId = 1; situationId < 9; situationId++) {
-      const tempUserSentence = await this.findUserSentenceBySituation(
-        user.id,
-        situationId,
-      );
-      const tempGuideSentence = await this.findGuideSentenceBySituation(
-        situationId,
-      );
-
-      userSentence.push(tempUserSentence);
-      guideSentence.push(tempGuideSentence);
-    }
-
-    return { userSentence, guideSentence };
-  }
-
   async findOne(user: User, id: number): Promise<SentenceResponseDto> {
     const sentence = await this.sentenceRepository.findOne({
       where: { id: id, userId: user.id },
