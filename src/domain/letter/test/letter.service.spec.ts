@@ -1,4 +1,4 @@
-import { LetterService } from './letter.service';
+import { LetterService } from '../letter.service';
 
 describe('LetterService', () => {
   let service: LetterService;

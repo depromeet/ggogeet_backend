@@ -1,4 +1,4 @@
-import { LetterController } from './letter.controller';
+import { LetterController } from '../letter.controller';
 
 describe('LetterController', () => {
   let controller: LetterController;

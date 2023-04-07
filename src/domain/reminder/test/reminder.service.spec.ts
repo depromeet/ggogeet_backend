@@ -1,16 +1,16 @@
 import { Test } from '@nestjs/testing';
 import { User } from 'src/domain/users/entities/user.entity';
 import { Repository } from 'typeorm';
-import { Reminder } from './entities/reminder.entity';
-import { ReminderService } from './reminder.service';
-import { ReminderController } from './reminder.controller';
+import { Reminder } from '../entities/reminder.entity';
+import { ReminderService } from '../reminder.service';
+import { ReminderController } from '../reminder.controller';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { PaginationBuilder } from 'src/common/paginations/paginationBuilder.response';
-import { FindAllReminderQueryDto } from './dto/requests/findAllReminder.request.dto';
-import { CreateReminderDto } from './dto/requests/createReminder.request.dto';
-import { ReminderResponseDto } from './dto/responses/reminder.response.dto';
-import { ReminderStautsResponseDto } from './dto/responses/reminderStatus.response.dto';
-import { UpdateReminderDto } from './dto/requests/updateReminder.request.dto';
+import { FindAllReminderQueryDto } from '../dto/requests/findAllReminder.request.dto';
+import { CreateReminderDto } from '../dto/requests/createReminder.request.dto';
+import { ReminderResponseDto } from '../dto/responses/reminder.response.dto';
+import { ReminderStautsResponseDto } from '../dto/responses/reminderStatus.response.dto';
+import { UpdateReminderDto } from '../dto/requests/updateReminder.request.dto';
 import { NotFoundException } from '@nestjs/common';
 
 const mockRepository = () => ({

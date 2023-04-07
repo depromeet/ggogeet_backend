@@ -1,13 +1,13 @@
 import { Test } from '@nestjs/testing';
-import { SentenceService } from './sentence.service';
-import { Sentence } from './entities/sentence.entity';
+import { SentenceService } from '../sentence.service';
+import { Sentence } from '../entities/sentence.entity';
 import { Repository } from 'typeorm';
-import { SentenceController } from './sentence.controller';
+import { SentenceController } from '../sentence.controller';
 import { User } from 'src/domain/users/entities/user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { SentenceResponseDto } from './dto/responses/sentence.response.dto';
+import { SentenceResponseDto } from '../dto/responses/sentence.response.dto';
 import { NotFoundException } from '@nestjs/common';
-import { CreateSentenceDto } from './dto/requests/createSentence.request.dto';
+import { CreateSentenceDto } from '../dto/requests/createSentence.request.dto';
 import { SentenceType } from 'src/domain/sentence/sentence.constant';
 
 const mockRepository = () => ({

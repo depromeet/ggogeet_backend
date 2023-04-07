@@ -1,10 +1,10 @@
 import { Test } from '@nestjs/testing';
 import { User } from 'src/domain/users/entities/user.entity';
-import { Reminder } from './entities/reminder.entity';
-import { ReminderController } from './reminder.controller';
-import { ReminderService } from './reminder.service';
-import { FindAllReminderQueryDto } from './dto/requests/findAllReminder.request.dto';
-import { ReminderResponseDto } from './dto/responses/reminder.response.dto';
+import { Reminder } from '../entities/reminder.entity';
+import { ReminderController } from '../reminder.controller';
+import { ReminderService } from '../reminder.service';
+import { FindAllReminderQueryDto } from '../dto/requests/findAllReminder.request.dto';
+import { ReminderResponseDto } from '../dto/responses/reminder.response.dto';
 
 const mockRepository = () => ({});
 
