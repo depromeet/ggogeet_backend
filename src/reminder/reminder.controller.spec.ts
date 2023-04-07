@@ -3,6 +3,8 @@ import { User } from 'src/users/entities/user.entity';
 import { Reminder } from './entities/reminder.entity';
 import { ReminderController } from './reminder.controller';
 import { ReminderService } from './reminder.service';
+import { FindAllReminderQueryDto } from './dto/requests/findAllReminder.request.dto';
+import { ReminderResponseDto } from './dto/responses/reminder.response.dto';
 
 const mockRepository = () => ({});
 
@@ -28,8 +30,6 @@ describe('ReminderController', () => {
       ],
     }).compile();
 
-    // add dependency of notice service
-
     reminderService = moduleRef.get<ReminderService>(ReminderService);
     reminderController = moduleRef.get<ReminderController>(ReminderController);
     reminder = new Reminder();
@@ -38,11 +38,11 @@ describe('ReminderController', () => {
 
   describe('Test FindAll', () => {
     it('should return an array of reminder', async () => {
-      const query = {
-        offset: Number(),
-        limit: Number(),
-        done: Boolean(),
-      };
+      const query = new FindAllReminderQueryDto();
+      query.done = true;
+      query.page = 1;
+      query.take = 10;
+
       const result = {
         count: Number(),
         offset: Number(),
@@ -55,6 +55,51 @@ describe('ReminderController', () => {
         .mockImplementation(() => Promise.resolve(result));
 
       expect(await reminderController.findAll(query, user)).toBe(result);
+    });
+  });
+
+  describe('Test FindOne', () => {
+    it('should return an array of reminder', async () => {
+      const result = {
+        data: new ReminderResponseDto(reminder),
+      };
+      jest
+        .spyOn(reminderService, 'findOne')
+        .mockImplementation(() =>
+          Promise.resolve(new ReminderResponseDto(reminder)),
+        );
+
+      expect(await reminderController.findOne(1, user)).toStrictEqual(result);
+    });
+  });
+
+  describe('Test Create', () => {
+    it('should return reminder', async () => {
+      const result = {
+        data: Reminder,
+      };
+      jest
+        .spyOn(reminderService, 'createReminder')
+        .mockImplementation(() => Promise.resolve(reminder));
+
+      expect(await reminderController.create(reminder, user)).toStrictEqual(
+        result,
+      );
+    });
+  });
+
+  describe('Test Update', () => {
+    it('should return reminder', async () => {
+      const result = {
+        data: Reminder,
+      };
+      jest
+        .spyOn(reminderService, 'update')
+        .mockImplementation(() => Promise.resolve(reminder));
+
+      expect(await reminderController.update(1, reminder, user)).toStrictEqual(
+        result,
+      );
     });
   });
 });
