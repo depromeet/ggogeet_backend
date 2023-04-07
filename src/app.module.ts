@@ -88,7 +88,7 @@ const dailyLoggerOptions = (level: string) => {
   };
 };
 
-const WinstomSettingModule = WinstonModule.forRoot({
+const WinstonSettingModule = WinstonModule.forRoot({
   transports: [
     new winston.transports.Console({
       format: winston.format.combine(
@@ -109,7 +109,7 @@ const WinstomSettingModule = WinstonModule.forRoot({
     ConfigSettingModule,
     TypeOrmSettingModule,
     RedisSettingModule,
-    WinstomSettingModule,
+    WinstonSettingModule,
     UsersModule,
     NoticeModule,
     AuthModule,
