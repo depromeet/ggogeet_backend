@@ -10,9 +10,7 @@ import { PaginationResponse } from './pagination.response';
 /*
  * @ApiPaginatedResponse() is a decorator to create a swagger document for a paginated response.
  */
-export const ApiPaginationResponse = <TModel extends Type<any>>(
-  model: TModel,
-) => {
+export const ApiPaginationResponse = <TModel extends Type>(model: TModel) => {
   return applyDecorators(
     ApiOkResponse({
       schema: {

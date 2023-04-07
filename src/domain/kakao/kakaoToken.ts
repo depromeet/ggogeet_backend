@@ -1,8 +1,8 @@
 export class KakaoToken {
-  private accessToken: string;
-  private refreshToken: string;
-  private accessTokenExpiresIn: number;
-  private refreshTokenExpiresIn: number;
+  private readonly accessToken: string;
+  private readonly refreshToken: string;
+  private readonly accessTokenExpiresIn: number;
+  private readonly refreshTokenExpiresIn: number;
 
   constructor(
     accessToken: string,

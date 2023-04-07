@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class TelegramMonitoringService {
-  private chatId: string;
-  private botToken: string;
+  private readonly chatId: string;
+  private readonly botToken: string;
 
   constructor() {
     this.chatId = process.env.TELEGRAM_CHAT_ID;
