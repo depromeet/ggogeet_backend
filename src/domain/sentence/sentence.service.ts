@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { SentenceType } from 'src/constants/sentence.constant';
+import { SentenceType } from 'src/domain/sentence/sentence.constant';
 import { User } from 'src/domain/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateSentenceDto } from './dto/requests/createSentence.request.dto';
