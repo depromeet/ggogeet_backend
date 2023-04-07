@@ -3,7 +3,7 @@ import { SentenceService } from './sentence.service';
 import { Sentence } from './entities/sentence.entity';
 import { Repository } from 'typeorm';
 import { SentenceController } from './sentence.controller';
-import { User } from 'src/users/entities/user.entity';
+import { User } from 'src/domain/users/entities/user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { SentenceResponseDto } from './dto/responses/sentence.response.dto';
 import { NotFoundException } from '@nestjs/common';

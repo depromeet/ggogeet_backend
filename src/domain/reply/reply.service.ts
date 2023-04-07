@@ -4,8 +4,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LetterBody } from 'src/letter/entities/letterBody.entity';
-import { User } from 'src/users/entities/user.entity';
+import { LetterBody } from 'src/domain/letter/entities/letterBody.entity';
+import { User } from 'src/domain/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateReplyDto } from './dtos/requests/createReply.request.dto';
 import { Reply } from './entities/reply.entity';

@@ -3,7 +3,7 @@ import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
 import { JwtStrategy } from 'src/auth/strategy/jwt.strategy';
-import { User } from 'src/users/entities/user.entity';
+import { User } from 'src/domain/users/entities/user.entity';
 import { Sentence } from './entities/sentence.entity';
 import { SentenceController } from './sentence.controller';
 import { SentenceService } from './sentence.service';

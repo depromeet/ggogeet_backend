@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ReceivedLetter } from 'src/letter/entities/receivedLetter.entity';
-import { SendLetter } from 'src/letter/entities/sendLetter.entity';
+import { ReceivedLetter } from 'src/domain/letter/entities/receivedLetter.entity';
+import { SendLetter } from 'src/domain/letter/entities/sendLetter.entity';
 
 export class SendLetterDetailResponseDto {
   @ApiProperty({ example: 1, description: '보낸편지 id' })

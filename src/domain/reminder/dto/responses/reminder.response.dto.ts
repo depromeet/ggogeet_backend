@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Reminder } from 'src/reminder/entities/reminder.entity';
+import { Reminder } from 'src/domain/reminder/entities/reminder.entity';
 
 export class ReminderResponseDto {
   @ApiProperty({

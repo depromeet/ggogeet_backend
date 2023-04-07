@@ -9,7 +9,7 @@ import {
 import { FriendService } from './friend.service';
 import { JwtAuthGuard } from 'src/common/guards/jwtAuth.guard';
 import { ReqUser } from 'src/common/decorators/user.decorators';
-import { User } from 'src/users/entities/user.entity';
+import { User } from 'src/domain/users/entities/user.entity';
 import {
   ApiBearerAuth,
   ApiOperation,

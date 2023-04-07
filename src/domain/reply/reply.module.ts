@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { LetterBody } from 'src/letter/entities/letterBody.entity';
+import { LetterBody } from 'src/domain/letter/entities/letterBody.entity';
 import { Reply } from './entities/reply.entity';
 import { ReplyController } from './reply.controller';
 import { ReplyService } from './reply.service';

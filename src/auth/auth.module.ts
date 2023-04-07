@@ -3,16 +3,16 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtStrategy } from 'src/auth/strategy/jwt.strategy';
-import { Social } from 'src/users/entities/social.entity';
-import { User } from 'src/users/entities/user.entity';
-import { UserInfo } from 'src/users/entities/userInfo.entity';
+import { Social } from 'src/domain/users/entities/social.entity';
+import { User } from 'src/domain/users/entities/user.entity';
+import { UserInfo } from 'src/domain/users/entities/userInfo.entity';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { KakaoService } from 'src/kakao/kakao.service';
-import { Friend } from 'src/friend/entities/friend.entity';
-import { UsersService } from 'src/users/users.service';
-import { FriendService } from 'src/friend/friend.service';
-import { KakaoTokenRepository } from 'src/kakao/repository/kakaoToken.memory.repository';
+import { KakaoService } from 'src/domain/kakao/kakao.service';
+import { Friend } from 'src/domain/friend/entities/friend.entity';
+import { UsersService } from 'src/domain/users/users.service';
+import { FriendService } from 'src/domain/friend/friend.service';
+import { KakaoTokenRepository } from 'src/domain/kakao/repository/kakaoToken.memory.repository';
 
 @Module({
   imports: [

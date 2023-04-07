@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/users/entities/user.entity';
+import { User } from 'src/domain/users/entities/user.entity';
 import { SendLetter } from './entities/sendLetter.entity';
 import { Repository } from 'typeorm';
 import { findAllSentLetterDto } from './dto/requests/findAllLetter.request.dto';

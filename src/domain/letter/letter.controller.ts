@@ -15,7 +15,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ReqUser } from 'src/common/decorators/user.decorators';
 import { JwtAuthGuard } from 'src/common/guards/jwtAuth.guard';
-import { User } from 'src/users/entities/user.entity';
+import { User } from 'src/domain/users/entities/user.entity';
 import { LetterService } from './letter.service';
 import {
   ApiBadRequestResponse,

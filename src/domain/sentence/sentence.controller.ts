@@ -21,7 +21,7 @@ import {
 } from '@nestjs/swagger';
 import { SentenceResponseDto } from './dto/responses/sentence.response.dto';
 import { ReqUser } from 'src/common/decorators/user.decorators';
-import { User } from 'src/users/entities/user.entity';
+import { User } from 'src/domain/users/entities/user.entity';
 import { SituationSentenceResponseDto } from './dto/responses/manysentence.response.dto';
 
 @Controller('sentence')

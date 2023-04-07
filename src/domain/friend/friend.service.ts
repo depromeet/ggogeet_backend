@@ -1,12 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ResponseFriendDto } from './dto/response/responseFriend.dto';
-import { User } from 'src/users/entities/user.entity';
+import { User } from 'src/domain/users/entities/user.entity';
 import { Friend } from './entities/friend.entity';
 import { Repository } from 'typeorm';
-import { KakaoTokenRepository } from 'src/kakao/repository/kakaoToken.memory.repository';
-import { KakaoToken } from 'src/kakao/kakaoToken';
-import { KakaoService } from 'src/kakao/kakao.service';
+import { KakaoTokenRepository } from 'src/domain/kakao/repository/kakaoToken.memory.repository';
+import { KakaoToken } from 'src/domain/kakao/kakaoToken';
+import { KakaoService } from 'src/domain/kakao/kakao.service';
 
 @Injectable()
 export class FriendService {

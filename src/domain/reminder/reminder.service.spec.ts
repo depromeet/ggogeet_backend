@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { User } from 'src/users/entities/user.entity';
+import { User } from 'src/domain/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { Reminder } from './entities/reminder.entity';
 import { ReminderService } from './reminder.service';

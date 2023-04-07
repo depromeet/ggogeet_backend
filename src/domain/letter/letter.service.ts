@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { User } from 'src/users/entities/user.entity';
+import { User } from 'src/domain/users/entities/user.entity';
 import { CreateDraftLetterDto } from './dto/requests/createDraftLetter.request.dto';
 import { LetterBody } from './entities/letterBody.entity';
 import { SendLetter } from './entities/sendLetter.entity';
@@ -8,10 +8,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ReceivedLetter } from './entities/receivedLetter.entity';
 import { LetterUtils } from './letter.utils';
-import { KakaoTokenRepository } from 'src/kakao/repository/kakaoToken.memory.repository';
-import { KakaoToken } from 'src/kakao/kakaoToken';
-import { Friend } from 'src/friend/entities/friend.entity';
-import { KakaoService } from 'src/kakao/kakao.service';
+import { KakaoTokenRepository } from 'src/domain/kakao/repository/kakaoToken.memory.repository';
+import { KakaoToken } from 'src/domain/kakao/kakaoToken';
+import { Friend } from 'src/domain/friend/entities/friend.entity';
+import { KakaoService } from 'src/domain/kakao/kakao.service';
 import { TempLetterRepository } from './repository/tempLetter.repository';
 import { KakaoMessageCallbackDto } from './dto/requests/kakaoCallback.request.dto';
 

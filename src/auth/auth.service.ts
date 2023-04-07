@@ -1,13 +1,13 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Social } from 'src/users/entities/social.entity';
-import { User } from 'src/users/entities/user.entity';
-import { UserInfo } from 'src/users/entities/userInfo.entity';
+import { Social } from 'src/domain/users/entities/social.entity';
+import { User } from 'src/domain/users/entities/user.entity';
+import { UserInfo } from 'src/domain/users/entities/userInfo.entity';
 import { Repository } from 'typeorm';
 import { CreateKakaoUserDto } from './dto/requests/createKakaoUser.dto';
-import { KakaoService } from 'src/kakao/kakao.service';
-import { UsersService } from 'src/users/users.service';
+import { KakaoService } from 'src/domain/kakao/kakao.service';
+import { UsersService } from 'src/domain/users/users.service';
 
 @Injectable()
 export class AuthService {

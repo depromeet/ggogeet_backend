@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Sentence } from 'src/sentence/entities/sentence.entity';
+import { Sentence } from 'src/domain/sentence/entities/sentence.entity';
 
 export class SentenceResponseDto {
   @ApiProperty({
