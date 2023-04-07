@@ -1,4 +1,4 @@
-import { AuthController } from './auth.controller';
+import { AuthController } from '../auth.controller';
 
 describe('AuthController', () => {
   let controller: AuthController;

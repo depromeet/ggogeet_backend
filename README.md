@@ -134,8 +134,8 @@ www.ggo-geet.com
 │   ├── users/
 │   ├── utils/
 │   │   ├── index.ts
-│   │   ├── multer.options.ts
-│   └   └── swagger.ts
+│   │   ├── s3.multer.ts
+│   └   └── document.swagger.ts
 ├── test/
 ├── deploy.sh
 ├── docker-compose.yml

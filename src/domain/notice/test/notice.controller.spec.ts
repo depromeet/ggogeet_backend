@@ -1,8 +1,8 @@
 import { Test } from '@nestjs/testing';
-import { DeleteNoticeDto } from './dto/deleteNotice.dto';
-import { Notice } from './entities/notice.entity';
-import { NoticeController } from './notice.controller';
-import { NoticeService } from './notice.service';
+import { DeleteNoticeDto } from '../dto/deleteNotice.dto';
+import { Notice } from '../entities/notice.entity';
+import { NoticeController } from '../notice.controller';
+import { NoticeService } from '../notice.service';
 
 const mockRepository = () => ({});
 

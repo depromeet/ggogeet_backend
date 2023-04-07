@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { Repository } from 'typeorm';
-import { NoticeService } from './notice.service';
-import { Notice } from './entities/notice.entity';
+import { NoticeService } from '../notice.service';
+import { Notice } from '../entities/notice.entity';
 import { NotFoundException } from '@nestjs/common';
 
 const mockRepository = () => ({
