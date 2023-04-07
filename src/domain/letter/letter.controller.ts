@@ -40,8 +40,6 @@ import {
   findAllReceviedLetterDto,
   findAllSentLetterDto,
 } from './dto/requests/findAllLetter.request.dto';
-import { SendLetter } from './entities/sendLetter.entity';
-import { ReceivedLetter } from './entities/receivedLetter.entity';
 import { KakaoMessageCallbackDto } from './dto/requests/kakaoCallback.request.dto';
 import {
   ReceivedLetterDetailResponseDto,
