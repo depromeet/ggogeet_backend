@@ -9,10 +9,10 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ResponseFriendDto } from '../friend/dto/response/responseFriend.dto';
-import { KakaoTokenRepository } from 'src/kakao/repository/kakaoToken.memory.repository';
-import { KakaoToken } from 'src/kakao/kakaoToken';
-import { FriendService } from 'src/friend/friend.service';
+import { ResponseFriendDto } from '../domain/friend/dto/response/responseFriend.dto';
+import { KakaoTokenRepository } from 'src/domain/kakao/repository/kakaoToken.memory.repository';
+import { KakaoToken } from 'src/domain/kakao/kakaoToken';
+import { FriendService } from 'src/domain/friend/friend.service';
 
 @Controller('auth')
 @ApiTags('Auth API')

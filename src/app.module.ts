@@ -1,28 +1,28 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersModule } from './users/users.module';
+import { UsersModule } from './domain/users/users.module';
 import { ConfigModule } from '@nestjs/config';
-import { NoticeModule } from './notice/notice.module';
+import { NoticeModule } from './domain/notice/notice.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { Notice } from './notice/entities/notice.entity';
+import { Notice } from './domain/notice/entities/notice.entity';
 import { AuthModule } from './auth/auth.module';
-import { User } from './users/entities/user.entity';
-import { UserInfo } from './users/entities/userInfo.entity';
-import { Social } from './users/entities/social.entity';
-import { Friend } from './friend/entities/friend.entity';
-import { LetterModule } from './letter/letter.module';
-import { ReceivedLetter } from './letter/entities/receivedLetter.entity';
-import { ReminderModule } from './reminder/reminder.module';
-import { Reminder } from './reminder/entities/reminder.entity';
-import { LetterBody } from './letter/entities/letterBody.entity';
-import { Reply } from './reply/entities/reply.entity';
-import { Relationship } from './relationship/entities/relationship.entity';
-import { SendLetter } from './letter/entities/sendLetter.entity';
-import { SentenceModule } from './sentence/sentence.module';
-import { Sentence } from './sentence/entities/sentence.entity';
-import { ReplyModule } from './reply/reply.module';
+import { User } from './domain/users/entities/user.entity';
+import { UserInfo } from './domain/users/entities/userInfo.entity';
+import { Social } from './domain/users/entities/social.entity';
+import { Friend } from './domain/friend/entities/friend.entity';
+import { LetterModule } from './domain/letter/letter.module';
+import { ReceivedLetter } from './domain/letter/entities/receivedLetter.entity';
+import { ReminderModule } from './domain/reminder/reminder.module';
+import { Reminder } from './domain/reminder/entities/reminder.entity';
+import { LetterBody } from './domain/letter/entities/letterBody.entity';
+import { Reply } from './domain/reply/entities/reply.entity';
+import { Relationship } from './domain/relationship/entities/relationship.entity';
+import { SendLetter } from './domain/letter/entities/sendLetter.entity';
+import { SentenceModule } from './domain/sentence/sentence.module';
+import { Sentence } from './domain/sentence/entities/sentence.entity';
+import { ReplyModule } from './domain/reply/reply.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
 import * as winston from 'winston';
@@ -30,11 +30,11 @@ import {
   utilities as nestWinstonModuleUtilities,
   WinstonModule,
 } from 'nest-winston';
-import { FriendModule } from './friend/friend.module';
+import { FriendModule } from './domain/friend/friend.module';
 import winstonDaily from 'winston-daily-rotate-file';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './common/exceptions/httpExceptionFilter';
-import { KakaoModule } from './kakao/kakao.module';
+import { KakaoModule } from './domain/kakao/kakao.module';
 
 const ConfigSettingModule = ConfigModule.forRoot({
   isGlobal: true,
@@ -88,7 +88,7 @@ const dailyLoggerOptions = (level: string) => {
   };
 };
 
-const WinstomSettingModule = WinstonModule.forRoot({
+const WinstonSettingModule = WinstonModule.forRoot({
   transports: [
     new winston.transports.Console({
       format: winston.format.combine(
@@ -109,7 +109,7 @@ const WinstomSettingModule = WinstonModule.forRoot({
     ConfigSettingModule,
     TypeOrmSettingModule,
     RedisSettingModule,
-    WinstomSettingModule,
+    WinstonSettingModule,
     UsersModule,
     NoticeModule,
     AuthModule,
