@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+// noinspection HttpUrlsUsage
 export class UserResponseDto {
   @ApiProperty({
     example: 1,

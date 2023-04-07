@@ -1,4 +1,4 @@
-import { SentenceType } from 'src/constants/sentence.constant';
+import { SentenceType } from 'src/domain/sentence/sentence.constant';
 import { User } from 'src/domain/users/entities/user.entity';
 import {
   Column,

@@ -8,7 +8,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { SentenceResponseDto } from './dto/responses/sentence.response.dto';
 import { NotFoundException } from '@nestjs/common';
 import { CreateSentenceDto } from './dto/requests/createSentence.request.dto';
-import { SentenceType } from 'src/constants/sentence.constant';
+import { SentenceType } from 'src/domain/sentence/sentence.constant';
 
 const mockRepository = () => ({
   save: jest.fn(),

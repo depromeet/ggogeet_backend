@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { WINSTON_MODULE_PROVIDER, WinstonLogger } from 'nest-winston';
-import { TelegramMonitoringService } from 'src/monitoring/monitoring.telegram';
+import { TelegramMonitoringService } from 'src/infrastructor/monitoring/monitoring.telegram';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
