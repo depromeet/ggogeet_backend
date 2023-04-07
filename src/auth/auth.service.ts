@@ -53,8 +53,7 @@ export class AuthService {
             ? kakao_account.gender
             : null,
         allow_scope: codeResponse.scope,
-        is_allow_friend:
-          codeResponse.scope.indexOf('friends') !== -1 ? true : false,
+        is_allow_friend: codeResponse.scope.indexOf('friends') !== -1,
       };
 
       // 존재하는 유저인지 확인 후 유저 정보 반환

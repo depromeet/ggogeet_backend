@@ -11,10 +11,10 @@ export class KakaoTokenRepository {
   ) {}
 
   async save(userId: number, kakaoToken: KakaoToken): Promise<void> {
-    const { acessTokenKey, refreshTokenKey } = this.getTokenKey(userId);
+    const { accessTokenKey, refreshTokenKey } = this.getTokenKey(userId);
 
     await this.redis.set(
-      acessTokenKey,
+      accessTokenKey,
       kakaoToken.getAcessToken(),
       'EX',
       kakaoToken.getExpiresIn(),
@@ -29,9 +29,9 @@ export class KakaoTokenRepository {
   }
 
   async findByUserId(userId: number): Promise<KakaoToken> {
-    const { acessTokenKey, refreshTokenKey } = this.getTokenKey(userId);
-    const acessToken = await this.redis.get(acessTokenKey);
-    const expiresIn = await this.redis.ttl(acessTokenKey);
+    const { accessTokenKey, refreshTokenKey } = this.getTokenKey(userId);
+    const acessToken = await this.redis.get(accessTokenKey);
+    const expiresIn = await this.redis.ttl(accessTokenKey);
     const refreshToken = await this.redis.get(refreshTokenKey);
     const refreshTokenExpiresIn = await this.redis.ttl(refreshTokenKey);
     if (acessToken === null) {
@@ -64,11 +64,11 @@ export class KakaoTokenRepository {
   }
 
   private getTokenKey(userId: number): {
-    acessTokenKey: string;
+    accessTokenKey: string;
     refreshTokenKey: string;
   } {
     return {
-      acessTokenKey: `${userId.toString()}:acessToken`,
+      accessTokenKey: `${userId.toString()}:accessToken`,
       refreshTokenKey: `${userId.toString()}:refreshToken`,
     };
   }

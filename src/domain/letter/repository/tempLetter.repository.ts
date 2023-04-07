@@ -15,11 +15,7 @@ export class TempLetterRepository {
   async findById(id: number): Promise<boolean> {
     const tempLetterKey = this.getTokenKey(id);
     const result = await this.redis.get(tempLetterKey);
-    if (result == '1') {
-      return true;
-    } else {
-      return false;
-    }
+    return result == '1';
   }
 
   private getTokenKey(id: number): string {

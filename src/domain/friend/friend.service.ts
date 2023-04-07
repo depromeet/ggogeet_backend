@@ -100,12 +100,12 @@ export class FriendService {
       return new FriendsInfo(friend.kakaoUuid, friend.kakaoFriendName);
     });
 
-    const newFreindUuidList = friendsList.filter((friend) => {
+    const newFriendUuidList = friendsList.filter((friend) => {
       const f = new FriendsInfo(friend.uuid, friend.profile_nickname);
       return !exFriendList.some((t) => f.equals(t));
     });
 
-    for await (const element of newFreindUuidList) {
+    for await (const element of newFriendUuidList) {
       const exFriend = await this.friendRepository.findOne({
         where: { userId: user.id, kakaoUuid: element.uuid },
       });
@@ -120,7 +120,7 @@ export class FriendService {
 
   async createKakaoFriends(element, user: User) {
     const friendUserId = await this.findUserByClientId(element.id);
-    if (friendUserId == null || friendUserId == undefined) {
+    if (friendUserId == null) {
       return;
     }
     const friend = new Friend();

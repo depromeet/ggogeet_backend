@@ -1,27 +1,27 @@
 export class KakaoToken {
-  private acessToken: string;
+  private accessToken: string;
   private refreshToken: string;
-  private acessTokenExpiresIn: number;
+  private accessTokenExpiresIn: number;
   private refreshTokenExpiresIn: number;
 
   constructor(
-    acessToken: string,
+    accessToken: string,
     refreshToken: string,
-    acessTokenExpiresIn: number,
+    accessTokenExpiresIn: number,
     refreshTokenExpiresIn: number,
   ) {
-    this.acessToken = acessToken;
+    this.accessToken = accessToken;
     this.refreshToken = refreshToken;
-    this.acessTokenExpiresIn = acessTokenExpiresIn;
+    this.accessTokenExpiresIn = accessTokenExpiresIn;
     this.refreshTokenExpiresIn = refreshTokenExpiresIn;
   }
 
   getAcessToken(): string {
-    return this.acessToken;
+    return this.accessToken;
   }
 
   getExpiresIn(): number {
-    return this.acessTokenExpiresIn;
+    return this.accessTokenExpiresIn;
   }
 
   getRefreshToken(): string {
@@ -30,15 +30,5 @@ export class KakaoToken {
 
   getRefreshTokenExpiresIn(): number {
     return this.refreshTokenExpiresIn;
-  }
-
-  setAcessToken(acessToken: string, expiresIn: number): void {
-    this.acessToken = acessToken;
-    this.acessTokenExpiresIn = expiresIn;
-  }
-
-  setRefressToken(refreshToken: string, expiresIn: number): void {
-    this.refreshToken = refreshToken;
-    this.refreshTokenExpiresIn = expiresIn;
   }
 }
